@@ -16,9 +16,10 @@ Polynomial-Space Algorithms for Max 2-SAT*.
 - `lean/`: the Lean 4 formalization; see `lean/README.md`. Running
   `python3 lean/verify.py` builds it and compares the formalized statements with
   the theorems of `paper/dense_max2sat_arxiv.tex`.
-- `archive/`: an earlier draft of the paper (`dense_max2sat_paper.tex`),
-  snapshots of the Lean artifact (`lean-snapshots/`) and older PDF builds
-  (`older-pdfs/`).
+
+An earlier draft of the paper (`dense_max2sat_paper.tex`), snapshots of the
+Lean artifact and older PDF builds were removed from the folder on 2026-10-28.
+They remain in the git history, for example in commit `eb5a5e4`.
 
 ## Building the paper
 
