@@ -13,6 +13,8 @@ Polynomial-Space Algorithms for Max 2-SAT*.
   constructions (`verify_dense_max2sat_*.py`). Each script writes its results
   (`*_checks.json`) next to itself, and several scripts import each other, so
   they belong in one folder.
+- `data/`: instance sets for experiments. `data/README.md` describes them
+  and says where to download them.
 - `lean/`: the Lean 4 formalization; see `lean/README.md`. Running
   `python3 lean/verify.py` builds it and compares the formalized statements with
   the theorems of `paper/dense_max2sat_arxiv.tex`.

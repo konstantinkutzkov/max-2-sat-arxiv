@@ -20,3 +20,11 @@ lean/.lake/
 
 # Scratch work
 tmp/
+
+# Downloaded datasets (see data/README.md): the subfolders of data/ are
+# ignored; only files directly in data/ with these extensions are committed
+data/*
+!data/*.md
+!data/*.py
+!data/*.sh
+!data/*.csv
