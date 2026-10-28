@@ -1,0 +1,141 @@
+Regular-graph Max-Cut: complete mathematical and node-count proof
+================================================================
+
+Paper result: cor:maxcut, status checked_core.
+Main declarations: Max2SAT.Regular.regular_result_correct,
+regular_result_maxcut, regular_nodes_bound, and regular_family_nodes.
+
+Final statement
+---------------
+For fixed real L >= 1 and 0 < eps <= 1/2, Lean proves that there exist
+integer thresholds D,N and real constants c,C with 1 <= c < 2 and C > 0
+such that every d-regular simple graph on n vertices satisfying
+
+  d <= (1-eps)*n,
+  every adjacency eigenvalue except one occurrence of d has magnitude
+    at most L*sqrt(d)
+
+has actual regularNodes <= C*(n+1)*(2+14*n)*c^n. The eigenvalue hypothesis
+is vacuous for n<=1, matching the paper's convention lambda(G)=0.
+The statement permits an arbitrary list of input unit clauses. The constants
+are fixed for the family, independently of n, the graph, and those units.
+
+EigenBound uses mathlib's actual Hermitian eigenvalues, with multiplicity.
+It does not assume a mixing estimate, an operator estimate, or an abstract
+spectral certificate disconnected from the input graph. Exactly one
+occurrence of d is excluded. In the high-degree branch the remaining bound
+is strictly smaller than d, so repeated occurrences cannot be hidden.
+The low-degree branch does not need the spectral hypothesis.
+
+The algorithm and its score
+---------------------------
+Regular.formula contains (u or v) and (not u or not v) for every edge,
+and the supplied units. formula_coeff identifies the actual score-derived
+interactions with -2 times the adjacency matrix. formula_score proves
+
+  score(formula,x) = score(units,x) + number of edges + cutSize(graph,x).
+
+regularResult fixes integer thresholds for the family. If n<N it enumerates
+all assignments. Otherwise it computes the input degree from vertex 0. If
+this degree is below D, it constructs a greedy independent set, enumerates
+assignments to its complement, and optimizes the unit-only residual. In the
+remaining case it runs the unchanged preprocessed, two-round count search
+with beta=-2*d/(n-1), floor(n/4) first-round vertices and floor(n/2) total
+prefix vertices. The ordering is fixed. There are n+1 count guesses.
+
+regular_result_correct proves optimality on every graph, without regularity,
+density, or eigenvalue assumptions. regular_result_maxcut specializes to no
+units. Only the improved node bound needs the family's hypotheses.
+
+Spectral and combinatorial derivation
+-------------------------------------
+Rows: the corrected matrix has diagonal zero and off-diagonal entries
+  -2*A_uv + 2*d/(n-1).
+Every squared row norm is D_N=4*d*(1-d/(n-1)). For sufficiently large n,
+  2*eps*d <= D_N <= 4*d, and |beta| <= 2.
+
+Centering and Spectral: let B=A-(d/n)*11^T and P=I-(1/n)*11^T.
+Lean proves the projection's energy bound and N=-2*B+beta*P. It derives
+||B|| <= L*sqrt(d) from the actual adjacency eigenbasis: the constant vector
+lies in the excluded eigenspace, and every zero-sum vector has zero
+coordinate there. The squared coordinate sums give the operator bound.
+Thus ||N|| <= 2*L*sqrt(d)+2 <= 3*L*sqrt(d) in the high-degree range.
+
+Mixing: Cauchy-Schwarz and the actual centered operator bound give the
+edge-count deviation inequality. Rounds checks the exact cardinalities of
+the two rounded prefix sets, their disjointness and relation to the count
+algorithm. For n>=80 and d>=64*L^2 it proves e(B1,B2)>=d*n/40.
+No equality of the two round sizes is assumed.
+
+Profile: each cross-edge contributes at least eps^2 to the squared row
+profile W_t. Summing sqrt(W_t) >= eps*degree_B1(t)/sqrt(d) gives
+  sum_{t in B2} sqrt(W_t) >= eps*n*sqrt(d)/40.
+Rounds identifies this sum with the actual count algorithm's earlier-round
+profile, including zero contributions in the first round.
+
+Parameters: the paper's constants g=eps/(320*sqrt(3)) and
+K=9*L^2/(2*eps) meet the existing count theorem's norm and profile bounds.
+T*|beta|<=2*d; if g^2*eps*n>=128, then
+  (16*d)^2 <= g^2*n^2*D_N,
+which discharges its comparison allowance. Encoding supplies the bridge
+from original clause scores to these matrix coefficients. HighDegree then
+applies the fully verified count theorem with no analytic hypotheses left
+unproved. Its bound is (n+1)*(2+14*n)*countBase^n, with countBase<2.
+
+Bounded degree and uniform assembly
+-----------------------------------
+Greedy explicitly chooses vertices and filters their neighbors from a
+finite list. It proves independence and coverage, then
+  n <= (D+1)*|S|
+under maximum degree <=D. IndependentSearch proves that assigning the
+complement leaves only unit clauses on S and that its completion is optimal
+among all extensions. The streaming fold returns an optimum, and its exact
+recursive-call count is 2^(n-|S|+1)-1, including the initial call.
+LowDegree bounds this by 2*degreeBase(D)^n, where
+  degreeBase(D)=exp(log(2)*(1-1/(D+1))) < 2.
+
+Runtime proves existence of thresholds with
+  D >= 64*L^2, N>=80, eps*N>=2, g^2*eps*N>=128.
+It sets c=max(degreeBase(D),countBase(L,eps)), proves 1<=c<2, and combines
+all branches. C=2^(N+1) suffices, including the finitely many small inputs.
+The thresholds are not extra assumptions on the final family theorem.
+
+Source map and tests
+---------------------
+All modules are under Max2SAT/Regular/:
+- Rows, Centering, Spectral, Mixing, Profile, Rounds, Parameters:
+  derivation of the actual graph estimates;
+- Encoding, CutScore: clause representation and score identities;
+- Greedy, IndependentSearch, LowDegree: constructive low-degree branch;
+- HighDegree: complete count-search instantiation;
+- Algorithm, Runtime: all-input exactness and full family node bound;
+- Examples: independent completion with units and ties, exact node counts,
+  unequal rounded rounds, clique row-energy degeneration, degree zero,
+  and correctness for the empty graph.
+
+All 88 new public theorems are included in the transitive axiom audit.
+The full build includes thirteen example modules. Universal proofs supply
+the result; examples only check concrete boundaries. The audit permits only
+propext, Classical.choice, and Quot.sound, with no placeholders, custom
+axioms, or native-evaluation proof dependencies. result.json records the
+exact checked sources, manuscript hash, dependencies, and correspondence.
+
+Scope and remaining work
+-------------------------
+The formal runtime model counts recursive calls, including rejected calls.
+Polynomial graph-to-formula conversion, bit-arithmetic overhead, and streamed
+polynomial space remain the ordinary implementation arguments in the paper.
+The graph encoding uses Finset.toList, hence a noncomputable list ordering
+in Lean. Its score and coefficient proofs are independent of that ordering;
+this is a mathematical specification of the input formula, not a claim to
+have certified the compiled cost of converting graph representations.
+
+The theorem starts from the paper's eigenvalue hypothesis. The constructions
+and cited eigenvalue facts for named Paley and Ramanujan families are not
+formalized. Independent-pair and SBM estimates, numerical discovery of
+hidden communities, and fallback integration remain outstanding. The
+biased-subset appendix is an unproved research proposal.
+
+The correspondence record and fingerprints assist independent review but do
+not prove semantic equivalence between the prose and the Lean statements.
+Reproduce the full check with python3 verify.py in the artifact directory.

@@ -1,0 +1,5951 @@
+{
+  "status": "PASS",
+  "checked_at_utc": "2026-10-23T16:25:01.368148+00:00",
+  "lean": "Lean (version 4.34.0, arm64-apple-darwin24.6.0, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release)",
+  "audited_theorems": 1110,
+  "allowed_standard_axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "theorem_dependencies": {
+    "Max2SAT.unit_cancellation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.pair_reduction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.preprocess_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.preprocess_finished": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.unit_domination": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.safe_domination": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.pruning_gain_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.pruning_bound_counts": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.pruning_iff_strict_improvement": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.propagation": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.remove_false": [
+      "propext"
+    ],
+    "Max2SAT.Constraint.remove_true": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.redundant": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.normalize_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.normalize_noOpposites": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.minimum_lhs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.infeasible_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.restrict_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.reject_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Enumeration.mem_enumerate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Enumeration.enumerate_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Enumeration.nodes_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Enumeration.stackDepth_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Enumeration.foldEnumerate_eq_foldl": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Enumeration.varying_nodes_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Enumeration.prefix_suffix_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FairCoin.mgf_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FairCoin.lower_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FairCoin.probability_eq_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.column_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.mean_initial_benefit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.statistic_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.cuts_surplus": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.admissible_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.exists_optimal_cuts": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Single.feasible_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Single.mem_enumerate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Single.enumerate_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Single.nodes_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Single.fold_eq_foldl": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Hybrid.mem_outputs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Hybrid.output_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Hybrid.nodeCount_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Hybrid.fold_eq_foldl": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Hybrid.solve_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.branchingSet_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.selected_gap_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.relative_bias_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.relative_bias_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.relative_bias_paper_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.exponential_base_lt_two": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.solveBias_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.solveBiasPreprocessed_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.relative_bias_preprocessed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.Hybrid.solve_depth": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.pruning_storage": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.sum_storage": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.cancellation_storage": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.checker_storage": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Constraint.holds_sum": [
+      "propext"
+    ],
+    "Max2SAT.Bias.mean_statistic": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.admissible_statistic": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.gap_mass_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.gap_mass_output_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.statistic_change": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.equivalent_gap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.preprocess_gap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.preprocess_occurrences": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.simple_occurrences": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.simple_occurrences_linear": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_total_gap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_occurrence_squares": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_gap_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_gap_output_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_gap_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_gap_paper_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_gap_base_lt_two": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Bias.dense_gap_preprocessed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Residual.restrict_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Residual.restrict_wellFormed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.ofConstraint_lhs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.sum_lhs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.sum_holds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.minimum_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.minimizer_lhs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.feasible_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.mem_enumerate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.enumerate_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.nodes_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Weighted.fold_eq_foldl": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.ComparisonTree.winner_mem": [
+      "propext"
+    ],
+    "Max2SAT.ComparisonTree.le_winner": [
+      "propext"
+    ],
+    "Max2SAT.Random.fullTree_covers": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.fullTree_valid": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.output_compatible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.winner_survives": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.fold_eq_foldl": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.solveOn_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.extend_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.weight_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.ceiling_sqrt": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.solve_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.randomFormula_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.active_degree_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.product_prob": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.condition_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.condition_expect": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.condition_invariant": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_push": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.prob_push": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.product_push": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.random_symmetries": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.condition_tensor_left": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.condition_fair_history": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fair_history_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.joint_multiply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.observed_factorization": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.present_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_moment": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.retained": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.oneClause_moment": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.oneClause_invariant": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.oneClause_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.independentClauses_moment": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.independentClauses_invariant": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.independentClauses_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.quarter_moment": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generate_wellFormed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_edge_neighbors": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.condition_observed_input": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.observed_event_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.invariant_iff_endpoints": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.randomized_pair_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.randomized_pairs_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.endpoint_deviation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.eta_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.pairGain_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signedCount_flip": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.pairGain_flip": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.product_select": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fresh_selection": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.condition_tensor_both": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fresh_bit_and_vector": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signed_sum_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signed_sum_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_gain": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.suffix_average_gain": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.delta_preprocess": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.delta_core": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.algorithm_exposure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.exposure_joint_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.base_pattern_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.retained_base_present": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.condition_exposure_history": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.coefficient_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.delta_exposure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.current_signs_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.assignment_after_signs_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.delta_known_after_signs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.current_theta_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_delta_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_delta_variance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_exposure_moments": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.exposure_variance_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.observed_degree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.list_history_step": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.edge_deviation_exposure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.deviation_coefficient_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.opposite_current": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.theta_subrow_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.toMeasure_singleton": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.integral_eq_expect": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.MomentBounds.cauchy_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.MomentBounds.moment_interpolation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.MomentBounds.integral_sqrt_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.moment_interpolation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.sqrt_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signed_sum_fourth": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signed_sum_fourth_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signed_sum_absolute": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signed_sum_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncation_loss": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.shifted_truncation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncated_absolute_gain": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.ae_toMeasure_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.range_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.centered_range_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.exponential_markov": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.lower_tail_of_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.prob_ge_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_mono_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fiber_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fiber_event_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fiber_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fiber_mass_mul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_fibers": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_conditional": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.mean_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fiber_expect_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.centered_fiber_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.exponential_step": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.Exposure.total_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.Exposure.budget_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.Exposure.exponential_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.Exposure.mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.Exposure.lower_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.conditional_ranges": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.law_nonempty": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_sub": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.abs_expect_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_distance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.oscillation_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_product_cons": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_product_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.update_cons_zero": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.update_cons_succ": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.bounded_differences_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.bounded_differences_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.bounded_differences_constant": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.zero_differences_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fair_nonpreferred_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_truncated_requirement": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncated_mean_constant": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_requirement_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncated_requirement_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncated_requirement_le_full": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.prob_mono_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.prob_union_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.drift_lower_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.two_deviation_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.summed_constraint_failure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.sqrt_denominator_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.weight_sqrt_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.weight_squared_degree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.predictable_sign_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.expect_product_separable": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.signed_sum_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.conditional_mgf_step": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.conditional_mgf_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.conditional_mgf_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.history_restrict": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.known_before_antitone": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.known_after_subset": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sign_abs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.comparison_multiplier_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.comparison_multiplier_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.later_coefficient_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.later_coefficient_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_compensation_row_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.observe_eq_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.observe_refines": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fiber_fair_history": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.observed_state_eq_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.fiber_exposure_history": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.degree_truncation_cap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.normalized_requirement_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.normalized_requirement_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.mem_orderedFree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.orderedFree_antitone": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.ordered_history_refines": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.ordered_history_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.ordered_assignment_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.ordered_endpoint_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.support_weight_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.support_weight_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.support_weight_squared_degree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.forward_weight_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.ordered_gain_deviation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.compensation_edges": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.compensation_rows": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.incoming_incidence_right": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.incidence_edge_compensation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.incoming_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.incoming_row_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.prob_tensor": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.prob_le_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.tensor_product_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.bounded_differences_finite": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.incoming_compensation_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.incoming_coefficients_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.incoming_compensation_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.total_compensation_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.compensation_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.compensation_tail_fixed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.compensation_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.clipped_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.clipped_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.data_coefficient_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.pair_gain_square_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.data_coefficient_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.variance_data_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.variance_data_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sqrt_bounded_below": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sqrt_variance_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.theta_transform_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.theta_signs_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.edge_inputs_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.data_coefficient_exposure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.drift_data_exposure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sqrt_change_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.variance_data_update": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sqrt_variance_update": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.drift_data_update": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.degree_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.edge_influence_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.requirement_constant_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.requirement_constant_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.support_weight_sqrt_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.drift_data_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.drift_data_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.available_drift_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.drift_lower_tail_indexed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncated_at_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncated_at_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.truncated_at_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.requirement_drift_tail_fixed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.requirement_drift_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.requirements_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.preferred_gain_absolute": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.comparison_sum_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.deviation_exponents": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sum_feasibility_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sum_feasibility_input_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.nonnegative_markov": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fair_assignment_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.fixed_support_candidate_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.fixed_support_candidate_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.bit_false": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.bit_true": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.bit_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.bit_le_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.abs_direction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.eval_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.eval_add": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.eval_scale": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.eval_shift": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.eval_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.budget_holds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.eval_update": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Affine.average_agree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.literalExpr_eval": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.termsExpr_eval": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.gainExpr_eval": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.gainExpr_diagonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.oriented_score_gain": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.optimal_oriented_gain": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.scoreGain_preprocess": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.mem_enumerate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.enumerate_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.nodes_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.fold_eq_foldl": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.mem_outputs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.outputs_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.output_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.PrefixSearch.nodeCount_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.without_eval": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.ones_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.ones_cast": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.countGain_eval": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.correct_count_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.zero_count_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_guesses_length": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.exists_count_guess": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_gain_error_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_gain_error_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.preference_agree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.comparison_stable": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.comparison_budget_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.oriented_approximation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.optimum_satisfies": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Runs.fold_eq_foldl": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Runs.mem_outputs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Runs.nodeCount_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.Runs.solve_correct_of_survival": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_optimum_survives": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.countSearch_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.countComparisons_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.countResult_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_optimum_survives": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_optimum_enumerated": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projectionComparisons_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_abs_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.coordinate_grid_length": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.coordinate_grid_length_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.coordinate_grid_cover": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.mem_tuples": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.pi_length": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.tuples_length": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.tuples_length_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_grids_cover": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.grid_search_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.run_nodes_of_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.all_runs_nodes_of_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.exponential_base_lt_two": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.all_runs_exponential": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.centered_bit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.preferred_average": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.opposite_direction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.eval_minus_average": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.comparison_sum_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.passing_requires_compensation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.radius_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.radius_le_sqrt": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.allowance_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.allowance_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.prefix_allowance_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.tuples_length_real_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_grid_card_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.shifted_absolute_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.row_gap_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.small_shift_clipping": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.large_shift_clipping": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.clipped_sum_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.gap_proxy_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.bit_history_agree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.bit_history_refines": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.bit_history_fresh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.assignment_sign_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.average_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.preference_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.direction_cast": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.average_signed_form": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.average_real_signed_form": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.comparison_gap_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.creator_centering": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.creator_gap_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.accumulated_gap_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.accumulated_gap_of_profile": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.incoming_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_compensation_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.incoming_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_compensation_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.changed_sign_creator": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.conjugated_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.conjugated_diagonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_pair_expansion": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_compensation_expansion": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.changed_sign_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.changed_sign_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.signed_linear_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_linear_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.matrix_squared_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.matrix_row_sum_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.matrix_frobenius_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.matrix_signed_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_energy_of_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_compensation_norm_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_passing_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sum_round_blocks": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.compensation_round_split": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.within_round_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.within_total_eq_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.compensation_all_rounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.later_incoming_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.later_block_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.later_first_round_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.later_total_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.later_compensation_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_mask_known": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_fresh_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_conditional_expect": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_conditional_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_probability_of_fixed_masks": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.matrix_norm_sq_of_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.extend_block_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.block_norm_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.conjugated_norm_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.within_round_decomposition": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.block_interactions_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.within_linear_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.within_quadratic_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.within_round_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.finite_union_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.within_sum_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.block_card_le_prefix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_passing_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.coeff_eval_difference": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.gainExpr_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.countGain_diagonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.countGain_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projectionGain_diagonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projectionGain_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.mixed_bits_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cross_mixed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cross_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.partition_cross_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.exp_expect_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.quadratic_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.quadratic_norm_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_mean_succ": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.two_point_entropy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.rms_difference_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_flip_cons_zero": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_flip_cons_succ": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_log_sobolev": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.exponential_difference_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_flip_involutive": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_mean_flip": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_edge_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_entropy_exponential": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.herbst_scalar": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_mgf_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_mgf_deriv": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_mgf_bound_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_lower_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_slope_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_approximation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_taylor": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.row_value_flip": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.proxy_slope_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_proxy_flip_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.error_square_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.column_energy_budgets": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_proxy_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smooth_proxy_sandwich": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.common_gap_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.prefix_row_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.matrix_row_square_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.smoothing_parameters": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.prefix_gap_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.rectangular_norm_sq_of_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_prefix_closed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_profile_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_profile_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.row_profile_rescale": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.clip_parameter_ge_two": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.clip_parameter_scale": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.normalized_rate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.exponential_fraction_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_passing_closed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_passing_closed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_rate_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_rate_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_passing_paper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_passing_paper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.cube_mean_eq_average": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.fair_probability_bridge": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_runs_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.round_runs_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_coeff_independent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_coeff_independent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.gain_coeff_preprocess": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_coeff_preprocess": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.prefix_rows_of_coeff_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.sequential_matrix_of_coeff_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.earlier_rows_of_coeff_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.interaction_matrix_of_coeff_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_round_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.projection_sequential_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_round_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.two_round_order": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.two_round_range": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.two_round_prefix_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.two_round_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.first_round_row_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_two_round_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.grid_round_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.grid_sequential_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.nodes_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.enumerate_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.nodeCount_of_active_empty": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.nodeCount_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.outputs_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Residual.clause_congr": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Residual.restrict_congr": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.branch_literal_congr": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.branch_cut_congr": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.weighted_excess_cons": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.output_path_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.enumerate_length_le_candidates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.outputs_le_candidates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.nodes_le_candidates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.expected_nodes_of_candidates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.branch_cut_excess": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.path_excess_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.list_comparison_preprocess": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.canonical_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.list_comparison_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.canonical_of_append": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.canonical_take_drop": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.ordered_univ": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.restrict_univ": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.core_eq_of_active": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.half_prefix_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.neighbors_imply_active": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_all_active": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.initialized_candidate_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.fixed_support_search_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.fixed_support_search_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.retained_support_search_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.retained_support_search_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.runtime_constant_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.prefix_candidate_rate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.fixed_support_exponential_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.fixed_support_exponential_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_slice_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Counts.count_slice_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.mem_activeVertices": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.endpoints_active": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_card_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_active": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.edge_influence_active_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_drift_data_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_available_drift_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_requirements_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_sum_feasibility_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_sum_feasibility_input_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.gain_core_compatible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.list_comparison_core": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_canonical_of_append": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_canonical_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.delta_active_free": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.list_comparison_active_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.comparison_sum_active_agree": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fill_active_compatible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fill_active_restrict": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.fixed_coordinate_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.support_prefix_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.support_prefix_subset": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.list_comparison_equivalent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.initialized_candidate_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_candidate_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.candidateCount_of_active_empty": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.expected_nodes_on_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_candidate_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_search_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.include_edge_injective": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.sum_restricted_edges": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.edge_clauses_absent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.selected_present": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_restrict_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_restrict_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_restrict_neighbors": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_eq_of_neighbors": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_restrict_active": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_restrict_candidates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.selected_conditional_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.observed_edges_subset": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.mem_observed_edge": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.observed_event_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.observed_edges_event": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.active_vertices_empty": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.conditional_candidate_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.runtime_constant_small": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.count_decay_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.count_decay_mono": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.all_support_candidate_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.all_support_candidate_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Random.nodes_le_input_candidates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.all_support_search_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.all_support_search_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.prefix_absorbed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.random_sign_expected_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.random_sign_nodes_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.random_sign_base_lt_two": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.standard_clause_model_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.random_clause_constant_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.random_clauses_expected_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.random_clauses_nodes_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.generated_input_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_result_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.regular_result_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.regular_result_maxcut": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.input_degree_regular": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.projection_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.centered_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.projection_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.corrected_decomposition": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.corrected_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.cut_pair_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.score_flatMap": [
+      "propext"
+    ],
+    "Max2SAT.Regular.formula_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.optimal_cut_of_optimal_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.cut_pair_wellFormed": [
+      "propext"
+    ],
+    "Max2SAT.Regular.formula_wellFormed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.terms_append_coeff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.gain_coeff_append": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.gain_coeff_flatMap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.units_coeff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.cut_pair_coeff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.formula_coeff_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.formula_coeff_ordered": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.formula_coeff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.count_matrix_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.greedy_subset": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.greedy_independent": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.greedy_covers": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_set_independent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_set_covers": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_set_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.count_result_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.high_degree_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.formula_independent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_residual_units": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.complete_compatible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.complete_optimal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_solve_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.zero_budget_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_nodes_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.degree_base_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_exponent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.independent_exponential_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.bounded_degree_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.matrix_set_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.expander_mixing": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.round_edge_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.gap_constant_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.norm_constant_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.large_degree_scale": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.regular_norm_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.regular_profile_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.count_allowance_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.regular_allowance_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.adjacency_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.cross_degree_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.round_row_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.sqrt_row_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.profile_from_edges": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.first_round_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.rounds_disjoint": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.prefix_rounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.round_cards": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.round_card_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.first_round_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.second_round_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.earlier_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.actual_round_profile": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.cross_edges_swap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.actual_round_edge_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.correction_cast": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.adjacency_row_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.adjacency_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.corrected_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.corrected_row_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.corrected_diagonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.corrected_row_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.density_margin": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.row_energy_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.correction_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.family_base_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.family_thresholds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.regular_nodes_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.regular_family_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.basis_map_coordinate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.basis_trivial_coordinates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.zero_sum_basis_coordinate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.zero_sum_spectral_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Regular.centered_norm_of_eigenvalues": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.cut_interaction_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_cut_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_cut_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_cut_variance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.bernoulli_scalar_event": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.shift_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_energy_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_mean_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_mean_shift": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.shift_row_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_row_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_count_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.energy_scale": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.raw_energy_tails": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_energy_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_matrix_diagonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_matrix_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_matrix_entry": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.sum_on_pairs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.symmetric_matrix_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_matrix_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_energy_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.pair_count_real": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_pair_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_mean_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_shift_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.earlier_pair_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.earlier_energy_matrix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.earlier_product_law": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.earlier_energy_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.earlier_shift_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.expect_const_mul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_small_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.independent_small_mgf": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_tail_small": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.lower_tail_small": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.two_sided_small": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.scalar_good_of_raw": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.scalar_event_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.bounded_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.squared_entry_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.squares_lower_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.squares_upper_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.difference_second_moment": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.centered_difference_moment": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.difference_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.difference_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_sub": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_smul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_add": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.matrix_norm_le_root_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_norm_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_lipschitz": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_convex": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_matrix_shift_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.row_root_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.expect_coordinate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_expect_symmetrized": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.copy_swap_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.copy_swap_difference": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.copy_sign_invariance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.copy_insert_signs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_sign_expectation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_rademacher_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.product_coordinate_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.expect_le_root_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_expect_from_row_moments": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_expect_289": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_norm_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.shifted_upper_norm_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.operator_energy_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.incident_edge_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.incident_edge_injective": [
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.incident_energy_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.upper_entry_le_pair_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.row_size_le_of_incident": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.incident_energy_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.copy_incident_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.expect_bound_with_exception": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.copy_row_moment_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.matrix_density_from_paper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.matrix_parameter_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.independent_pair_norm_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.independent_pair_norm_from_paper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.scalar_operator_event": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.root_increment": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.root_sum_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.root_sum_upper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.root_interval_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.late_rows_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.row_profile_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.membership_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.variance_le_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.bound_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.membership_budgets": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.mean_radius_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.mean_radius_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.profile_target": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.comparison_allowance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.accumulation_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.comparison_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.exponential_power_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.row_failure_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.mean_failure_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.scalar_failure_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.membership_failure_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.membership_of_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.success_of_failure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.raw_scalar_event_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.raw_operator_event": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.supplied_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.membership_gap_rpow": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_input_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.supplied_input_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.bernoulli_supplied_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.bernoulli_empirical_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.capped_spacing_pos": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.capped_spacing_cover": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.capped_grid_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.capped_spacing_inactive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.spacing_from_allowance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.spacing_allowance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.useful_grid_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.exhaustive_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.projection_phase_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.community_search_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.community_result_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.coefficient_mass_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.zero_coefficient_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.zero_coefficients_gain": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.matrix_vector_add": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.matrix_vector_sub": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_add_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_sub_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_diagonal_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_diagonal_frobenius": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.entry_le_operator_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.diagonal_norm_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_diagonal_decomposition": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_diagonal_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_perturbation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.row_vector_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.cross_profile_roots": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.cross_profile_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.cross_profile_add_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.cross_profile_perturbation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.symmetric_from_upper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.symmetric_norm_from_upper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.symmetric_noise_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.remainder_operator_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_operator_constant": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.matrix_energy_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.remainder_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.correction_small": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.remainder_energy_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.corrected_profile_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_profile_target": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.first_round_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rounds_disjoint": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.prefix_round_union": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.second_round_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.round_sizes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.two_round_first": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.two_round_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.earlier_second_row": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.two_round_profile": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.root_below_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.root_below_square_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.root_below_real_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_spacing_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.coefficient_mass_cast": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.remainder_energy_cast": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.projection_phase_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.community_positive_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_structural_conditions": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_result_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_grid_size": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_positive_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.zero_count_gain": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.zero_count_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_nodes_of_quality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.cross_edge_injective": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.cross_row_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.cross_row_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.first_before_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.two_round_row_tail": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_scalar_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_noise_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.raw_good_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rayleigh_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.coefficient_mass_rayleigh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.coefficient_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.coefficient_budget_from_matrix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.representation_remainder": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_nodes_on_event": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovered_search_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.trace_unitary_conjugate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_square_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_square_eigenvalues": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.eigenvalue_abs_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_square_rank": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_rank_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rank_sub_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.representation_rank": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.representation_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.correction_frobenius": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.diagonal_near_injective": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.large_diagonal_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discarded_diagonal_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.diagonal_truncation_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.unitary_conjugation_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.unitary_conjugation_rank_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.spectral_truncation_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.operator_le_frobenius": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.spectral_truncation_from_frobenius": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.real_matrix_mul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.real_matrix_transpose": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.real_matrix_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frame_direction_unit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frame_coefficient_rayleigh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frame_matrix_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.ranked_length": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.ranked_nodup": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.ranked_mem": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.ranked_pairwise": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.top_selection_largest": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_matrix_cast": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rank_correction_small": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.model_distance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frame_approximation_guarantees": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sorted_frame_approximation_guarantees": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotation_denominator": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotation_circle": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotation_component_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotation_distance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotation_distance_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotation_coordinate_lipschitz": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotated_pivot_endpoints": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.eliminating_parameter": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.bounded_product_difference": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotated_pivot_lipschitz": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.mul_plane": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.transpose_plane_mul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.plane_orthogonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rational_plane_orthogonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.conjugated_pivot": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.best_grid_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.best_grid_index_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.grid_covers_interval": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotated_pivot_cast": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.best_grid_pivot_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sum_remove_two": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sum_same_outside_two": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotated_pair_square": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotate_vector_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.square_sum_mul_plane": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.square_sum_transpose_plane_mul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.square_sum_conjugate_plane": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.conjugated_diagonal_first": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.conjugated_diagonal_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.conjugated_diagonal_other": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rotated_block_square": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.plane_energy_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.mem_pivot_pairs": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.best_pivot_distinct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_energy_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_energy_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_energy_le_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.no_pivot_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.largest_pivot_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.entry_square_le_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.entry_bound_of_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.step_rotation_orthogonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.jacobi_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.jacobi_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.best_grid_pivot_bound_rat": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.jacobi_progress": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.orthogonal_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.conjugate_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.iterate_frame_orthogonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.iterate_frame_residual": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.scale_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.square_sum_le_scale": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.square_sum_le_scale_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.diagonalization_parameter_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_frame_orthogonal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_frame_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_square_star_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frobenius_unitary_conjugate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.off_energy_frobenius": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frame_rotated_matrix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.frame_residual_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_frame_residual": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_score_range": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.score_gain_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_coefficient_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_square_sum_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_scale_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_grid_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_fuel_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.formula_matrix_symmetric": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.diagonalized_result_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.computed_discovery_guarantees": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.diagonalized_search_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_constant_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.rational_discovery_parameter": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_family_threshold": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_density_conditions": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_direction_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.all_runs_coarse": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.search_polynomial_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.community_nodes_coarse": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.diagonalized_nodes_coarse": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_base_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.small_size_nodes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_probability_from_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.block_mean_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.block_mean_rank": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.block_mean_entry_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.block_mean_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sampled_formula_wellFormed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sampled_formula_matrix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sampled_formula_model": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sampled_maxcut_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.block_variance_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sbm_density_transfer": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sbm_probability_from_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.sbm_family": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.discovery_family": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.toMeasure_ofMeasure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.prob_eq_measure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.toMeasure_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.coordinate_expect": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.independent_event": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.coordinate_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.bounded_integer_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.integer_common_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.integer_encoding": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.integer_expect": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.integer_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.independent_integer_event": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.integer_event_measurable": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.FiniteLaw.integer_variance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.empirical_integer_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.IndependentPairs.supplied_integer_membership": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.integer_noise_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.pair_mean_decomposition": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.integer_discovery_event_from_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.Community.integer_discovery_family": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Max2SAT.RandomInput.theta_involution": [],
+    "Max2SAT.IndependentPairs.earlier_edge_injective": []
+  },
+  "external_mathematical_dependencies": {
+    "schema_version": 1,
+    "policy": "Established published results may be explicit hypotheses. Verify their precise quotation and our application; do not require formal proofs of the cited results. Internal unproved lemmas are not external results. Conditional deductions must be labelled as such.",
+    "statement_module": "Max2SAT/IndependentPairs/ExternalResults.lean",
+    "statement_module_sha256": "a6433b056332feb85a0ac3a7b72ba1f8730ef46ed0802d2256c6987409fb97a1",
+    "results": [
+      {
+        "id": "bvh_rademacher",
+        "lean_statement": "Max2SAT.IndependentPairs.External.BandeiraVanHandel",
+        "source": "Bandeira and van Handel, Annals of Probability 44(4), 2479--2506 (2016)",
+        "doi": "10.1214/15-AOP1025",
+        "url": "https://arxiv.org/pdf/1408.6185",
+        "locator": "Theorem 3.1, Corollary 3.2 and following Rademacher paragraph; electronic reprint pp. 11--13",
+        "specialization": "Square n-by-n fixed coefficient array, independent fair signs, Euclidean operator norm; row/column/entry maxima replaced by arbitrary nonnegative upper bounds; n>0 and 0<theta<=1/2.",
+        "citation_review": "Published electronic reprint inspected; Gaussian-to-Rademacher extension explicitly checked; no direct assumption for arbitrary centered inputs.",
+        "formal_status": "Explicit proposition supplied as theorem hypothesis; no proof or new axiom is declared."
+      },
+      {
+        "id": "ledoux_upper_tail",
+        "lean_statement": "Max2SAT.IndependentPairs.External.LedouxUpperTail",
+        "source": "Ledoux, Seminaire de Probabilites XXXIII, LNM 1709, 120--216, Springer (1999)",
+        "url": "https://www.numdam.org/article/SPS_1999__33__120_0.pdf",
+        "locator": "Corollary 3.3, p. 165, and interval rescaling, p. 166",
+        "specialization": "Convex (hence separately convex) Euclidean 1-Lipschitz function; product finite laws supported on [-B,B], B>0; r>0; upper tail exp(-r^2/(8B^2)) around the expectation.",
+        "citation_review": "Published text inspected; interval diameter 2B, upper-tail direction, mean rather than median, and independence checked. Empty coordinate case is trivial.",
+        "formal_status": "Explicit proposition supplied as theorem hypothesis; no proof or new axiom is declared."
+      }
+    ],
+    "conditional_declarations": {
+      "Max2SAT.IndependentPairs.upper_rademacher_bound": [
+        "bvh_rademacher"
+      ],
+      "Max2SAT.IndependentPairs.upper_expect_from_row_moments": [
+        "bvh_rademacher"
+      ],
+      "Max2SAT.IndependentPairs.upper_expect_289": [
+        "bvh_rademacher"
+      ],
+      "Max2SAT.IndependentPairs.upper_norm_tail": [
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.shifted_upper_norm_tail": [
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.independent_pair_norm_tail": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.independent_pair_norm_from_paper": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.scalar_operator_event": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.empirical_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.raw_operator_event": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.supplied_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.empirical_input_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.supplied_input_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.bernoulli_supplied_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.bernoulli_empirical_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.symmetric_noise_tail": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.discovery_noise_probability": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.discovered_search_probability": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.diagonalized_search_probability": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.discovery_probability_from_density": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.discovery_family": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.sbm_probability_from_density": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.sbm_family": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.empirical_integer_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.IndependentPairs.supplied_integer_membership": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.integer_noise_probability": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.integer_discovery_event_from_density": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ],
+      "Max2SAT.Community.integer_discovery_family": [
+        "bvh_rademacher",
+        "ledoux_upper_tail"
+      ]
+    },
+    "review_note": "The register and source hashes document the boundary. They do not themselves prove that the published theorem and its formal statement are semantically equivalent."
+  },
+  "dependency_revisions": {
+    "mathlib": "5ed2965256430c3649e86755f9576b54eca72435",
+    "plausible": "118aa17ee84656b8bd727fef7c458ee8c833385c",
+    "LeanSearchClient": "ddf04cf3949fa556442341e87d47f9f6e6074707",
+    "importGraph": "e928b72544873815af278d38681b31c0293588e3",
+    "proofwidgets": "106ff4fafc74ef4ac99d81dbf3ab399118f497a5",
+    "aesop": "355695d523e41d0554926416cba2a2b3544fbbc9",
+    "Qq": "6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259",
+    "batteries": "f2effa3d803fda822b1f97b806c47cf2adfbcbc2",
+    "Cli": "e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204"
+  },
+  "source_sha256": {
+    "Max2SAT/Basic.lean": "1374858407e635a896b73c73a0926eb8d6437507a25384f4b33886e10ed4fdf8",
+    "Max2SAT/Bias/Accumulation.lean": "10db4a54d266ad0bbee4ed1ddf67cf8deb6194442bb935924a071530868de919",
+    "Max2SAT/Bias/Complexity.lean": "139a851966a9a07045220b5702bcfab3c5458bbdb85b6765f04e4decf2574007",
+    "Max2SAT/Bias/ConstraintEnumeration.lean": "d2263c770db7197bcc1e42fa73e53da19004ec4100a73ce132a07007b0bb621e",
+    "Max2SAT/Bias/Counting.lean": "a3af7c1d5b77b79c517f19050bab0e6d8ea006b7eb368db3ba81b7aa6d6b645d",
+    "Max2SAT/Bias/DenseGap.lean": "86633682acc113275cdae0b9f4a1848de42bc12590c9262c9865ead4690a6d7f",
+    "Max2SAT/Bias/Examples.lean": "35de65ebc0b8e3ef5b852066ef00269eb6a27b574cbe1f92c06b3c75a90da47e",
+    "Max2SAT/Bias/FairCoin.lean": "1acf4b164ac561a35af6c2976ecfaa4d30527f3044f4b3991af2b8ffa5e7b8c6",
+    "Max2SAT/Bias/Hybrid.lean": "698469ac9f45793be975dde456fd83fc085c33d5ef0519311c0df730d7e26e28",
+    "Max2SAT/Bias/Incidence.lean": "4d222d165bee43531893ee9aafbdf121d8e88f5fea32e11de2767576d50fb238",
+    "Max2SAT/Bias/Influence.lean": "491ea6030da64e6bfd43ec67e8a5a95b7508b94d1b24ea093559e0303df48adf",
+    "Max2SAT/Bias/Moments.lean": "27295ed33f38333a4e4db0274571f6a3a7ae9ba90a6e1232c3330f219542c494",
+    "Max2SAT/Bias/Optimal.lean": "996e5ec82ed9abdb48a8947849489a3f1df59c55d053c9875239d35a77794c9d",
+    "Max2SAT/Bias/Parameters.lean": "1f3fe5d89431389c856b24414914a7b7fd9cbe037c7d7c79b9f671dc1344fc59",
+    "Max2SAT/Bias/PreprocessStats.lean": "9626c26490b68240b12f89aefc916143666675379a5cf288e577fece659ed3aa",
+    "Max2SAT/Bias/Resources.lean": "0dbbd41cf72bf02902c74d4adb7046a793fa3396317ffcf010d6a1a8880c305f",
+    "Max2SAT/Bias/Simple.lean": "ac2803c267ebb1a879e29a683ef3d9cccd2d18c8b85c82157e3143b53d4bdac3",
+    "Max2SAT/Community/Algorithm.lean": "9e34108577b8378e0238b0bfd5ee6d1a8bb378087f36e8d7f4072c021c14296c",
+    "Max2SAT/Community/CoefficientBudget.lean": "e61d90d755a5b48e0f3b4b723c62c9ff26892f2f540637c1b2a6e86624fffc4a",
+    "Max2SAT/Community/Computed.lean": "4ee8e35423aaee6fdf0d8151e09b0abfedb6d537620611fc46d345de768c3feb",
+    "Max2SAT/Community/ComputedDiscovery.lean": "622c08fa225530b1a0eb22a457b2907e2c3c5b60a756acdf62d91ae62509ccd3",
+    "Max2SAT/Community/CrossRows.lean": "1b0319d5584a58dc76b5e94da51ca2c263aeb5d2d71ae18a37d69a23c30ea14d",
+    "Max2SAT/Community/DiagonalTruncation.lean": "1788d87a7132cd3029d395fe030f12aaf6c81235d9f9ac6d44add34ef98ba8a3",
+    "Max2SAT/Community/DiscoveryBridge.lean": "854781aa51c37d1ca3c88a98599942f4610bc87929e0892a79c973aa5c9e0443",
+    "Max2SAT/Community/Energy.lean": "8c8484ec8ee679c7d3470a85a66dc7ccaf427b2a5c8ffa516fc1ea4ba3493b38",
+    "Max2SAT/Community/Examples.lean": "aa25ce892ec3003eeca88fced2ba1ff41cb562f6f144aec2c21fb78f860dc7b7",
+    "Max2SAT/Community/FamilyParameters.lean": "e510eac9a5b4cc681d488873fee22f966b5e83c16055fab63c8bb500cda6b51f",
+    "Max2SAT/Community/FamilyRuntime.lean": "cb3ee5caf0b702b9ae45d5b32460e5ab15c55efe93f1cbd2d80b1539a08d3751",
+    "Max2SAT/Community/FormulaScale.lean": "3ee17fea9663549f94146c79936ada2e3b1d93f175c499475062c07cb9abf663",
+    "Max2SAT/Community/FrameGuarantees.lean": "1d337eb79fdec44a211a04005e7a77330c9d454047748b3ff30ad24cbedc2119",
+    "Max2SAT/Community/FrameResidual.lean": "36c511cce4c42ae98b88c6184e998b5e489e8df01fd8e842e845caffbf6e1a10",
+    "Max2SAT/Community/FullSearch.lean": "4e01d0cd4364ec2e9764b5d474c5044dab8d2fd8a9485807076fd24e6e2cc480",
+    "Max2SAT/Community/GridRotation.lean": "894b073f6550504ddd5bf9739d85c5fdf6929cee937e52a9e937d4d0eb2b7ed1",
+    "Max2SAT/Community/JacobiIteration.lean": "9af5dac6ae7f5a42094589e51cdc0b85a11ec6c4cd9b665971f703dac83669c5",
+    "Max2SAT/Community/JacobiParameters.lean": "fb3a28255cf193393f0c1ab40b007f7eaf415c64ed7bc73c91024dd43dfd5fcf",
+    "Max2SAT/Community/JacobiStep.lean": "d939de52192496a89442a1eadd4c5a00d3a7bcb08cabb839085240b801738996",
+    "Max2SAT/Community/MeasureNoise.lean": "922204bef394dc06e10d6b11a0fc9ffbcfe0eb590c49543f6aedc8d90e6e85a0",
+    "Max2SAT/Community/MeasureRuntime.lean": "c12363c5e2e404d5d1b20fa6af9d29474d5a8438f9db885922b4f630052a0c8f",
+    "Max2SAT/Community/Noise.lean": "229d3b3e6d6897ccca14a4aa14fd63b020c3948c6672c0910e1e697172e44891",
+    "Max2SAT/Community/Perturbation.lean": "12d7960a0abff7e97f6701c02bde38527f23cfad6fb5f2b4edf38b2628e6f0ed",
+    "Max2SAT/Community/PlaneEnergy.lean": "126da576c7800dd060a1010a5624ad632d2f79d2a728b9540ede719b2c39c8d7",
+    "Max2SAT/Community/PlaneRotation.lean": "2893a7f79c47ce1088acfbbd5731d6d61a41982a8084111860dd6f9b820aae7b",
+    "Max2SAT/Community/RandomEvent.lean": "5c02a28cd0941ff3f43b352567a9a2451f418f4334336e6e1a891240699051cb",
+    "Max2SAT/Community/RankGeometry.lean": "4135281e60b00feb3b2d5b7af894cc7f5de127f0cd0fdaca954a97981c08ef46",
+    "Max2SAT/Community/RationalFrame.lean": "782fe27ded8e30664659a8cb80a2e177077e26e4756b06319e6a6f1d18b627f2",
+    "Max2SAT/Community/RationalRoot.lean": "fd262f2632dbf8602f1a773b616854eb1a71685695f7ac177612348019d6a934",
+    "Max2SAT/Community/RepresentationMatrix.lean": "594818bffb042d24d3a755de7f27d7be32729c11b8be9c2ff6c8fb18ba5b80aa",
+    "Max2SAT/Community/RotationScalar.lean": "c533612e807451761fd9821396365571165ce6c63fd721cf294b64707995fedb",
+    "Max2SAT/Community/Rounds.lean": "930a43643f1b4b2d86e44bfc71ec251c0dab6e2bdd3fcda8efa0a7426a72d0e9",
+    "Max2SAT/Community/Runtime.lean": "27d5a87e208061dfc26060e6134ced7509df18f55f2146026f62ac455f1b35e5",
+    "Max2SAT/Community/SBMModel.lean": "4f1ebbe3ecb21d9de877f8cb74230e0763409fe95a8b56d9180a58edf32954dd",
+    "Max2SAT/Community/SBMRuntime.lean": "3f074a5c18c73dbcf9b3dbec7ec7c4fc5194a8b9a74a025caca10a18b6a2f9a5",
+    "Max2SAT/Community/SBMVariance.lean": "9a294e634cd85aeeba260e8af3bebff6a964a889eea2cd6fb314bbfb5be428d7",
+    "Max2SAT/Community/Spacing.lean": "41d5446a51434b2b9fd130707b83e39c79d6a05176ff4ca91abdf747b49cb4b9",
+    "Max2SAT/Community/SpectralTruncation.lean": "5379b42fdeab4a77390e911a5c925eca22b235ae26b69895c3e2cae27806835b",
+    "Max2SAT/Community/TopSelection.lean": "29c2c6c7a6b9b1c5a29cb87fd8a27736346642908682ee189ef6d8e16fd53a82",
+    "Max2SAT/Community/UniversalNodes.lean": "a521ed599c1844e6b610f80dbce4b669dc5df28492845bb7fd73b1aa9ae8102e",
+    "Max2SAT/ConstraintCheck.lean": "5ba458270cc3bc3b58c49027e3d2c4058c28ebba1f65577eabe9f9a166d8283c",
+    "Max2SAT/Counts/AccumulationIdentity.lean": "3aa8e82d536cf5941e2390b5df65c5122da54959efea42a2a4b832831d9094a6",
+    "Max2SAT/Counts/Adjustments.lean": "c7b7eee258fba42d930f4f84fbafe5517b627ef6ca87c88bb986f99aa9d3c2c4",
+    "Max2SAT/Counts/Affine.lean": "ebf29e184191ae42d0698cfb8e86d12a75878bf0e5cce4b010a29b59fd3377a4",
+    "Max2SAT/Counts/Algorithms.lean": "084992590390a73f9414ce144e9487decff5d067a49d16887ae0470859995745",
+    "Max2SAT/Counts/AnalyticsExamples.lean": "50b375412638e0cd97d6b10ec46fad1c0bea84d7c99e270852b179f34d08bd4c",
+    "Max2SAT/Counts/BitExposure.lean": "4cd4b66534d3babf12310679fbb93225c4741416126358e4154853e7551194dd",
+    "Max2SAT/Counts/BlockNorms.lean": "ac15d37ae63d27269b47caefa583c93b66f636070da3c6581c0ecd1f6d35fd01",
+    "Max2SAT/Counts/Comparisons.lean": "780379bd83df80ad3250c2e7edb32de96aa8884ccc15cddd0e707e1201a52601",
+    "Max2SAT/Counts/CompleteExamples.lean": "d8f5d23adec1a728619197bc5bc38d9b555a4cb5a99b1cc1da82a355eed6d17a",
+    "Max2SAT/Counts/CompletePassing.lean": "f3d7dee8bad03863e135f88632851fb7131cb855bfb0aafa706a4d2d8288c50a",
+    "Max2SAT/Counts/CreatorTail.lean": "63ddf61018dacf882375bad224f8a023a1ffa4dcd98d03cd4e67934475d4fbf5",
+    "Max2SAT/Counts/CubeEntropy.lean": "e319785415749b1c81a41c3f696fe75da73af6692af86b8e4fe30a6d8d36be22",
+    "Max2SAT/Counts/CubeMGF.lean": "02a4751c294d4e92d1531db5a9ff8e72c20190d8b1dac733168ab3cb0654be6f",
+    "Max2SAT/Counts/Examples.lean": "b0e8e2dd6943535f7af85a237b8474798a58cc7b7e5e29899871de86e2fb3a64",
+    "Max2SAT/Counts/FormulaGains.lean": "2a46d8ffc1dddd148dc155a9c320a86b1dd2f44192a654d8bf82ab4fd6f97070",
+    "Max2SAT/Counts/GainStructure.lean": "e1808c8fff7f902ab663e5f7eb9e2f17547b51186cb938f5591df28c0393d676",
+    "Max2SAT/Counts/GapBridge.lean": "d89f4468e91d3871d4fca1e3cf7f6615b35d23edcbee47f7341e99fdd3424d7f",
+    "Max2SAT/Counts/GapConcentration.lean": "72c11eee8139ed66fa934053116a6cfc7312b4b402cacdd800b3eafa16338ffc",
+    "Max2SAT/Counts/GapProfile.lean": "396e5e0f11a9681b048722f36feafa40926aeb3aef11c42d8594c8e53d878b9c",
+    "Max2SAT/Counts/GridBounds.lean": "4a331a9aa0a5ae7747f54c4b372d1dafbe850f768de0bf43ea40a5092f90fe43",
+    "Max2SAT/Counts/GridPrograms.lean": "014a7a3047c670d32e8bc8a9ce7e77063d514bd3419bf33b8d10366d01070cae",
+    "Max2SAT/Counts/Grids.lean": "02810d0e26aa841cf534d7cc9b229c5300ff638379ebb03b3f20d756661bb20a",
+    "Max2SAT/Counts/GuessInvariance.lean": "37bd65c12d8f075e9311864b4c95ab423b04c90198e6d4e2caa4b06bd37a941f",
+    "Max2SAT/Counts/Herbst.lean": "90ffa5ff43040cbea4a91d8684787142175ba75225255e42347b3dc92f1007c9",
+    "Max2SAT/Counts/LaterRounds.lean": "4f7d2d6f23b467ea85c7f2418e6f30c1c8707ed62761156bdcb1be45c3bb514b",
+    "Max2SAT/Counts/OperatorEnergy.lean": "b9a03627cc087a29e63d3bab350a52f7177a38c0f2c68eff9c5d37cead13bc8a",
+    "Max2SAT/Counts/PrefixSearch.lean": "2167ae04e08b7ec34068bd46c4bfe6df0505c744d1548a7d2e9f97e8ebc5e0c9",
+    "Max2SAT/Counts/ProfileNorms.lean": "d81fa8744fd84a97bdc8ede5e1f9a9ed78d7cdcbaf25d976b02e97f1ed1f1fca",
+    "Max2SAT/Counts/ProfileParameters.lean": "7b7129cadf05867854ac7edb4525ec3225f3e6f87eb23f26a7b8e43bb0af4948",
+    "Max2SAT/Counts/ProgramBounds.lean": "478de71c346292d8d218deaba1747fc28c52ce07dc1a76083544d78dd574eb01",
+    "Max2SAT/Counts/QuadraticTail.lean": "74d9f351f611a7385257ae74e330153526cbd658307c0a12502f9105ecc3ba53",
+    "Max2SAT/Counts/Resources.lean": "fbeff7fcc7a6dfbeb3e129f1245cf9a7349323e7c0fb5c206ee877192facd26c",
+    "Max2SAT/Counts/RoundCompensation.lean": "7a2160b0e74aff7073cf86e1c8878ccbf2dbc6dd21fac32cd365f288c79b432e",
+    "Max2SAT/Counts/RoundExamples.lean": "acab69004b1e3e6a7a4e90828b71600effb26b8eb20deb237b65e84273f96287",
+    "Max2SAT/Counts/RoundHistory.lean": "957ba75ca282ee96fbf6b34f5cad8e23958729b007316bec71707ab9fb5c2eec",
+    "Max2SAT/Counts/RoundPassing.lean": "083b254e728b8329e486d59a3b229dd70626d31f4f94a7d7d320d86b1c4c9fb8",
+    "Max2SAT/Counts/RoundSplit.lean": "e54a1f43b97b5d3b129d404e9d6722ecf34a7c0378596a5047467033dabe161c",
+    "Max2SAT/Counts/Runs.lean": "db059bb000910cbba12c3f3b6bdd0410d4212fcb4697a4f836efd970bebad03a",
+    "Max2SAT/Counts/ScalarRates.lean": "a5567e9e1532a0684a5af8590420a4f0a883d45849ddfd4ce8fb7d6ae16e8631",
+    "Max2SAT/Counts/SequentialCompensation.lean": "6cbf616b47d1b654bd72e77d38d46d5007134dec743fd71c2a7170333fae7da4",
+    "Max2SAT/Counts/SequentialPassing.lean": "7f892fdbce117e31a623b5ebbdf54a8f74aa1539b129271410451d4f990c3b08",
+    "Max2SAT/Counts/Slice.lean": "6fb03f2053d4413fe4ccf37db2e6347096e83f62fd548651718a1acf01ece7e5",
+    "Max2SAT/Counts/SmoothEnergy.lean": "edc33b8c4ac5ab1ae164884422d2b1b663e2e3d7cc1269b4b4b6e53f67aff4c5",
+    "Max2SAT/Counts/SmoothGap.lean": "118203d00352766c66c0522c30edd415ff88d1f924708fadf1408e0cb108309b",
+    "Max2SAT/Counts/TwoRounds.lean": "e586705cc08455d107e388f74a8cb5572f6b0da409a6c754dc95383a665b4f10",
+    "Max2SAT/Counts/VerifiedAccumulation.lean": "a0117b9d1c9f13e387b5ae24d22f10ca7a1ba1dc54d9acaec10f5cf832f51aad",
+    "Max2SAT/Counts/VerifiedNodes.lean": "a1bc66a9c8d0ab5bb8be24f13c033cbd8a4946195db895eae3fdc17e2f0033ac",
+    "Max2SAT/Counts/WithinRounds.lean": "8b3094387b5958c73f3f37ea3c212265491300bb5467c50854f4ee50e9ad430e",
+    "Max2SAT/Enumeration.lean": "d931e375450f89db7a72ff6cd620bd51447125aef2f445d074697046ee94a406",
+    "Max2SAT/Examples.lean": "0e9dd38fa6505a382279bb132a67999c26bac5fcf4d5a0353d438c7b10b3f90c",
+    "Max2SAT/IndependentPairs/Bernoulli.lean": "bf3fb3b2f3681c1b5531d1becc1e56a70d7f0c0df9688a63c76aedfd336d1cf5",
+    "Max2SAT/IndependentPairs/Centering.lean": "d8b20d80673ac011f2cfd70babdccf04522a2d199c5e21301aa821493a6e4919",
+    "Max2SAT/IndependentPairs/EnergyTails.lean": "44fa345994fffd48a743fb09b89132262cbdab1443f2ff87c078c0f0060c09df",
+    "Max2SAT/IndependentPairs/Examples.lean": "dfff6fe32bd8b39fd6c9553bd26b17fd568053c75aea6130bcd4f685fa09002a",
+    "Max2SAT/IndependentPairs/ExternalResults.lean": "a6433b056332feb85a0ac3a7b72ba1f8730ef46ed0802d2256c6987409fb97a1",
+    "Max2SAT/IndependentPairs/InputMembership.lean": "5261578b0cca2b0c78ddfbc801ffb567d837845aeee02da19b1ecce46662f00e",
+    "Max2SAT/IndependentPairs/MatrixExpectation.lean": "2e28f29f57dceb89fc4c1895f7b37f5d437d75aaedf21d38ec5a328b249e546a",
+    "Max2SAT/IndependentPairs/MatrixGeometry.lean": "226d84c5cdbb38c45b08ef0d26f5e07f5b1cebce947fe83d9ed899716406c00b",
+    "Max2SAT/IndependentPairs/MatrixModel.lean": "f9eb7ea92150774c3d9a3912e2ee22f37c683f6ddb957ef1f5da071af901675e",
+    "Max2SAT/IndependentPairs/MatrixNorm.lean": "d29ea2e7daade86c96d020c9e1a04ec67191c2ed9c68c5fad9f237ac9a0919f1",
+    "Max2SAT/IndependentPairs/MatrixParameters.lean": "62515d9853fc7b18640b028fd743970ee45855c30974bdf70aeffd0133f94b87",
+    "Max2SAT/IndependentPairs/MatrixRowMoments.lean": "6112e80d61c2af31970fa90693fa082a6c467a661d8055f38dd862beed9eb013",
+    "Max2SAT/IndependentPairs/MatrixTail.lean": "7c4a81e0f31d6ca4a988555c5f8ef1474e681d247e005881d45c9caa0e6bad3e",
+    "Max2SAT/IndependentPairs/MeanTail.lean": "8a7b921435a2f761055abf9226b689e9055db7872247718fa435a6881303a0d8",
+    "Max2SAT/IndependentPairs/MeasureMembership.lean": "9be88aa26dec1f1efc07f1a07212b54a42f33ad4e8cb4a6a30568e296a74dd22",
+    "Max2SAT/IndependentPairs/Membership.lean": "9253cbaa2052204f95722917fdee1f7319dc1466ff0448b1ebeaac10d66d97db",
+    "Max2SAT/IndependentPairs/MembershipParameters.lean": "a42ad65a6f8dbd1a7b1e16e5c5653e97c9eab5531c0a0b60782e1d53da173621",
+    "Max2SAT/IndependentPairs/MembershipProbability.lean": "c67fcf3cfab26417d77c007d56f76697cc303eee0735826dd685c9cc9dede400",
+    "Max2SAT/IndependentPairs/Profile.lean": "05e1571ee8cdc733046204586cbbe7265919eb69c96e04763df22158520e6394",
+    "Max2SAT/IndependentPairs/RowTails.lean": "f9bf599b6b5dbf876d7b72c4ca353343e255707074d756f5abc812969dcc87ba",
+    "Max2SAT/IndependentPairs/Scalar.lean": "84f18542b8c8e61b190b9f92e0a3802b8864bbf346b5bfbd830035d79636d69c",
+    "Max2SAT/IndependentPairs/ScalarEvent.lean": "b21b1294f33e9414299a8619d71e7589c077678f83278b870d8e27efe42c0558",
+    "Max2SAT/IndependentPairs/Squares.lean": "a382392969a86897ba39a0602e2d53ad0acab1cf375a8425f8e98c7d80d8f1ab",
+    "Max2SAT/IndependentPairs/Symmetrization.lean": "f4151fffe8da933ed28237210df9d8cd13aa9e02bae675546cf5f684f1db6108",
+    "Max2SAT/Normalization.lean": "1ac49b4ed3433c56055179d19fc31a499d9e6de859163693d86ab71696084e6e",
+    "Max2SAT/PartialAssignment.lean": "ecc40ad79a5d2e8952c890d7922405a8fa8b67c48ba898e0bc81b05314b228f6",
+    "Max2SAT/Preprocess.lean": "6fb68d6a19339de81ea78d7b22ce1c0a6e3caa4e388b30b37c860e67ee3cc5a0",
+    "Max2SAT/Pruning.lean": "6112e15cde2d0fa798f08f8da44ce02e8f3f0c9af639038f282c17c3de7a94de",
+    "Max2SAT/Random/AbsoluteGains.lean": "63b6e7f32db5bd0b91314a1cbbf357748578dba004b1db7b21706e820fd6dccc",
+    "Max2SAT/Random/AccumulatedRequirements.lean": "121bcef4c48d8b886fc7d93b269922500441a455dac81e71742b0b64d3b05bdd",
+    "Max2SAT/Random/AccumulationExamples.lean": "72c305c34e41aee6d4bd0a28893962891ef5f8eba949b82ccc07264d39d51d23",
+    "Max2SAT/Random/ActiveCandidates.lean": "4532daf0868093e3d26202545285102e9d6e6f3574adca34759cc68a2045655b",
+    "Max2SAT/Random/ActiveConcentration.lean": "a95265c52a3c593c0b18fca0895bfe2226700d3d132d85514fa8fea3e02d6493",
+    "Max2SAT/Random/ActiveCounting.lean": "1907a72330abfd01e998064f55f4574da949a36995bb2da10fbf358f8e1be747",
+    "Max2SAT/Random/ActiveNodes.lean": "88988f9640e394195dcb20a347d665345864106f1aa177d3cc8dd85c9a1b5a38",
+    "Max2SAT/Random/ActivePaths.lean": "d0881d4e0085c1b12fd31818f43cb52131ce231811a776e99f6020638e7c8138",
+    "Max2SAT/Random/ActiveSupport.lean": "a38924620da61dbd85d98fda2b7432f1db396ab0589e1fe53f1b0f991b38856d",
+    "Max2SAT/Random/AdaptiveRanges.lean": "af6eea7b0d17778d5471c99d26e968a792ff14c50a686daf34433e6b861d284e",
+    "Max2SAT/Random/Algorithm.lean": "d5d8f354b52d82e322bd88284e9a375896c759e09906c40db2233167297e96d4",
+    "Max2SAT/Random/BitHistory.lean": "86e40495d7744ddbf4e879cb8aeb3f4364103f7be6e108d0bc547d0a3df46c6d",
+    "Max2SAT/Random/BlockLaws.lean": "2b0e0c2a4ad0ff93769d3633a89f6cb3735f5f24977e1d5f2cacdb1ce7caa0b0",
+    "Max2SAT/Random/BoundedDifferences.lean": "c6dc23eb571b956cfcee39a7550bd76d7f5b6dfd1cc8e59481b2d8c1f8944cc2",
+    "Max2SAT/Random/CandidateProbability.lean": "d3b6a77ff41f7aa612fc1040e8682ae2e9d483716425965ab3ece3718921a59c",
+    "Max2SAT/Random/CanonicalOrder.lean": "4abdf42bc622a502e6220d93a19b07c8ea6745054523493b3517359db70db0d7",
+    "Max2SAT/Random/ComparisonTree.lean": "86ae319a1813af86ab9957d81d729380b5e0e2b3b52a7608e14301ba7fc5f32c",
+    "Max2SAT/Random/CompensationRow.lean": "66d4feb83a8f7e8ebf54a1a188609ba9249dce0ffc0b6196cfc7a0a10766c850",
+    "Max2SAT/Random/CompensationSum.lean": "fc8b6f74df52c60994f3dda858ac23267ca8caf47808368b0155ae676259405d",
+    "Max2SAT/Random/CompensationTail.lean": "c07dc86c49f0a1b4934504c28afc704f225596e9d30889709d408b196501c44f",
+    "Max2SAT/Random/ConcentrationExamples.lean": "8edbca3ff2d310a672fc3768accf0ae75f4ceb66bcaf8810f8fa7430a376d873",
+    "Max2SAT/Random/ConcentrationTools.lean": "7d40d4e3e0e5660159b01166913726690b0cd809ea41537fc23169fcae597804",
+    "Max2SAT/Random/ConcreteRuntime.lean": "67e51c9b0a1d7b9eb55ce7c7aba37185f9e0ef4da27141bd134ffa4c328f0889",
+    "Max2SAT/Random/ConditionalMGF.lean": "73398ed20695fb011bd22a800d7f01fb5f9cbe0216b19d0ae1ad839807290133",
+    "Max2SAT/Random/DriftMean.lean": "bcc03f56ebc5d0971d7849c4ada3d7eefb9dffc3815822819a3b5359d8c72fd7",
+    "Max2SAT/Random/DriftSensitivity.lean": "b168c2db204c9ea8c3966c30d931a588f9aa3cb1e29393ebaefa982a8803ac77",
+    "Max2SAT/Random/DriftTail.lean": "88a6ad8e30f8beb6d818d4e06afb64564dfcd7e7b1fab2ed44fb76f3761a0366",
+    "Max2SAT/Random/EdgeDataLaw.lean": "effd2a535d7657cc813b3bb5dc143343a17bcbb2a85ddeb401548361d1ba94c3",
+    "Max2SAT/Random/EdgeVariance.lean": "fd75e8f6770f54d17de92c26f87ff6384a50d1a03b5a7f277cdf5d9ba85102ec",
+    "Max2SAT/Random/Encoding.lean": "272417b8d2dec22ebbbba54771e285ff57d14bbc8b639b4e31ea3c045ca0201d",
+    "Max2SAT/Random/EndpointSigns.lean": "0f4dedb9f3fb5dfd3bafc245b9351b5761b3a3c59723c41b72f336d6fac69297",
+    "Max2SAT/Random/Examples.lean": "5dd6e6b47d517f19dc31a2058ecce9294525e72a3740be5229ff9ead624c5a43",
+    "Max2SAT/Random/Exposure.lean": "7f37552758025fb70a1730efc67acb14f8167c3df05e1e9e8013e3e83f355c2f",
+    "Max2SAT/Random/ExposureGraph.lean": "b2238333f945de8b86c603fdd66fa3bac9d70135c60b85d8332e4b29efae71fb",
+    "Max2SAT/Random/ExposureLaw.lean": "c3dc7503b49e14e546cb23828b280e4b7f7a8277ba83dec623413c0273b13eab",
+    "Max2SAT/Random/ExposureSupport.lean": "2a99abf012e85e3e04188a4c2a4b816064c06c1aadb31e9ed29ab52ba3c41881",
+    "Max2SAT/Random/FiniteLaw.lean": "c086d17902fd7f1540eadf7191a6d82fd6cc68196654ae6d11dbe4672e1fed64",
+    "Max2SAT/Random/FiniteSupport.lean": "096f0b8866dc8bbb9a95f7c00c1c833e1333165937d200e9e81f61be2e07d53f",
+    "Max2SAT/Random/FixedSupportNodes.lean": "c30be1b88142760126ede15e0a2a1007edeafc23c592f00de1fc4d13ca7f549d",
+    "Max2SAT/Random/FormulaGains.lean": "6945b27a91c4bff2086545dcdee66189a54a16501bdfa946c4732c958b856d79",
+    "Max2SAT/Random/FourthMoment.lean": "d5931afa6d67733b23cea1ba8bd08c387e0d4650cb3033c73dcb87ab5a7067d9",
+    "Max2SAT/Random/FreshBits.lean": "96a43db632bea1c81745d1aa033d7255bb5a79bf5f47cb38c56de81f00d870c8",
+    "Max2SAT/Random/FullRuntime.lean": "07f682aeb46a7279c11b40eea54a998789ab4de380b8fec8348a79a546744875",
+    "Max2SAT/Random/FullTree.lean": "181dc485a3eb7b6f72133b36092ca89c893b54d8677b731895cbfeb5b0790f54",
+    "Max2SAT/Random/GainAverage.lean": "a11b89e2295fde36673ebc5f65887769b71118957aefb2557954eaaddbbb6e44",
+    "Max2SAT/Random/HistoryAverage.lean": "758386e7401b9a37e6ffb93dc96aee3d3e106d4211cd76b8d57c7c994f00250b",
+    "Max2SAT/Random/Hoeffding.lean": "ebbc00d4ee2cd54af5521f8d6afa7a94eae3193b504905c567fe3ef98a1fdc0d",
+    "Max2SAT/Random/IntegerMoments.lean": "45c2bf1f4a31fb166f18a6160a7503dd4e3b8464b13de6dbec3f9e9a54e10cbc",
+    "Max2SAT/Random/MeasureBridge.lean": "869d5dd0c13f06372f056e6a6719392f743c548e85bdd0660a3c8d6029bd41f5",
+    "Max2SAT/Random/MeasureInput.lean": "7c8e58232d41a2a07a6faaf169a7204a0af54d8db87b7530409961a4c5686c95",
+    "Max2SAT/Random/MomentBounds.lean": "2cdf075db67d9e59fef06f8b67173b584447e5c36b236cf1686d5f0a19864011",
+    "Max2SAT/Random/ObservedFormula.lean": "25bf515e27fd6dda9bc2daf79662e235d8efac345e2e7a3e8cdbe7b5f01a15f2",
+    "Max2SAT/Random/ObservedPartition.lean": "e645d9fd0d8b57a0ac0bb65b1f181ad5ee2ac17dea4907c152e589927a23defa",
+    "Max2SAT/Random/ObservedRestriction.lean": "5685337a5dfb1567c1bc528cc6011f00a6578287d0d8126778a013fef12f2440",
+    "Max2SAT/Random/OrderedExposure.lean": "a2a74b6a5a8f600bc3645cdb145974fffb4be1f39392ab428232132aa2b81cdf",
+    "Max2SAT/Random/PairModel.lean": "5276c350dc4444a15ace334f58de14ed2f188a628f9e46141387b0df95658af5",
+    "Max2SAT/Random/PathBudget.lean": "017715fb8c7096d2ad39b143989594cb3da1221df7808fd60501bbd9312c802d",
+    "Max2SAT/Random/PredictableSigns.lean": "3a25ff5de85f7c66ebeed71fc5d0d7a116173e1e76fd5365c1d2cdb59c3c51b9",
+    "Max2SAT/Random/ProbabilityExamples.lean": "caea0548f83c4b5468ed2cd0ebd17fdafce8fd9c8f3e081069f74432a1327ece",
+    "Max2SAT/Random/ProductLaw.lean": "dc267ffb9c8d51a419b6e36b0a343bbee1f66603d2e705929b661bbe7659f1a5",
+    "Max2SAT/Random/ProductTools.lean": "8a44251f0d929ed3840dbb2340a8fba8ec4c7f917e53f9f52b3e39835616975d",
+    "Max2SAT/Random/RequirementAccumulation.lean": "5f4646108e291ea85267863a4b49cedc7c4350e7eb9eb69fc24bbf0270d59179",
+    "Max2SAT/Random/RequirementDegree.lean": "c14df731ac480baaf341ee76b8f0ec9887ca7662c0f64a6588ae238feef4fbfa",
+    "Max2SAT/Random/RequirementMean.lean": "4cc1e53aeb5e3439be30232b1dcde89f3ccab870b961b68583e85679d29b318d",
+    "Max2SAT/Random/RequirementTail.lean": "45427cbad394cf0c9d8105b4d73d58f4d4c25b3ce01287da426d0d257985a5f1",
+    "Max2SAT/Random/Residual.lean": "60ab45e09a6223bd00a6c8a95694edde1433ed0628115831e8bec24244f23b0a",
+    "Max2SAT/Random/RuntimeExamples.lean": "d8a9fbb139800d13ce01f401614004d6ed7bfb9aa42f33f989dc9665655c834d",
+    "Max2SAT/Random/RuntimeRates.lean": "a8e22a9ff8a323039fb24645e8053c845d79df2a3d9b4b18c3f8d9271bfceddb",
+    "Max2SAT/Random/Sampling.lean": "fa69467367e09fa7834bc7ac39af7784093668fe6d919d70cebeefc3f5b97bed",
+    "Max2SAT/Random/ScorePaths.lean": "d3a970b7af1893a12f573b2ca350f9bf571a1d3a7ffd724c6513221b5a4f2b71",
+    "Max2SAT/Random/Search.lean": "8e97601d1cc35e4fdc92a19bf7f690e96540af0c73236baca7df76d859f60d9a",
+    "Max2SAT/Random/SearchCounts.lean": "31cd3621746a47f83b0a13284683b1af58b6833539577094657cef161b5ae5d2",
+    "Max2SAT/Random/SearchNodes.lean": "929a333d8569644a20ce2620d00f020a67784f120b9a4ee476d0a37ab2988f90",
+    "Max2SAT/Random/SequentialExposure.lean": "0c49d7f796cecd0ef02c993b55e56ca6fccd65d0f2fd33db69867a3f66cbe2cd",
+    "Max2SAT/Random/SignMoments.lean": "28fb4254856baca3648a2a5f8abe276cce76d538197405464e620b6ee1d82e83",
+    "Max2SAT/Random/SumFeasibility.lean": "6e2c8ae89345cc83b6c3b1746e655a63b756d1caf56c6da54195771e5b8af4ca",
+    "Max2SAT/Random/Support.lean": "5d5ae4fa0e0df4802a6fa7974842b041e61dc10a2662c29f96cccb6973acebc7",
+    "Max2SAT/Random/SupportAveraging.lean": "7de1d9ce147fb46304b9821f00ff0987dfbaf675e417610f986c065f3a69e02f",
+    "Max2SAT/Random/SupportExamples.lean": "3bca8a839dd79565a66cf6deca7c4d3943cc2b93320783568a9c68e5dcfb536a",
+    "Max2SAT/Random/WeightBounds.lean": "d41f1908345d6d49193f4629a8e8d6cc82b0e3740f553dd5acbf2907d38d6f61",
+    "Max2SAT/Random/Weighted.lean": "1deaaf873ee7998357f13f8a889fc5062f07da77d0c41c5100d04852aa9c9250",
+    "Max2SAT/Random/WeightedEnumeration.lean": "5d627b418079f22093502c288af1b07336eba31c6eeabea4595830eef4a8f89a",
+    "Max2SAT/Reduction.lean": "f34fa678de539d4350c1c8e27f59b74ce57224ad6f7778475fedd4ffb4f0e6cf",
+    "Max2SAT/Regular/Algorithm.lean": "2cfed77a32d9730366bfc6055efc24023c8cbf0491e9227e89273d0e07217c8c",
+    "Max2SAT/Regular/Centering.lean": "ebc3feac17fe21a6b7140b6c76c144ce223244218cd2db03947301f660fef7fd",
+    "Max2SAT/Regular/CutScore.lean": "c036a7743b21b6405a5e4aa1400a9599c4a020212b5c2faef6860a285aa882b2",
+    "Max2SAT/Regular/Encoding.lean": "0f09b174973439874b65d992de9bf2e8e7b8fc1f47e0da2a333196db6a1329c4",
+    "Max2SAT/Regular/Examples.lean": "38f2ab11c82ba272e4b083955f1561eda1af4055fe8a8f857d69a886265d8a9c",
+    "Max2SAT/Regular/Greedy.lean": "c404b35cffe3c62e90d30a0b80fc5da1ab1162050fdb2dbd93187e0ed2c8cff6",
+    "Max2SAT/Regular/HighDegree.lean": "1a5903f337912f499e1c81205a7fdf85c5715ec254d9e2bec423c9cdc98bd3d5",
+    "Max2SAT/Regular/IndependentSearch.lean": "c340354d6f36190b992b612263c8437142ad141014c974d87bfc7883fb5cb2b4",
+    "Max2SAT/Regular/LowDegree.lean": "909a97264b3f79e3767a82d870e163094fea7b1bcc75e7be1d86fff9ae0e37f0",
+    "Max2SAT/Regular/Mixing.lean": "c554aed09de8ed210eaf6bd27ab13486f40d1208618813a528163cc32a035584",
+    "Max2SAT/Regular/Parameters.lean": "c8d72b2eaf1dbd75bf10ef4955f3b57f145bea27b1f4ffffbdebd78d0d22629e",
+    "Max2SAT/Regular/Profile.lean": "6a672b77eedfba000cf39bdd05ebb59a093bfe5ed9f966128c34089f74ba1f99",
+    "Max2SAT/Regular/Rounds.lean": "7935c2b0b1163a8305085592c6dfac4f2a7437118013c9f8ad940be234246d1d",
+    "Max2SAT/Regular/Rows.lean": "bfb50c242c3cc482055dbbfdaf4b9266f1db1c6123502f9ccd3da7a4ea07a2dc",
+    "Max2SAT/Regular/Runtime.lean": "155d24a2bd6664b5cb55cb767389bcc4156fd8694cb04da5dbdbc5336b83dcbe",
+    "Max2SAT/Regular/Spectral.lean": "36d771bb9ac162d721ddbdad4c8a71e8b6058a0513e7b084dbce53b0a531f809",
+    "Max2SAT/Simplification.lean": "b94aae7747635a3b4cd4b22dedc2de34751f275981e12208b6118491d8a08e0f",
+    "Max2SAT.lean": "e9a5470b2354cba050ed0365072f3651a6fb5820e5ea774d66abd0ea6ff1d160",
+    "Audit.lean": "33fec03a6f645c2ecb4e899c622fedec49e37c051b13500fb47a3073077e0e59",
+    "ExternalAudit.lean": "badbc469d6d54b97c5d594b82edb9cf16e3a43ed3f74972b71d856eb98daf3ee",
+    "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+    "lakefile.toml": "497977dc35ee5ddc12cb229bca3fb36044662cb4e75f74d8eb8c626379a88e5e",
+    "lake-manifest.json": "d0a1bee453cbe6d64252275aab4816484b48de67e0752f0179616646c749b029",
+    "verify.py": "4b72f4d29d1d5974f93cf5029efc59e2e7ab856e8552badb4b5491fd46a2e1dd",
+    "README.md": "440599111b950c4ffad15f8e509df23b76d9ece1a6c16cdf83a99293b8345040",
+    "verification/BIAS_PROOF.txt": "99efabb6cabfb9f405a720e78d79a1d8a106f17c62e09ca4adb01d12d57b6d25",
+    "verification/RANDOM_CORRECTNESS.txt": "a00d2410f0e5eaa36645d9621eab5c1585b51ebd9f32e768a961f5af7891ce5b",
+    "verification/RANDOM_PROBABILITY.txt": "6bf34535722e18288237b438c383f190891d0198d640e488307c19c6b34b32fd",
+    "verification/RANDOM_EXPOSURE.txt": "b6c10ae9bf6539b946c8b76fbd1d56c858b752e4c8e5f57ef796e4d9cc15d545",
+    "verification/RANDOM_MOMENTS.txt": "b249e19b09edf5627a734c3ab93773bc5e1b80b2eb6eb8834357e48c449fc439",
+    "verification/RANDOM_CONCENTRATION.txt": "aaef115d276298a96063322602e1a96d1bf2637fcd889eb754a5dee66f42d05f",
+    "verification/RANDOM_ACCUMULATION.txt": "e56473801f5379dd067359f012370b0eadba540899c2ecf939cb146ddae4c51e",
+    "verification/RANDOM_RUNTIME.txt": "332844c90d955b68e7183ad836c5f4e0f9a473b257f84a17fd1d0d12bc3695b8",
+    "verification/RANDOM_COMPLETE.txt": "c3e4cdfee4f13197725e6425d8991605ef6d6ada611349c1add135e892a71e61",
+    "verification/COUNT_GUESSING.txt": "8c39b854f382f76b55c01ff795e0a04f475dc4ebf5761e33a9b0a1b1ca2a31c5",
+    "verification/COUNT_ANALYTICS.txt": "23763c4e570f8c303e2baf5cc96758ab928dc07736a4e680781b0c4295d42af8",
+    "verification/COUNT_ROUNDS.txt": "b2a01046e8b50c71b6018d76bf0ba24151bc0162142a089ee991e81c6ec30ca9",
+    "verification/COUNT_COMPLETE.txt": "2a83d5e801d5b7ce6cfd550e74ad6e29114589080a5b5d0e17ad919de3f9f9fe",
+    "verification/REGULAR_GRAPHS.txt": "abf930fb4989eeac1115d4932592ecb333cf0624c714515d8ad3f620d54f1773",
+    "verification/INDEPENDENT_PAIRS_SCALAR.txt": "cd697c3a73e449d097ffcea2146a6177978219c3b8909cdb3aa1bc2989994000",
+    "verification/EXTERNAL_RESULTS.txt": "b9718541251391a27ccf72d47758dbca43a2b5643632d6bda46c2d6f5b55cb38",
+    "verification/INDEPENDENT_PAIR_MEMBERSHIP.txt": "547457fa85306766df836732a47c5ad28a10e27d173708f6dd64103288d18176",
+    "verification/COMMUNITY_PREPROCESSING.txt": "f1d745c5240e12f2af290b3784460b09d2a3bce640a5da246dd0259f77868351",
+    "verification/COMMUNITY_ASSEMBLY.txt": "7d13aeecfbe3ca028acad0efa4be10da6e55aa60a73f72cdb062ef7013d9a6a8",
+    "verification/SPECTRAL_TRUNCATION.txt": "3f6b1d80206b7d1b0bdf608c52a0102d550e15865220febfef6240f0de7de899",
+    "verification/RATIONAL_DIAGONALIZATION.txt": "901f0a6cd820fcb2f4849417a40822e4c87f3c37ac946b910af7a385a5496821",
+    "verification/SBM_COMPLETE.txt": "b79dee26769cb7e21f7dbd2fda56d18d685f0c2d4a4284ec9a7846b2abeaec12",
+    "verification/SUBMISSION_SCOPE.txt": "2da65b494dfbf14d1b387e3a34251190c893a47bb7b1aad139a493ec09870db4",
+    "verification/external-results.json": "354eadc6534928875a69cb336ec1b8e65172ca982e982f95ec6c0d3c5258b323",
+    "verification/paper-correspondence.json": "6f5f58c3968284d73a42058df160cafe9df2ac78011831233f7e3114b28e9189"
+  },
+  "manuscript_reference": {
+    "file": "dense_max2sat_arxiv.tex",
+    "sha256": "f96b82a2b15ca66977e4bdb5648f1a3cbb1dec3dedda9fb9108cb80d9d247fe6"
+  },
+  "paper_result_status_counts": {
+    "checked": 23,
+    "checked_core": 11,
+    "unverified": 1
+  },
+  "scope": "All 34 numbered proved statements have checked mathematical content: 23 checked and 11 checked_core, with no partial entries. The sole unverified numbered statement is the explicitly unproved biased-subset research target. Actual algorithm correctness, reductions, constraint arithmetic, enumeration and exponential search-node bounds are checked for all four main families and the proved appendix results. The independent-pair auxiliary proposition is now explicitly scoped to integer coefficients, as in every computational input model in the paper; the earlier additional assertion for arbitrary continuously distributed real coefficients is not claimed. This changes no Max 2-SAT/Max Cut input family. General original probability spaces, almost-sure integer bounds, independent product transport, exact expectations and ordinary variance are checked. Discovery yields a measurable good event uniform in all subsequently chosen units, with one fixed base c<2 and constants for every size. Two published probability estimates remain explicit hypotheses, with source quotations and their applications audited separately. No internal proof obligation is classified as external. Standard-axiom checking does not prove those hypotheses. Polynomial bit-operation overhead and polynomial space remain conventional manuscript arguments, not machine-cost or compiler proofs. The registry and fingerprints track intended paper correspondence; independent review of its semantic correctness remains distinct from kernel checking. See SUBMISSION_SCOPE.txt for the final boundary; older milestone notes record historical states."
+}

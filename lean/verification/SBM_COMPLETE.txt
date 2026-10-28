@@ -1,0 +1,134 @@
+Fixed family bounds and the original stochastic block model
+============================================================
+
+This batch adds 25 audited mathematical declarations and closes the
+mathematical core of thm:sbm. Its status is CHECKED_CORE, like the other
+main running-time results. Exactness and the actual search-node bound are
+checked; polynomial bit-operation overhead and space remain conventional
+paper arguments. The only external mathematical dependencies are the same
+two explicitly registered published probability estimates. They remain
+hypotheses, not custom axioms or purported formalizations of their proofs.
+
+1. One density constant and a fixed size threshold
+---------------------------------------------------
+FamilyParameters chooses a positive rational g in
+  [1/(512*sqrt(chi)), 1/(256*sqrt(chi))]
+and defines
+  C0 = 10^9*chi + 1 + (256*r/g)^2.
+It proves the existence of one natural N0 at least
+  max(100, r, 5120000*r*chi, 1792*r*sqrt(chi)/g).
+These depend only on the fixed class parameters. The single hypothesis
+  C0*(B^2*log(n)+B0^2+mu^2) <= n*nu,  B>=1
+implies every explicit noise-density, diagonal-error, numerical-accuracy
+and mean-budget condition used by the earlier concrete algorithm for
+n>=N0. The remaining size conditions follow from the choice of N0.
+No additional degree, balance, or approximation-quality hypothesis is added.
+
+UniversalNodes proves that the computed directions have squared norm at
+most one on every input, including the n<r zero-representation branch.
+The exact search's capped-grid and enumeration bounds imply
+  nodes <= p_r(n)*2^n,
+  p_r(n) = (2*n^3+4*n+3)^r*(2+14*n).
+This includes both exhaustive fallbacks and zero coefficient mass. The
+useful-event bound is at most p_r(n)*c^n for one 1<=c<2. For n<N0,
+  nodes <= 2^N0*p_r(n)*c^n.
+Thus the small inputs require only a fixed multiplier, with no algorithm
+change. These are actual recursion-node bounds, not an enumeration claim
+inferred merely from the number of optima.
+
+FamilyRuntime assembles discovery_probability_from_density and the fully
+quantified discovery_family. The latter chooses g, C, K and c before n,
+the finite independent-pair law, the original input formula map, and the
+hidden mean. For every size, the actual algorithm has
+  Pr[nodes <= K*p_r(n)*c^n] >= 1-1/n,  1<=c<2.
+All original-model, density and rank conditions are those of the discovery
+lemma. No internal numerical, cross-profile, coefficient-budget or size
+hypothesis remains. Finite-law exactness was already proved unconditionally.
+The convention at n=0 is handled by the deterministic small-input bound.
+
+2. Original SBM law, graph, and formula
+---------------------------------------
+SBMModel takes an arbitrary group map Fin n -> Fin k and a symmetric real
+probability matrix pi with entries in [0,1]. No group balance, nonemptiness,
+separation, or probability rationality is required. One Boolean coordinate
+per unordered vertex pair decides whether that edge is present. sampledGraph
+and sampledFormula construct the graph and its standard Max-Cut encoding;
+the actual interaction matrix is exactly -2 times the adjacency matrix.
+The previously proved score identity identifies the ordinary cut objective.
+Units affect the linear terms only.
+
+The mean matrix is Abar_ij=-2*pi[group i,group j]. It factors through the
+k group indicators, proving rank(Abar)<=k. Symmetry, diagonal bounds and
+|Abar_ij|<=2 are checked. The latter gives Frobenius norm <=2*n, hence the
+same operator-norm bound. The matrix decomposition into this mean, centered
+independent entries, and the diagonal correction is proved for the actual
+sampled formula, including arbitrary added unit clauses.
+
+SBMVariance defines the minimum and maximum of pi_ab*(1-pi_ab) over ALL
+block pairs, exactly as in the paper. Its range bound connects these
+extrema to each individual edge variance, even when some groups are empty.
+SBMRuntime defines sbmLaw as the original product of Bernoulli laws.
+Existing scalar identities give zero centered mean, absolute bound 2, and
+variance 4*pi_ab*(1-pi_ab). The parameter substitution is
+  r=k, nu=4*v_min, B=B0=mu=2.
+For n>=100, log(n)>=1/2, so the paper assumption with C=5*C0 implies
+  C0*(4*log(n)+8) <= 4*n*v_min.
+The finitely many smaller sizes use the already checked uniform multiplier.
+
+3. Final quantifiers and algorithm inputs
+-----------------------------------------
+Theorem sbm_family chooses a rational g and constants C,K,c, with
+0<C, 0<K and 1<=c<2, BEFORE the number of vertices, partition, block
+probabilities, observed graph, or added units are supplied. Under
+  v_min>0, v_max<=chi*v_min, n*v_min>=C*log(n),
+it proves the original-law probability bound
+  Pr[nodes(actual formula-only algorithm) <= K*p_k(n)*c^n] >= 1-1/n.
+The hidden partition and probabilities occur only in the sampling law and
+proof. diagonalizedNodes/diagonalizedResult receive the formula, k and
+fixed rational g, not the group map, probability matrix or mean.
+
+The unit list is quantified as an ARBITRARY FUNCTION of the entire sampled
+graph. Thus it may be chosen adversarially after observing the draw; no
+independence of the units is assumed. Correctness is unconditional on every
+observed formula. sampled_maxcut_correct explicitly gives an optimal cut
+when no units are added. The exact finite product law, model identities,
+probability bound, fixed constants, and bounded-size cases are all checked.
+
+The theorem is uniform for each fixed partition, which is the conditional
+form of the paper's model. A separate theorem mixing random partitions is
+not claimed. The main statement defines a fixed partition; its discussion
+of a partition drawn first is interpreted conditionally, as stated there.
+
+4. Precise remaining boundary
+------------------------------
+All four MAIN result families now have checked mathematical content with
+conventional arithmetic/space analysis. thm:sbm is conditional only on the
+two named published estimates in external-results.json. These were quoted
+and their applications checked in earlier batches; no new external theorem
+is introduced here.
+
+Two broader appendix results remain PARTIAL in their full stated generality:
+- prop:pairmembership: arbitrary non-finite input laws, beyond the proved
+  finite-law concentration and membership result;
+- cor:planted: the probability-space translation from arbitrary original
+  bounded integer-valued inputs to the finite product representation.
+Bounded integer ranges are finite, but that general translation has not
+been supplied as a Lean proof. The finite-law discovery theorem itself is
+now complete, including asymptotic parameters and all sizes. SBM needs
+neither unfinished translation, because its ORIGINAL sample space is
+already a finite Boolean product law.
+
+The biased-subset appendix remains an unproved target. Bit-operation cost,
+polynomial space, and compiler correctness are not machine-cost theorems.
+Independent review of paper-to-Lean translation remains distinct from
+kernel checking. The correspondence register documents these boundaries.
+
+5. Reproducibility
+-------------------
+The example suite supplements the universal proofs with present/absent
+edges, the actual -2 Max-Cut interaction, exact min/max Bernoulli variance,
+an unbalanced assignment with unused communities, and the cut-optimum
+connection. Existing numerical and earlier-family checks are retained.
+Run python3 verify.py for the full pinned build, fifteen example modules,
+public-declaration axiom audit, external-signature audit and paper statement
+fingerprints. result.json records the completed outcome.

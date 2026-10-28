@@ -1,0 +1,117 @@
+Complete arbitrary-support random-sign runtime verification
+===========================================================
+
+Scope and final statements
+--------------------------
+thm:random_main and thm:weighted now have checked_core status. The complete
+mathematical probability argument, deterministic correctness, and actual
+initialized recursive-call bounds are checked. The algorithm takes only the
+formula; neither the generating support nor its distribution is an input.
+No probability or candidate-count estimate is assumed in the final theorems.
+The paper's algorithm, input families, and constant formulas are unchanged.
+The general model now explicitly types its clause-count bound m0 as a positive
+integer and kappa as real, matching the finite multiplicity representation.
+
+For a fixed arbitrary potential support E on n original labels, independent
+PairLaw m0 kappa draws with m0>0 and 0<kappa<=m0^2, and arbitrary fixed unit
+clauses, FullRuntime proves, with c0=runtimeConstant m0 kappa,
+
+  E nodeCount <= (4+6*n)*2^n*exp(-c0*n),
+  P(nodeCount > (4+2*n)*2^n*exp(-c0*n/2)) <= 3*exp(-c0*n/2).
+
+All recursive invocations are counted, including immediate rejection.
+The two exponential bases are strictly below two because c0>0; the proof
+also establishes c0<(log 2)/2 to absorb the rounded prefix cost.
+Random.randomFormula_correct and generated_input_exact prove optimality
+on every well-formed generated input, not merely with high probability.
+
+ConcreteRuntime instantiates both distributions in thm:random_main:
+- exactly one uniformly chosen signed clause per potential pair;
+- each of the four signed clauses independently present with probability 1/4.
+Both use m0=4 and kappa=3/4, as in the manuscript. The Boolean model flag
+selects a probability law in the theorem, not an input to the algorithm.
+Empty potential supports, empty observed supports, unit-only variables,
+and n=0 are included. There is no minimum-density assumption.
+
+Why no renaming proof is needed
+------------------------------
+ActiveSupport defines the vertices incident to a support on the original
+Fin n labels. Its influence budget charges only these vertices. Inactive
+coordinates have zero degree and zero influence. ActiveConcentration then
+repeats the previous tail assembly with r=card(activeVertices E), not n.
+The inequality 2*T>=r is proved for the actual ceil(r/2) prefix.
+
+ActivePaths checks the increasing order with skipped inactive labels.
+Removing the clauses on inactive variables preserves active score gains
+when their initialized values are fixed. Removing inactive coordinates from
+a free suffix cannot affect any comparison, since every binary endpoint is
+active. The actual list comparisons equal the analytic comparisonSum.
+
+ActiveCounting proves the exact count identity for any predicate P depending
+only on a set S of coordinates and any fixed values outside S:
+
+  card {x : x agrees with base outside S and P x}
+    = 2^card(S) * P_uniform-original-bits(P).
+
+Thus the ambient uniform probability can still use all original n bits,
+while the initialized search counts each active assignment once. No extra
+factor 2^(n-r) is introduced. This is a proved finite-set bijection and
+coordinate-projection law, not an assumed invariance of the search.
+
+ActiveCandidates applies that identity to the initialized algorithm,
+including rational weights, unit-only initialization, core restriction,
+preprocessing, tie choices, and the strict +1 comparison offset. This
+identifies the candidate count exactly even under score equivalence with
+a constant offset. ActiveNodes derives the fixed-support expectation with
+arbitrary original labels. Early pruning can remove additional candidates;
+only output implies full-prefix feasibility is used, not the converse.
+
+From observed supports to the original input law
+------------------------------------------------
+ObservedRestriction defines selection of nonempty pair draws without
+renaming vertices. It proves preservation of scores (up to the stated
+offset), observed neighbors, weights, and initialized candidate counts.
+The conditional law of the selected patterns is exactly the product of
+the original pair laws conditioned to be present. Symmetry, boundedness,
+and the second-moment bound for that law were established earlier.
+
+ObservedPartition partitions the original sample space by its observed
+edge set and applies the preceding expectation to each positive-probability
+fiber. For an empty observed support the active set is empty and the
+candidate count is exactly one; the search charges one terminal call.
+No conditional event of probability zero is used.
+
+SupportAveraging proves that 2^r*exp(-c0*r) is increasing in r and r<=n.
+The finite law of total expectation gives
+
+  E candidateCount <= 3*2^n*exp(-c0*n).
+
+The finite nonnegative Markov inequality gives the corresponding tail.
+FullRuntime combines this with the deterministic initialized node bound
+and absorbs the prefix cost. ConcreteRuntime supplies both original model
+wrappers with the common constants and all-input correctness.
+
+Trust, tests, and remaining scope
+--------------------------------
+All new public theorems are included in Audit.lean. SupportExamples checks
+a count with nonconsecutive active labels, empty observed support despite
+an arbitrary potential support, unit-only initialization, and zero variables.
+These are kernel proofs; no random testing is used as proof evidence.
+At this milestone the build ran twelve example modules. The dependency audit, statement
+correspondence, and source/manuscript fingerprints are recorded in result.json.
+Only propext, Classical.choice, and Quot.sound are permitted.
+
+checked_core is deliberately narrower than a verified machine-time bound.
+Polynomial bit-arithmetic overhead and streamed polynomial space use the
+ordinary implementation arguments in the manuscript; no compiler-level
+cost semantics is claimed. The regular-graph result is now checked_core; see
+REGULAR_GRAPHS.txt for its complete mathematical and node-count proof.
+Independent-pair and SBM concentration, hidden-community numerical discovery
+and fallback integration remain outstanding. The biased-subset appendix
+is an unproved research target, not a formalization obligation with a proof
+already available.
+
+The correspondence record identifies the formal statements supporting each
+paper result. Its translation still requires mathematical review: neither
+successful kernel checking nor matching fingerprints proves equivalence
+between the prose theorem and the Lean theorem.

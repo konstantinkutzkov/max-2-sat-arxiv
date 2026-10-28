@@ -1,0 +1,594 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=26mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Pre-Branching Constraints for Max 2-SAT},
+  pdfsubject={Sound learning, random-sign counting, and exact enumeration}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\newcommand{\ind}[1]{\mathbf 1\{#1\}}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\title{Pre-Branching Constraints for Max 2-SAT\\
+\large Sound learning, simultaneous counting, and exact enumeration}
+\author{}
+\date{12 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We give a common correctness invariant for constraints introduced before
+branching: every comparison preserves the same optimal assignment, chosen
+by a fixed secondary order. Single-variable comparisons yield guarded
+cardinality constraints, and partial improvement certificates yield
+ordinary clauses. Pair exchanges give a directly checkable source of
+binary clauses and exact exponential savings when they contain a large
+matching or long disjoint chains. For the random-sign model, we prove a
+separate counting theorem: on any fixed interaction graph, with arbitrary
+fixed initial unit clauses, the expected number of assignments satisfying
+all single-variable comparisons is at most $2^{n/2}$. The proof uses a
+read-two entropy inequality, not independence of the comparisons or any
+degree bound. This is a candidate-count bound, not an enumeration-time
+bound. We state the remaining Las Vegas enumeration target precisely.
+The local derivations are proved here; literature novelty is not claimed.
+\end{abstract}
+
+\section{What is being constrained?}
+
+Let $F(x)$ be the number of satisfied soft clauses of an unweighted
+Max 2-SAT instance, including unit clauses. There are initially no genuine
+hard feasibility constraints. All assignments belong to the original
+optimization domain. We may also use the equivalent quadratic objective
+\begin{equation}
+ F(x)=c+\sum_u h_ux_u+\sum_{u<v}J_{uv}x_ux_v,
+ \qquad x\in\{0,1\}^n.                         \label{eq:quadratic}
+\end{equation}
+Units affect $c,h$; binary clauses determine $J$. The deterministic rules
+below also apply to rational coefficients of polynomial encoding length.
+
+Fix a priority order on the variables and a preferred bit $a_u$ for each
+variable. Rank complete assignments first by $F$, then lexicographically
+by agreement with these preferred bits. Call the resulting strict total
+order $\Phi$, and let $x^\star$ be its unique maximum. Thus $x^\star$ is
+an optimum of the original problem. The priority and preferred bits are
+fixed for all constraints that will be combined.
+
+\begin{proposition}[Common representative]\label{prop:representative}
+For any collection of maps $T:\{0,1\}^n\to\{0,1\}^n$, the constraints
+\[
+ \Phi(x)\ge \Phi(T(x))
+\]
+hold simultaneously at $x^\star$. Any sound consequences of these
+constraints can therefore be added together without losing every optimum.
+\end{proposition}
+\begin{proof}
+No assignment has rank greater than the maximum $x^\star$.
+\end{proof}
+
+The maps may change one variable, exchange two values, or replace a
+specified pattern on a block. They may be selected adaptively or randomly.
+We do not need to know $x^\star$ to construct the comparisons. Randomness
+selects which valid tests to use; it does not guess that an unjustified
+inequality holds. If the input has genuine hard constraints, a replacement
+must additionally be feasible, or the comparison must be guarded by its
+feasibility. That extension is not assumed here.
+
+\paragraph{Compatibility with simplification.}
+Strict domination for the soft objective is safe. A weak domination
+fixing must respect the secondary order whenever equality is possible,
+or have an additional compatibility proof. More generally, reductions
+need a reconstruction invariant preserving $x^\star$ (or an alternative
+joint proof). Existing path-dependent pruning constraints cannot simply
+be mixed with a different convention for resolving ties.
+
+For example, take $F=(u\lor v)$ and prefer zero at both variables. The
+two single-variable comparisons below retain exactly $01$ and $10$.
+Ordinary weak pure-literal domination can fix $u=1$ and then $v=1$
+while preserving an optimum of the soft objective at each step; doing
+so ignores the new constraints and eliminates both retained assignments.
+This illustrates why separate preservation of \emph{some} optimum is
+insufficient. A tie-aware implementation avoids this conflict.
+
+\section{Single-variable constraints and short certificates}
+
+Write
+\[
+ D_u(y)=F(u=1,y)-F(u=0,y)
+       =h_u+\sum_{v\ne u}J_{uv}y_v.
+\]
+For readability, first take $a_u=1$. The full pre-branching constraint is
+\begin{equation}
+ C_u:\quad
+ (u=1\Rightarrow D_u(y)\ge0)
+ \ \land\ (u=0\Rightarrow D_u(y)\le-1).
+                                                        \label{eq:guard}
+\end{equation}
+For $a_u=0$, use $D_u\ge1$ on the $u=1$ side and $D_u\le0$ on the
+$u=0$ side. These thresholds use integer scores; strict inequalities
+give the corresponding rational-score formulation. The guards involving
+$u$ remain present until its value is fixed.
+
+In the occurrence notation, let
+\[
+ k=d_1(u)-d_1(\neg u),\quad r=d_2(u),\quad q=d_2(\neg u),
+ \quad G=r+k-q.
+\]
+Let $A$ count true partner literals of $u$ and $B$ true partner literals
+of $\neg u$, counting occurrences. Then
+\begin{equation}
+ D_u=G-A+B=L-(q-k),\qquad L=(r-A)+B.             \label{eq:gap}
+\end{equation}
+Thus, with ties favoring $u=1$, the two guarded inequalities are
+\begin{align}
+ u=1&\Rightarrow L\ge q-k,\nonumber\\
+ u=0&\Rightarrow L\le q-k-1.                    \label{eq:two}
+\end{align}
+The second is the usual pruning constraint. Its one-neighborhood
+consequence is
+\begin{equation}
+ u=0\Rightarrow A\ge G+1.                      \label{eq:one}
+\end{equation}
+This uses the user's occurrence gap: unit and binary occurrences count
+equally. It does not change that definition to the differently weighted
+quantity used to select a branching orientation in some earlier notes.
+
+The reverse upper-bound form, obtained by complementing every pruning
+literal, is
+\[
+ u=1\Rightarrow A+(q-B)\le r+k.
+\]
+The two full constraints allocate ties to exactly one value. Requiring
+strict improvement on both sides is unsound. Dropping a nonnegative
+term gives a valid weaker consequence; independently splitting an
+allowance into smaller budgets does not.
+
+\begin{proposition}[Partial certificates become clauses]\label{prop:certificate}
+Let $\alpha$ be a partial assignment not fixing $u$. If every completion
+of $\alpha$ has $D_u>0$, or has $D_u\ge0$ and $a_u=1$, then the ordinary
+clause $\neg\alpha\lor u$ is sound under Proposition~\ref{prop:representative}.
+The analogous negative certificate gives $\neg\alpha\lor\neg u$.
+\end{proposition}
+\begin{proof}
+Any assignment violating the clause improves in $\Phi$ after flipping $u$.
+\end{proof}
+
+The certificate is efficiently checkable. Substitute $\alpha$ into $D_u$,
+leaving $b+\sum_{v\in R}c_vy_v$. Its exact unconstrained range is
+\begin{equation}
+ \left[b+\sum_{v\in R}\min(0,c_v),\quad
+       b+\sum_{v\in R}\max(0,c_v)\right].        \label{eq:range}
+\end{equation}
+This test may ignore older hard pruning constraints and is still sound.
+Using them to obtain a stronger certificate requires a correct joint test.
+
+For the simple-clause case, if $p=q-k\ge1$, any $p$ distinct pruning
+literals of $L$ that are all true certify $u=1$ (ties favoring one).
+They give a clause of width $p+1$ including $u$. When $r+k\ge0$, for reverse
+strict improvement, $r+k+1$ true literals in the complemented list certify
+$u=0$, giving width $r+k+2$. Such witnesses must actually exist; the
+threshold can exceed the list length. Nonpositive certificate thresholds
+are handled directly by the range test and can give a unit clause.
+Multiplicities or opposite literals
+on one variable require the occurrence-aware range test above. A full
+cardinality constraint can represent exponentially many such clauses.
+
+\begin{proposition}[One bit per full comparison]\label{prop:half}
+For every fixed formula and variable $u$, exactly $2^{n-1}$ complete
+assignments satisfy $C_u$.
+\end{proposition}
+\begin{proof}
+For each assignment to the other variables, exactly one value of $u$
+is preferred, with the specified tie convention.
+\end{proof}
+
+Consequently, a larger literal gap does not improve the unconditional
+one-bit saving of the \emph{full guarded comparison}. Its importance is
+that the preferred value can be certified after fewer neighboring values
+are exposed, or by a shorter learned clause. Joint information and
+early detectability are different quantities.
+
+\section{A deterministic counting baseline: independent centers}
+
+\begin{proposition}\label{prop:independent}
+Let $T$ contain $s$ variables with $J_{uv}=0$ for all distinct $u,v\in T$.
+Exactly $2^{n-s}$ assignments satisfy $\bigwedge_{u\in T}C_u$.
+They can be generated and scored in $\Ostar(2^{n-s})$ time and
+polynomial space.
+\end{proposition}
+\begin{proof}
+Assign the outside variables. Each center's comparison now determines
+its unique preferred value independently of the other centers. Enumerate
+the $2^{n-s}$ outside assignments and compute these responses.
+\end{proof}
+
+The external neighborhoods may coincide completely and have linear size.
+Repeated information can fix different center variables. This is the
+familiar independent-set mechanism; balanced bipartite interaction
+graphs give $\Ostar(2^{n/2})$ time. It is a useful baseline rather than
+a new general algorithm. Identification of $T$ is part of the algorithm:
+the proposition assumes it is supplied or efficiently found.
+
+\section{A counting theorem for arbitrary graphs with random signs}
+\label{sec:random}
+
+Fix any simple graph $G=(V,E)$, any initial unit clauses, and the secondary
+order, all before drawing the binary-clause signs. For each edge, choose
+one of its four literal-sign pairs uniformly and independently. Let
+\[
+ Z(F)=\left|\{x:\ C_u(x)\text{ holds for every }u\}\right|.
+\]
+There is no restriction on minimum degree, maximum degree, regularity,
+or the number of fixed initial units.
+
+\begin{theorem}[Read-two count]\label{thm:random}
+For each vertex $u$, let $p_u$ be the probability, over the clause signs,
+that its preferred response is one, for any fixed assignment to the
+other variables. This probability is independent of that assignment.
+Then
+\begin{equation}
+ \boxed{\E_F Z(F)
+ \le \prod_u\left(\sqrt{p_u}+\sqrt{1-p_u}\right)
+ \le 2^{n/2}.}                                  \label{eq:randomcount}
+\end{equation}
+In particular, for every fixed $0<\varepsilon<1/2$,
+\begin{equation}
+ \Prb_F\left[Z(F)>2^{(1/2+\varepsilon)n}\right]
+ \le 2^{-\varepsilon n}.                        \label{eq:randomtail}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Fix a full assignment $x$. Write $b_u=d_1(u)-d_1(\neg u)$ and
+$d_u=\deg_G(u)$. The distribution of $D_u(x_{-u})$ is
+\begin{equation}
+ b_u+\sum_{j=1}^{d_u}W_j,\qquad
+ \Prb[W_j=-1]=\Prb[W_j=1]=\tfrac14,\quad
+ \Prb[W_j=0]=\tfrac12.                          \label{eq:lazy}
+\end{equation}
+Indeed, a clause contributes zero when its partner literal is true and
+otherwise contributes the sign of its literal on $u$. Independent uniform
+incidence signs make this distribution independent of $x_{-u}$.
+Thus $\Prb_F[C_u(x)]=p_u$ if $x_u=1$, and $1-p_u$ if $x_u=0$.
+
+The events $C_u(x)$ are not independent. However, each independent
+four-valued edge label is used only by the comparisons at its two
+endpoints. The read-two form of the generalized H\"older/Shearer
+inequality~\cite{Finner,ReadK} gives
+\begin{equation}
+ \Prb_F\left[\bigwedge_u C_u(x)\right]
+ \le \prod_u\Prb_F[C_u(x)]^{1/2}.              \label{eq:readtwo}
+\end{equation}
+For completeness, in this finite uniform setting it follows directly
+from entropy. Let $\mathcal E$ be the set of edge-label assignments
+satisfying all the events, and $\mathcal A_u$ the allowed assignments
+to the $d_u$ incident edge labels. If $\mathcal E$ is nonempty, apply
+Shearer's entropy inequality to the uniform distribution on $\mathcal E$.
+Every edge coordinate is covered twice, so
+\[
+ 2\log_2|\mathcal E|
+ \le\sum_u\log_2|\mathcal A_u|
+ =4|E|+\sum_u\log_2\Prb_F[C_u(x)].
+\]
+Subtracting $4|E|$ proves~\eqref{eq:readtwo}; an empty event is trivial.
+Summing over $x$ factorizes the right-hand side:
+\[
+ \E_F Z(F)
+ \le\sum_x\prod_u
+ \begin{cases}\sqrt{p_u},&x_u=1,\\\sqrt{1-p_u},&x_u=0\end{cases}
+ =\prod_u(\sqrt{p_u}+\sqrt{1-p_u}).
+\]
+Each factor is at most $\sqrt2$. Markov's inequality yields
+\eqref{eq:randomtail}.
+\end{proof}
+
+The inequality of Shearer used above follows from the entropy chain rule:
+expand the entropy of every coordinate subset in the same global order;
+conditioning on only the earlier coordinates of that subset gives at
+least the corresponding conditional entropy given all earlier coordinates;
+then sum, using the fact that each coordinate occurs twice.
+
+The marginal can be computed exactly. With ties favoring one,
+\[
+ p_u=4^{-d_u}\sum_{\substack{-d_u\le s\le d_u\\b_u+s\ge0}}
+                  \binom{2d_u}{d_u+s}.
+\]
+Replace $\ge0$ by $>0$ when ties favor zero. This includes isolated
+variables. Their comparison fixes the preferred optimal value, so they
+contribute a factor one, not two. Without a tie convention, the empty
+formula would have $2^n$ weak local optima and the theorem would fail.
+
+\paragraph{What the theorem establishes.}
+For instance, take $\varepsilon=1/4$. With probability at least
+$1-2^{-n/4}$ the entire constraint system has at most
+$2^{3n/4}\simeq1.682^n$ solutions. The expectation has the stronger
+base $\sqrt2$. These are input-distribution statements on \emph{counts}.
+They do not yet give these running-time bounds. The signs must be
+independent at clause incidences; randomly complementing the names of
+variables in a fixed adversarial formula does not create that model.
+The tie convention must also be fixed independently of the signs for
+the stated marginal factorization.
+
+If comparisons are imposed only for a fixed set $T$, the same proof,
+with unrestricted local events at the other vertices, gives
+\[
+ \E_F\left|\{x:\bigwedge_{u\in T}C_u(x)\}\right|
+ \le 2^{n-|T|}\prod_{u\in T}(\sqrt{p_u}+\sqrt{1-p_u})
+ \le 2^{n-|T|/2}.
+\]
+The proof requires neither spectral assumptions nor a bound on overlap.
+This is the principal counting result of this note. Local maxima are a
+classical object in exact Max 2-SAT algorithms~\cite{Hastings}; a focused
+literature comparison is still needed to establish novelty of this
+particular formulation and bound.
+
+\section{Pair exchanges give short pre-branching clauses}
+\label{sec:exchange}
+
+Single-variable comparisons need not be the only permissible constraints.
+Compare the states $(x_u,x_v)=(1,0)$ and $(0,1)$. Their score difference is
+\begin{equation}
+ E_{uv}(y)=h_u-h_v+
+       \sum_{w\notin\{u,v\}}(J_{uw}-J_{vw})y_w. \label{eq:exchange}
+\end{equation}
+The internal edge $uv$ cancels. Its exact minimum over all outside
+assignments is
+\begin{equation}
+ \lambda_{uv}=h_u-h_v+
+       \sum_{w\notin\{u,v\}}\min(0,J_{uw}-J_{vw}).
+                                                        \label{eq:exmin}
+\end{equation}
+
+\begin{proposition}[Unconditional exchange clause]\label{prop:exchange}
+If $\lambda_{uv}>0$, or if $\lambda_{uv}=0$ and the secondary order
+prefers state $(1,0)$ to $(0,1)$, then the binary clause
+\begin{equation}
+ \boxed{x_u\lor\neg x_v}\qquad(x_v\Rightarrow x_u) \label{eq:implication}
+\end{equation}
+can be added before branching. Any collection passing these tests with
+the common secondary order preserves $x^\star$.
+\end{proposition}
+\begin{proof}
+Every violating assignment has $(x_u,x_v)=(0,1)$. Exchanging these values
+increases $\Phi$, by~\eqref{eq:exchange}--\eqref{eq:exmin}.
+\end{proof}
+
+Identical interaction rows outside the pair reduce the test to comparing
+$h_u$ and $h_v$. More generally the field advantage need only compensate
+for the total unfavorable row discrepancy:
+\[
+ h_u-h_v\ge
+ \sum_{w\notin\{u,v\}}\max(0,J_{vw}-J_{uw}),
+\]
+with the stated tie condition. Hence exact twins are unnecessary.
+Both variables can still be individually undominated. All pair tests
+are computable in $O(n^3)$ arithmetic operations using a dense matrix.
+Variables may be complemented once before applying the test.
+
+After exposing a partial assignment $\alpha$, the same minimum test on
+the residual expression gives the guarded clause
+$\neg\alpha\lor x_u\lor\neg x_v$. This is one concrete way that branching
+on discrepancy coordinates creates new short constraints.
+
+\begin{theorem}[Matching and chain savings]\label{thm:chains}
+Suppose the valid unconditional exchange clauses contain $r$ clauses
+on pairwise disjoint variable pairs. They admit exactly
+\begin{equation}
+ 3^r2^{n-2r}=2^n(3/4)^r                         \label{eq:matching}
+\end{equation}
+assignments. Enumerating these assignments solves the original soft
+instance in this time up to polynomial factors, with polynomial space.
+
+More generally, suppose selected clauses form disjoint chains on
+$s_1,\ldots,s_q$ variables, requiring ones to precede zeros in each chain.
+Then the corresponding bound is
+\begin{equation}
+ 2^{n-\sum_i s_i}\prod_i(s_i+1)=2^{n-\Gamma},
+ \qquad \Gamma=\sum_i\bigl(s_i-\log_2(s_i+1)\bigr). \label{eq:chains}
+\end{equation}
+This too is an exact polynomial-space running-time bound.
+\end{theorem}
+\begin{proof}
+A pair has three allowed states. A chain of length $s_i$ has $s_i+1$
+allowed cut positions. Enumerate these choices and the remaining free
+bits, and score every generated assignment. There is no dead-prefix
+overhead: every generated prefix extends to a state of this relaxation.
+Its domain contains $x^\star$, even if additional valid constraints are
+ignored during generation.
+\end{proof}
+
+A linear matching gives a fixed exponential saving independent of
+clause density. A maximum matching in the certified-pair graph can be
+found in polynomial time; even a greedy maximal matching loses at most
+a factor two in matching size. Thus this is a checkable class, not a
+condition involving unknown numbers of satisfying assignments.
+Longer chains use overlap constructively: a chain on all variables
+reduces the candidate set to $n+1$ assignments.
+
+\paragraph{A dense redundant example that is resolved.}
+For even $n$, put $(x_u\lor x_v)$ and $(\neg x_u\lor\neg x_v)$ on
+every pair. If $k$ bits are one, the score is
+\[
+ \binom n2+k(n-k).
+\]
+All $\binom n{n/2}$ balanced assignments are strict single-flip local
+optima, so every choice of single-variable tie preferences retains them.
+This standard example is discussed in~\cite{Hastings}. But its exchange
+differences vanish identically. Choose a priority order preferring ones;
+the adjacent exchange clauses impose one chain, leaving $n+1$ assignments,
+and only one survives the single-variable comparisons as well.
+The redundant family therefore suggests an additional learning rule
+rather than an impossibility for the algorithmic program.
+
+The matching rule overlaps with the existing near-twin and group-count
+notes~\cite{Near,Groups}. The contribution here is its explicit encoding
+as a compatible pre-branching clause, its discrepancy-versus-field test,
+and its integration with counting. It does not subsume the group-count
+solver, whose cuts allow other forms of arbitrary internal structure.
+
+\section{General block certificates and their counting effect}
+
+Fix a block $S$, an excluded pattern $a\in\{0,1\}^S$, and a replacement
+$b\in\{0,1\}^S$. Quadraticity implies
+\begin{align}
+ F(b,y)-F(a,y)&=\kappa+\sum_{w\notin S}c_wy_w,\nonumber\\
+ \kappa&=\sum_{u\in S}h_u(b_u-a_u)
+       +\sum_{\{u,v\}\subseteq S}J_{uv}(b_ub_v-a_ua_v),\nonumber\\
+ c_w&=\sum_{u\in S}J_{uw}(b_u-a_u).              \label{eq:block}
+\end{align}
+Thus $\kappa+\sum_w\min(0,c_w)$ is an exact, polynomial-time test
+for unconditional domination by this \emph{specified} replacement.
+Strict positivity, or zero with a favorable secondary comparison,
+allows the ordinary nogood clause
+\[
+ \bigvee_{u\in S}(x_u\ne a_u).
+\]
+The comparison of the two block patterns in the secondary order is
+independent of the outside assignment. Searching over all blocks or all
+replacements is not claimed to be polynomial.
+
+For disjoint supports of widths $w_1,\ldots,w_t$, one forbidden pattern
+per support leaves exactly
+\[
+ 2^n\prod_{i=1}^t(1-2^{-w_i})
+\]
+assignments and gives an enumeration algorithm of that cost. Bounded
+width and linearly many such clauses suffice. Growing width alone gives
+no comparable constant saving from this product; overlap can help, as
+the chain example shows, but must be analyzed jointly.
+
+\section{Enumeration and Las Vegas targets}
+
+For a supplied exposed set $K$, suppose polynomial-time propagation of
+compatible constraints fixes at least $\delta n$ variables outside $K$
+on all but a $2^{-\gamma n}$ fraction of assignments to $K$ (infeasible
+assignments can be discarded). Assume $|K|\le(1-\delta)n$.
+Enumerating $K$ and then the remaining free bits costs
+\begin{equation}
+ \Ostar\left(2^{n-\delta n}+2^{n-\gamma n}\right). \label{eq:exposure}
+\end{equation}
+This conditional theorem pays for all exposed assignments. Its missing
+ingredient in a new formula class is availability of such a $K$ and the
+stated propagation bound, not the final summation.
+
+Alternatively, randomize an exact search strategy. If an independent
+attempt finishes within $B$ operations with probability at least $p>0$,
+abort unfinished attempts at $B$ and restart. Returning only after a
+complete exact search is a Las Vegas algorithm with expected time
+$O(B/p)$. In particular,
+\[
+ B=\Ostar(2^{(1-\delta)n}),\quad p\ge2^{-\eta n},\quad \eta<\delta
+ \quad\Longrightarrow\quad
+ \E T=\Ostar(2^{(1-\delta+\eta)n}).
+\]
+Polynomial space is retained if each attempt has polynomial space and
+discarded attempt data are not accumulated without a bound. Keep the
+secondary convention fixed when retaining constraints across attempts.
+
+\paragraph{What a direct random-order analysis must bound.}
+For a fixed constraint system and a monotone rejection test, assign
+variables in a uniformly random permutation. Let $q_t$ be the probability
+that a uniform assignment to its first $t$ variables passes the test.
+The expected number of passing depth-$t$ prefixes is $2^tq_t$, and the
+expected traversal cost, up to polynomial factors, is bounded by
+\[
+ 1+\sum_{t=0}^n2^tq_t.
+\]
+At depth $n$, if the test evaluates the whole constraint system,
+$2^nq_n=Z(F)$. A candidate-count theorem controls this final term.
+A direct search proof also controls earlier terms; a restart proof may
+instead establish a sufficiently frequent set of fast attempts.
+
+For the random-sign class, Theorem~\ref{thm:random} settles a strong
+counting target for the pre-branching constraints. Obtaining a Las Vegas
+enumerator with a comparable base remains open here. The earlier
+early-enumeration note~\cite{Early} proves a different, weaker-base time
+bound under almost regularity by enumerating a tractable summed
+relaxation. That theorem is not automatically upgraded to $(\sqrt2)^n$
+by the count proved above.
+
+\section{Checks and the next mathematical questions}
+
+The companion \texttt{explore\_prebranch\_constraints.py} uses integer
+scores and exact rational probabilities. Its output is
+\texttt{prebranch\_constraint\_checks.json}. All checks passed:
+\begin{itemize}
+\item 100 formulas on 4--7 variables, 37,600 exact flip identities,
+6,339 one-neighborhood implications, and preservation of the canonical
+optimum under simultaneous single-variable and exchange constraints.
+\item 12,204 exchange implications; 100 independent-center counts and
+100 matching counts; 5,364 block-minimum checks and 1,547 block nogoods.
+\item Exhaustive enumeration of 12,497 signings across eight graph/unit/tie
+models, including all $4^6$ signings of $K_4$ in three settings. Every
+fixed-assignment read-two inequality was checked using rational arithmetic.
+\item Complete-cut examples on $n=6,8,10,12$ variables: single-variable
+counts $20,70,252,924$ respectively; chain counts $7,9,11,13$;
+their conjunction has one assignment in each case.
+\end{itemize}
+These finite checks are sanity checks for the stated proofs, not
+asymptotic evidence or a substitute for them.
+
+The existing exploratory command \texttt{python3 explore\_two\_sided.py combine}
+also provides a concrete compatibility warning. On its 300 test instances,
+mixing constraints registered with a fixed root orientation and
+path-dependent strict branching constraints lost the optimum in 17 cases.
+The branching-only baseline and the variant whose branching followed the
+registered orientation lost none in that run. This experiment is not an
+implementation of the full common-order system above; it confirms that
+an unproved mixture of conventions is a real correctness risk.
+
+\newpage
+The companion script also checks
+the auxiliary identity
+\[
+ \E_a Z(F,a)=\sum_{x\text{ a weak single-flip local optimum}}2^{-z(x)},
+\]
+where $a$ is a vector of independent uniform tie preferences and $z(x)$
+counts zero-gain single flips at $x$. Each tied coordinate imposes one
+independent preferred-bit condition. This identity shows exactly what
+random tie choices can remove, and why strict local optima need other
+comparisons.
+
+The next questions are concrete:
+\begin{enumerate}
+\item For random-sign inputs, can an exposure strategy or a counted
+relaxation enumerate the pre-branching comparison solutions without
+visiting almost all dead prefixes?
+\item When exchange tests initially fail, can a small exposure set make
+a linear matching of tests succeed on enough branches, with the cost
+of the other branches explicitly included?
+\item Can persistent redundancy of the comparisons be converted into
+chains, collective block certificates, or the group-count structures of
+the earlier note, with a uniform bound on the total search cost?
+\end{enumerate}
+The local soundness rules, random-sign counting theorem, and matching/chain
+algorithms above are proved. A general availability theorem joining
+these alternatives is not claimed.
+
+\begin{thebibliography}{9}
+\bibitem{Finner} H.~Finner. A generalization of H\"older's inequality and
+some probability inequalities. \emph{Annals of Probability} 20(4),
+1893--1901, 1992. \url{https://doi.org/10.1214/aop/1176989534}.
+\bibitem{ReadK} D.~Gavinsky, S.~Lovett, M.~Saks, S.~Srinivasan.
+A tail bound for read-$k$ families of functions. 2012 preprint.
+\url{https://arxiv.org/abs/1205.1478}.
+\bibitem{Hastings} M.~B.~Hastings. Local maxima and improved exact algorithm
+for MAX-2-SAT. 2016. \url{https://arxiv.org/abs/1610.07100}.
+\bibitem{Near} \emph{Near-Twin Neighborhoods as a Structural Exit}.
+Working note, 8 October 2026. \path{max2sat_near_twin_pairs.tex}.
+\bibitem{Groups} \emph{Useful Constraints or Compression by Group Counts}.
+Working note, 10 October 2026.
+\path{max2sat_redundancy_and_group_counts.tex}.
+\bibitem{Early} \emph{Max 2-SAT by Early Constraint-Guided Enumeration}.
+Working note, 8 October 2026. \path{max2sat_early_enumeration.tex}.
+\end{thebibliography}
+\end{document}

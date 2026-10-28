@@ -1,0 +1,335 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlist{itemsep=3pt,topsep=5pt}
+\emergencystretch=2em
+\title{Lean Verification Plan for Dense Max 2-SAT}
+\author{}
+\date{23 October 2026}
+\begin{document}
+\maketitle
+
+The active manuscript is \texttt{dense\_max2sat\_arxiv.tex}. The aim is
+for every retained formal result to have a corresponding Lean proof.
+This is a long-term target, not a claim about current coverage. We keep
+executable algorithms only when they implement procedures presented in
+the paper. Supporting definitions and technical proof lemmas remain in
+Lean without requiring a numbered paper statement for each one.
+
+\section{Keep the paper and the formal artifact aligned}
+
+For each numbered result or proposed theorem, record its label, hypotheses, conclusion,
+corresponding Lean declarations, and verification status. The record is
+\texttt{lean/verification/paper-correspondence.json}. The checking script
+requires an entry for every numbered result and audits the named Lean
+declarations. It records the manuscript and source hashes. It also flags changes to a statement for renewed correspondence review.
+Mathematical correspondence still requires review,
+especially when a statement changes without changing its label.
+
+There are four statuses: checked mathematical content; checked core with
+an ordinary arithmetic-cost argument; partial mathematical verification;
+and unverified. A theorem with unfinished internal proof obligations is
+not marked complete. Published dependencies are permitted under the policy
+below, with the conditional guarantee explicitly recorded. Correctness, candidate counting, recursion-node
+bounds, arithmetic cost, and storage bounds are separate obligations.
+
+Every paper revision affecting a formalized result must update its Lean
+statement or explicitly record a remaining discrepancy. Rebuild and audit
+before reporting a new verification result. Earlier artifact archives
+remain historical snapshots; they are not additional active algorithms.
+
+\section{Completed mathematical foundation}
+
+The first milestone supplies clause scores, score-preserving unit and pair
+reductions, executable preprocessing, exact strict-improvement constraints,
+propagation, complementary cancellation, and sound summed-constraint
+rejection. It also proves guarded domination and exact output-sensitive
+enumeration of a single nonnegative rational inequality. Passing the sum
+check does not certify feasibility of a collection of inequalities.
+
+The formal input permits clause multiplicities, with distinct variables
+inside each binary clause. This covers simple original inputs and the
+repeated units created by preprocessing. Canonical-form counting facts
+needed by later distributional results must still be proved where used.
+
+\section{Completed literal-gap mathematical bounds}
+
+The paper now uses the verified fixed-preference algorithm: preprocess,
+fix preferences from the effective gaps, choose the half carrying more
+total absolute gap, branch on that half, and enumerate the suffixes
+satisfying each prefix's summed constraint. The older adaptive algorithm
+is outside the active build.
+
+The checked proof includes the common optimal assignment, the expected
+comparison statistic, the exact occurrence influence bound, a finite
+Boolean bounded-differences inequality, and the general count
+\[
+ W\le2^n\exp(-G^2/(512Q)),\qquad
+ G=\sum_i|g_i|,\quad Q=\sum_i(D_i+u_i)^2>0.
+\]
+It then establishes correctness after preprocessing and the explicit
+relative-bias search bound
+\[
+ (4+2n)2^{(1-\varepsilon^2\eta^2/(3000R))n}.
+\]
+Recursion depth, constraint sizes, and the agreement of streaming folds
+with mathematical output lists are also checked. The polynomial
+bit-overhead and space conclusion uses the paper's conventional
+implementation argument. No compiler-level or physical-memory theorem
+is claimed.
+
+The dense-gap corollary is now checked as well. The formalization defines
+simplicity using clause literal sets, so reversing a binary clause cannot
+hide a duplicate. It proves the bound $B_i\le4(n-1)+2$, preservation of
+every effective gap under preprocessing, and nonincrease of occurrence
+counts. These facts supply the hypotheses of the general counting lemma
+from the original input and yield the explicit bound
+\[
+ (4+2n)2^{(1-\varepsilon^2\eta^2/48000)n}.
+\]
+The arithmetic-cost verification boundary remains as stated above.
+
+The proposed biased-subset extension is recorded without a proof in the
+paper's appendix. It is not an established result and is outside the
+current verification milestone. Its recognition questions and concrete
+applications should not delay verification of the selected main results.
+
+\section{Random signs: correctness, conditioning, and exposure completed}
+
+The deterministic correctness milestone is complete. The formal procedure
+computes the observed support and rational degree weights from the formula,
+optimizes unit-only variables, preprocesses the core, recomputes preferences
+from residual formulas, and performs weighted prefix--suffix search.
+The earliest-optimum argument proves simultaneous survival of the necessary
+cuts. Exact rational-sum feasibility and streaming enumeration are checked.
+The final theorem returns an optimum original score and assignment, including
+for repeated clauses, empty support, and zero variables.
+
+The finite sampling models are now defined, with their symmetries and
+endpoint second moments proved. The observed-support conditioning lemma
+is checked, including the connection between sampled pair counts and the
+neighbor relation extracted from the generated formula. The complete
+exposure lemma is now checked: its auxiliary experiment has the prescribed
+joint law, the gains and residual preferences are connected to the actual
+algorithm, and the history determines the coefficients while leaving the
+required signs fresh. The conditional mean, variance, observed-degree
+bound, and later-deviation identity are formalized. The identification of
+$\Delta_t$ with the average over uniform unassigned values is checked
+separately from the expectation over random inputs.
+
+The absolute-gain and second-moment lemma is now checked, including
+the exact fourth moment, truncation, arbitrary shifts, and the
+second-moment inequality on general probability spaces. Its proof uses
+two applications of the Cauchy--Schwarz inequality, with the same bounds
+as before. The finite sampling laws are connected to probability
+measures by checked expectation identities.
+
+The conditional-range lemma is now checked on finite probability spaces,
+including adaptive interval lengths, a pathwise sum of squared lengths,
+and the independent-input bounded-differences corollary. The zero-influence
+case is included. An adaptive regression example checks that the proof
+uses the budget spent on each path, rather than separate worst-case
+bounds for all steps.
+
+The accumulated-requirement and compensation lemmas are now checked in
+full. Their proofs instantiate the entire fixed order and average over
+the base-pattern law. For requirements, the direct pointwise estimate
+$\sqrt{Y_t}\ge Y_t/(m_0\sqrt{d_t})$ replaces the variance calculation,
+while retaining the theorem's constant. The independent-edge law,
+coordinate sensitivities, and their summed budget are checked. For
+compensation, grouping by the later endpoint gives checked conditional
+exponential estimates and a total budget $m_0^2T$.
+
+The identity between the summed comparison and $A_T+Q_T$, the joint
+feasibility bound, and its transfer to the original input/assignment law
+are checked. Expected and high-probability candidate counts are also
+checked for a fixed support.
+
+The node bound for the executable weighted prefix/suffix search is now
+checked, including rejected calls and its formula-only initialization.
+Every output satisfies the comparisons on its full prefix; the converse
+is unnecessary because early pruning may remove further candidates.
+The score interpretation of the actual rational constraints, preprocessing,
+and the prescribed order are connected to the analytic count. This yields
+expected and high-probability node bounds on a fixed support whose indexed
+vertices are all active, with a fixed exponential base below two. The same
+bounds hold for the conditional retained-pair law.
+
+The arbitrary-support runtime assembly is now complete. It avoids
+reindexing: original labels are retained, inactive variables spend no
+influence, and inactive coordinates are fixed when candidates are counted.
+Deleting empty pair draws preserves the score comparisons and candidate
+count. The conditional retained-pair law, the empty-support case, the
+comparison $r\le n$, and averaging over observed supports are all checked.
+Lean proves expected nodes at most $(4+6n)2^ne^{-c_0n}$ and failure
+probability at most $3e^{-c_0n/2}$ for the node threshold
+$(4+2n)2^ne^{-c_0n/2}$. Both concrete clause models are instantiated with
+the paper's common constants. No concentration or candidate bound is
+assumed in the final results. The algorithm and theorem constants are
+unchanged; polynomial arithmetic overhead and streamed space remain
+ordinary implementation arguments.
+
+\section{Count adjustments and graph families}
+
+The count-adjustment algebra and optimum-survival arguments are now
+formalized. This includes the actual rational score gains, the diagonal
+allowances, exact counts and approximate projection tuples, preprocessing,
+and the streaming prefix/suffix enumeration. The grid construction has
+checked coverage, cardinality, and total-allowance bounds. The full
+comparison sum is identified with accumulated gap plus compensation.
+The newly stated lemma for assignments with exactly $h$ ones has direct
+formal proofs of its identity and its comparison inequality for either
+polarity, using the same count-adjusted gains.
+The analytic accumulation proof is now complete through explicit node
+bounds for both sequential comparisons and a fixed number of rounds.
+The common-gap bound uses a smooth approximation to absolute value and a
+finite-cube concentration inequality proved from the two-point entropy
+inequality. The quadratic tail follows from a random partition and the linear
+sign-sum exponential bound. Both proofs are in Lean and in the manuscript;
+no concentration theorem is assumed in the final accumulation result.
+
+The checked assembly includes the actual comparison sum, conditional block
+laws, operator-norm reductions, constant substitutions, summation over all
+guesses, and an exponential base strictly below two. Formula-level theorems
+include preservation of count interactions by preprocessing and independence
+of interaction coefficients from the guess. The main-text specialization
+also checks the two-round order, prefix size, zero first-round rows, and the
+$n+1$ count bound. Projection-grid corollaries combine the checked grid size
+and allowance bounds with the analytic theorem. The conventional polynomial
+bit-cost and space arguments are still outside the formal node-count model.
+
+The regular-graph corollary now has a complete mathematical proof and
+an explicit recursion-node bound in Lean. The proof starts from actual
+adjacency eigenvalues, retaining multiplicity, and derives the centered
+operator bound, mixing inequality, row energies, rounded-round profile,
+and comparison allowance. It also verifies the greedy independent-set
+branch, optimal unit-only completion, and their enumeration bound.
+Fixed integer degree and size thresholds combine these branches with the
+count search into one bound with a base below two, including arbitrary
+unit clauses and small inputs. No graph estimate is left as an assumed
+intermediate bound. The cited properties of Paley and Ramanujan graphs
+remain external membership facts; their constructions are not formalized.
+The separate random-sign runtime assembly is also complete.
+
+The independent-pair work now proves variance-sensitive scalar tails,
+squared-entry variance bounds, empirical-mean concentration, and
+independent-copy moments and symmetry on finite probability spaces.
+The unordered-pair sampling model is connected to the symmetric matrix,
+its exact squared-energy normalization, and each earlier-neighbor row.
+Deterministic centering identities and a union bound yield a simultaneous
+scalar event, with an instantiation for independent Bernoulli edges.
+The manuscript includes the elementary scalar proof and uses its sufficient
+constants. The subsequent matrix and probability-space steps below
+complete the independent-pair proposition.
+
+The matrix estimate is now checked conditional on the explicitly quoted
+Rademacher bound of Bandeira and van Handel and the convex upper-tail
+inequality of Ledoux. Symmetrization, sign insertion, Euclidean norm
+geometry, row and column moments, the large-density substitutions, and
+the empirical perturbation are checked. The finite-law membership proof is now complete in both centering cases:
+the summed row profile (including integer rounding), comparison allowance,
+scalar parameter substitutions, final probability $1-1/n$, and the size
+bound for count accumulation are checked. Statements for the original
+coefficients identify the sampled empirical mean exactly. Bernoulli
+instantiations cover homogeneous empirical centering and inhomogeneous
+supplied means. The final probability-space translation also covers
+independent bounded integer variables on an arbitrary probability space,
+with their original expectations and measure-theoretic variances. The
+proposition is stated for integer interactions, as in every formula model
+in the paper; an additional claim for continuously distributed real
+coefficients is outside this submission.
+For hidden communities, the search wrapper now has checked exactness for
+any total rational representation routine, including the small-input and
+zero-energy fallbacks and the zero-coefficient branch. A concrete integer
+square root computes the grid spacing; coverage, the lower cap, arbitrary-
+input grid size, and inactivity of the cap on the useful event are checked.
+The deterministic energy and cross-round profile perturbations are proved.
+The subsequent assembly also proves the zero-coefficient runtime branch,
+identifies the formula's remainder matrix, and derives the coefficient mass
+and allowance from Rayleigh quotients and explicit mean/size budgets.
+Cross-round scalar tails, total energy and symmetric matrix norm hold jointly
+with probability at least $1-1/n$ under an explicit sufficient density bound.
+The actual search consequently has a checked high-probability node bound,
+conditional on the numerical representation's stated guarantees. The only
+published-result hypotheses remain the two previously recorded estimates.
+The manuscript uses the sufficient constant $K=400\chi$.
+
+The next numerical batch verifies rational largest-entry sorting and the
+retained representation, unit directions, exact Rayleigh coefficients,
+elementary diagonal truncation, and the rank-to-Frobenius inequality.
+The explicit cutoff $n\ge5{,}120{,}000r\chi$ gives the small correction
+needed by the search analysis. All four previous approximation guarantees
+now follow from a rational orthogonal matrix with a small diagonalization
+residual. The paper presents the same elementary truncation proof; the
+algorithm and input classes are unchanged.
+
+The rational orthogonal matrix is now constructed by an executable grid
+search. Exact plane rotations, the largest-pivot energy identity, a uniform
+per-step decrease, and the finite iteration bound prove termination with
+residual at most $n^{-4}$. Bounds in the explicit formula length show that
+the grid and number of iterations are polynomial. The conventional
+bit-complexity argument is recorded in the manuscript. The actual
+formula-only search now has unconditional correctness and a checked
+high-probability node bound under explicit model, density and size
+conditions; no numerical callback or quality assumption remains.
+The hidden-community correctness lemma is consequently checked.
+
+The asymptotic parameter substitution and bounded-size running-time
+assembly are now checked. The finite-law discovery theorem fixes its
+rational algorithm parameter, density constant, multiplier, and exponential
+base before the input size and distribution are supplied. The original
+SBM specialization is also checked: independent Bernoulli edges, the actual
+graph/formula encoding, mean rank and norm, minimum and maximum block
+variances, and units depending arbitrarily on the sampled graph. This
+closes the mathematical node bound for the main SBM theorem, conditional
+on the same two recorded published estimates. Bit-operation overhead and
+polynomial space retain the conventional paper argument.
+
+The probability-space translation is now checked. Almost-sure boundedness
+of integer coefficients yields a finite common alphabet. Encoding them
+preserves their joint independent law, all event probabilities, moments,
+and variance. Both membership alternatives and the complete discovery
+family theorem apply on the original probability space. The discovery
+theorem constructs a measurable event depending only on the binary
+coefficients; on this event its node bound holds for every formula with
+those interactions, including arbitrary subsequently chosen units.
+
+Every numbered proved statement now has checked mathematical content;
+there are no partially formalized numbered results. The independent-pair
+proposition has been scoped explicitly to integer interactions, without
+changing any Max 2-SAT or Max Cut input family. The only unverified numbered
+statement is the deliberately unproved biased-subset research target.
+Polynomial bit-operation overhead and space remain conventional paper
+arguments, and the two published estimates remain explicit hypotheses.
+The final audit and correspondence register document these boundaries.
+
+\section{Trust and scope}
+
+We formally verify our contributions and our applications of established
+results, rather than undertaking to formalize every cited theorem's proof.
+For each external result, record the exact published statement, source,
+theorem number or page, and any rescaling or specialization. Check all
+hypotheses and deductions in our application. The corresponding Lean
+statement is an explicit hypothesis, never an unlabelled assumption or a
+claim that the external theorem has itself been formally proved.
+Verification is conditional on these named published results. The register
+\texttt{lean/verification/external-results.json} distinguishes them from
+unfinished lemmas specific to our paper; an unfinished internal lemma may
+not be relabelled as an external result.
+
+
+The project pins Lean and mathlib versions. The build rejects proof
+placeholders, and the transitive axiom audit permits only Lean's standard
+\texttt{propext}, \texttt{Classical.choice}, and \texttt{Quot.sound}.
+Executable examples supplement universally quantified proofs.
+
+TLA+ is not needed for the current finite combinatorial and analytic
+arguments. It may later help investigate operational invariants, but
+finite model checking would not replace the arbitrary-size correctness
+and asymptotic proofs. We should finish paper-aligned Lean targets before
+starting a second verification framework.
+\end{document}

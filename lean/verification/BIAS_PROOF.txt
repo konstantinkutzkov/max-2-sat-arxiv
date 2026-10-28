@@ -1,0 +1,206 @@
+Literal-bias milestone: proof guide and scope
+============================================
+
+The active algorithm is Max2SAT.Bias.solveBiasPreprocessed in
+Bias/Complexity.lean. It implements the fixed-preference prefix/suffix
+algorithm now presented in Section sec:bias of dense_max2sat_arxiv.tex.
+The superseded adaptive implementation is archived, outside the build.
+The numbered-result correspondence is paper-correspondence.json.
+
+INPUT AND PARAMETERS
+
+F0 is the score-preserving preprocessing of the input F. For variable i,
+D_i counts binary occurrences, u_i counts unit occurrences, and B_i=D_i+u_i.
+The effective signed gap is
+
+  g_i = d2(i)-d2(not i) + 2(d1(i)-d1(not i)).
+
+Assume epsilon, eta in (0,1], R >= 1, and a set S with |S| >= eta*n,
+|g_i| >= epsilon*D_i on S. Define d by sum_{i in S} D_i = |S|*d.
+Require d >= 1 and sum_i B_i^2 <= R*n*d^2. These are the assumptions of
+Theorem thm:bias. The formalization also allows repeated clauses, as long
+as a binary clause has two different variables. The node theorem is for
+n > 0; the executable solver and its correctness theorem also cover n=0.
+
+THE PAPER'S ALGORITHM
+
+1. Preprocess F, retaining its satisfied-clause offset.
+2. Prefer the positive value of i when g_i >= 0, and the negative value
+   otherwise. These preferences never change during the search.
+3. Divide the variable labels into halves, of sizes floor(n/2) and
+   ceil(n/2). Let P be the half with the larger sum of |g_i|. Ties choose
+   the second half. This is computable directly from F0; S and the real
+   parameters epsilon, eta, R and d are not algorithm inputs.
+4. Branch over assignments to P in increasing variable order. At each
+   completed prefix, collect the usual strict-improvement cut for each
+   variable set against its preferred polarity. Sum these cuts.
+5. Enumerate all suffix assignments satisfying this single sum. At each
+   suffix node, substitute the partial assignment, cancel complementary
+   occurrences, and reject exactly when the remaining bound is negative.
+6. Evaluate the completed assignments and retain a best one. The streaming
+   implementation keeps no list of outputs or completed prefixes.
+
+The sum can admit assignments violating individual cuts. This relaxation
+is intentional and preserves correctness. Adding the individual checks is
+not needed for the new bound. The normalization routine is the same
+verified occurrence-count cancellation used in the common checker.
+
+WHY AN OPTIMUM SURVIVES
+
+Among all maximum-score assignments, choose one with the most preferred
+bits. If a nonpreferred bit could be changed to preferred without reducing
+the score, the change would either improve the score or break the tie in
+its favor. Both contradict its choice. Thus every relevant strict cut is
+satisfied by this common optimum, and so is their sum. This argument
+establishes simultaneous compatibility without assuming that arbitrary
+redirected assignments satisfy older cuts.
+
+Lean declarations: exists_optimal_cuts, exists_optimal_admissible,
+Hybrid.solve_correct, solveBiasPreprocessed_correct.
+
+THE CONCENTRATION ARGUMENT
+
+For a full assignment x, let
+
+  L_P(x) = sum_{i in P} [score(x[i := preferred_i])-score(x)].
+
+A preferred bit contributes zero. A nonpreferred bit contributes exactly
+the left-hand side minus the bound of its cut, minus one. Therefore any
+assignment admitted by the summed cuts has L_P(x) <= 0.
+
+Under a uniformly random full assignment, the mean of the i-th summand is
+|g_i|/4. The chosen half carries at least half the total gap, so
+
+  E[L_P] >= epsilon*eta*n*d/8.
+
+Changing bit w changes its own comparison, if present, by at most B_w.
+Its effect on every other comparison is at most the number of occurrences
+of w in the corresponding cut. Summing over all comparison variables,
+that number is exactly D_w. Hence changing w changes L_P by at most 2B_w.
+No disjointness or probabilistic independence between neighborhoods is
+assumed. This identity handles all their overlaps.
+
+A finite Boolean-cube bounded-differences inequality is proved in Lean,
+including its exponential-moment induction and Chernoff argument. With
+sum_w (2B_w)^2 <= 4R*n*d^2, it gives
+
+  Pr[L_P <= 0] <= exp(-epsilon^2*eta^2*n/(512R)).
+
+The probability is exactly a count divided by 2^n. In particular, the
+number N of complete assignments emitted by the prefix/suffix algorithm
+is at most 2^n times this probability.
+
+More generally, with G=sum_i |g_i| and Q=sum_i B_i^2 > 0, the same
+argument yields W <= 2^n exp(-G^2/(512Q)). This is exactly the paper's
+Lemma lem:bias_count, verified as gap_mass_output_count. The relative-bias
+assumptions give G >= epsilon*eta*n*d and Q <= R*n*d^2.
+
+Lean declarations: gap_mass_probability, gap_mass_output_count, column_count, mean_initial_benefit, statistic_bounded,
+cuts_surplus, admissible_statistic, FairCoin.mgf_bound,
+FairCoin.lower_tail, relative_bias_probability, Hybrid.output_count.
+
+WHY FEW OUTPUTS REALLY GIVE FAST ENUMERATION
+
+For one occurrence-count constraint, complementary cancellation computes
+its exact minimum. Thus a passing suffix node always has a satisfying
+completion. This property is proved for the executable restriction and
+cancellation routines, not assumed as an oracle. The suffix enumerator
+emits every satisfying completion once and visits at most 1+2kN nodes,
+including rejected nodes, when k variables remain and N outputs exist.
+
+Combining all prefixes gives the actual recursion count
+
+  nodes <= 2^(|P|+1)-1 + 2nN.
+
+Since |P| <= ceil(n/2), the full instantiated bound is
+
+  nodes <= (4+2n) exp((log 2-epsilon^2*eta^2/(512R))*n)
+        <= (4+2n) 2^((1-epsilon^2*eta^2/(3000R))*n).
+
+The base 2^(1-epsilon^2*eta^2/(3000R)) is formally proved less than 2.
+The finite bound, including the leading polynomial, is more precise than
+an O* statement. No assumed concentration estimate, enumeration bound,
+cut soundness condition, or solver optimality occurs among its hypotheses.
+
+Lean declarations: Single.feasible_iff, Single.mem_enumerate,
+Single.nodes_bound, Hybrid.mem_outputs, Hybrid.output_count,
+Hybrid.nodeCount_bound, relative_bias_nodes, relative_bias_paper_bound,
+exponential_base_lt_two, relative_bias_preprocessed.
+
+SPACE, ARITHMETIC, AND THE VERIFICATION BOUNDARY
+
+The following representation bounds are kernel checked:
+
+- The search recursion has at most n+1 levels.
+- A pruning cut has at most m occurrences and bound magnitude at most m+1.
+- Its accumulated sum has at most nm occurrences and bound magnitude at
+  most n(m+1).
+- Substitution and cancellation do not increase the occurrence list; the
+  normalized restricted bound has magnitude at most the original bound
+  magnitude plus twice the original occurrence count.
+- The streaming folds equal folds over the mathematical output lists.
+
+These bounds give the ordinary polynomial-space implementation: the
+recursion stores partial assignments, polynomial-sized constraints and
+one incumbent. Cancellation has at most nm recursive steps, and its
+list scans take polynomial work. All stored integer magnitudes are
+polynomial in n and m, so their binary encodings have polynomial length.
+Every search node takes polynomial time. Preprocessing also performs
+only polynomially many scans/reductions. Thus the verified exponential
+node bound yields the stated O*(c^n) time and polynomial space in the
+usual algorithmic model.
+
+The step from these structural bounds to a bit-operation or physical
+memory bound for the compiled Lean executable is a conventional
+complexity argument, not a formal compiler or machine-cost verification.
+In particular, recursion-depth statements do not claim constant-size
+frames. The proof explicitly bounds the sizes of their constraints.
+Random-formula, spectral, and SBM results are outside this literal-bias milestone.
+The subsequently verified deterministic random-formula correctness is described
+separately in RANDOM_CORRECTNESS.txt; its probabilistic runtime remains unverified.
+The dense-gap corollary is also checked as described below. The proposed
+biased-subset extension in the appendix remains unproved and unverified.
+
+DENSE GAPS ON THE ORIGINAL SIMPLE INPUT
+
+Simple F requires wellFormed F and no duplicates in the list of clause
+literal sets. Thus (a or b) and (b or a) are the same logical clause.
+The incidence proof counts at most four sign patterns for each other
+variable, plus two units: B_i <= 4(n-1)+2 <= 4n.
+
+PreprocessStats proves that no preprocessing rule increases any B_i.
+For gaps, the signed mean gain from forcing the positive value is g_i/4.
+Equivalent score functions up to an additive constant have identical
+such gains, hence identical gaps. The already verified score identity
+therefore proves that preprocessing preserves every g_i.
+
+If at least eta*n original variables satisfy |g_i| >= epsilon*n, these
+facts give G >= epsilon*eta*n^2 and Q <= 16n^3 in the reduced formula.
+For n>0 the positive gap mass implies Q>0. The existing general count
+then yields
+
+  W <= 2^n exp(-epsilon^2*eta^2*n/8192).
+
+The same prefix/suffix node accounting gives
+
+  nodes <= (4+2n) exp((log 2-epsilon^2*eta^2/8192)*n)
+        <= (4+2n) 2^((1-epsilon^2*eta^2/48000)*n).
+
+The final theorem includes optimality for the original formula and a
+strictly sub-2 exponential base. Neither a postpreprocessing bias
+hypothesis nor a degree-count bound is left as an assumed premise.
+The subset and real parameters are proof witnesses, not solver inputs.
+The arithmetic/space verification boundary is unchanged.
+
+Lean declarations: equivalent_gap, preprocess_gap, preprocess_occurrences,
+simple_occurrences, dense_total_gap, dense_occurrence_squares,
+dense_gap_output_count, dense_gap_nodes, dense_gap_preprocessed,
+dense_gap_base_lt_two.
+
+TRUST AND REPRODUCTION
+
+Run python3 verify.py in lean/. It builds all modules, checks examples,
+audits theorem axioms and pinned dependency revisions, and records
+source hashes. Proofs use no placeholders, custom axioms, native_decide,
+or external numerical certificates. The only permitted axioms are
+Lean's standard propext, Classical.choice, and Quot.sound.

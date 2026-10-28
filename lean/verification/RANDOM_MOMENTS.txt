@@ -1,0 +1,78 @@
+Random-input moment estimates: scope and correspondence
+======================================================
+
+Completed paper result
+----------------------
+lem:random_moments (Absolute gains and second moments).
+
+1. Independent fair signs are the existing finite product law fairBits.
+   The coefficients a_i are arbitrary real numbers, on any finite index
+   type. FourthMoment.signed_sum_fourth proves the exact identity
+
+     E Z^4 = 3 (sum a_i^2)^2 - 2 sum a_i^4,
+
+   equivalent to the paper's diagonal-plus-pair expansion. Its proof
+   averages a fresh coordinate and inducts on a finite set. The existing
+   signed_sum_second supplies E Z^2 = sum a_i^2. Empty index sets and zero
+   coefficients are included.
+
+2. MomentBounds.moment_interpolation proves, for V >= 0 with finite fourth
+   moment on a finite measure space,
+
+     (E V^2)^3 <= (E V)^2 E V^4.
+
+   It uses Cauchy--Schwarz for sqrt(V), V sqrt(V), then for V, V^2.
+   All integrability requirements are derived from the finite fourth
+   moment. The zero-second-moment case is handled separately. The paper's
+   proof was rewritten to use these same two inequalities; its statement,
+   constants, and algorithm are unchanged.
+
+3. signed_sum_absolute gives E|Z| >= sqrt(Y/3). truncation_loss bounds
+   the amount removed by a cap K > 0. signed_sum_symmetric proves the
+   whole signed sum is invariant in law under negation, for an arbitrary
+   test function. shifted_truncation supplies the pointwise inequality.
+   truncated_absolute_gain combines these facts to give precisely
+
+     E min(|b+Z|, K) >= (1/2) (sqrt(Y/3) - Y/(4K))
+
+   for every real shift b and every K > 0. No restriction on b or a
+   relationship between K and Y is imposed.
+
+4. MomentBounds.integral_sqrt_lower_bound proves the second assertion on
+   an arbitrary probability space, not just a finite sample space. Its
+   assumptions are almost-everywhere nonnegativity, measurability,
+   integrability of U^2, and E U > 0. Its conclusion uses real powers
+   3/2 and 1/2 exactly as in the paper. The proof establishes the positive
+   denominator before division. FiniteLaw.sqrt_lower_bound is its finite
+   specialization.
+
+5. MeasureBridge constructs an actual probability measure from Law.mass.
+   integral_eq_expect proves equality with the existing finite expectation.
+   Thus the general analytic statements apply to the same finite laws
+   already used for input sampling and conditional exposure. No different
+   distribution or unproved expectation identity is introduced.
+
+Subsequent concentration work
+-----------------------------
+The one-step interval estimates from this milestone are now used in the
+complete finite-space sequential and bounded-differences proofs. The
+current status and exact correspondence are in RANDOM_CONCENTRATION.txt.
+The accumulated-requirement and compensation lemmas are now checked in
+full, along with joint feasibility and fixed-support candidate counts;
+see RANDOM_ACCUMULATION.txt. The final running-time assembly remains partial.
+
+Regression cases and trust
+--------------------------
+ProbabilityExamples checks a two-sign exact fourth moment, an empty
+signed sum, a shifted and truncated single sign, equality in the moment
+interpolation with an atom at zero, and an interval bound with an
+out-of-range zero-mass outcome. These complement universal proofs.
+
+Audit.lean includes the public declarations above and audits transitive
+axioms. The build excludes proof placeholders, custom axioms and native
+evaluation proofs. Only propext, Classical.choice and Quot.sound are
+allowed. The moment statement fingerprint remains unchanged. The later
+concentration batch explicitly restricts lem:random_ranges to finite
+probability spaces and records that separate statement change.
+The correspondence record is a mathematical translation guide, not an
+independent certificate that the prose and Lean statements agree.

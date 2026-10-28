@@ -1,0 +1,176 @@
+COUNT AND PROJECTION ACCUMULATION: COMPLETED ANALYTIC BATCH
+=========================================================
+
+Current scope
+-------------
+Both concentration inputs of the preceding COUNT_ROUNDS batch are now proved,
+not assumed. The proof continues through the paper's norm reductions, parameter
+substitutions, actual passing events, and actual recursion nodes across all
+count or projection guesses. The paper contains the simpler proofs and revised
+explicit constants. Algorithms and input families are unchanged.
+
+lem:counts-concentration and lem:counts-profile are checked. res:counts,
+lem:count_accumulation, and cor:spectral are checked_core: the formalization
+proves correctness and explicit recursion-node bounds for the implemented
+rational comparison/enumeration procedures. Polynomial arithmetic overhead,
+streamed storage, and bit-complexity remain the ordinary paper argument, not
+compiler-level formal cost or memory proofs. The older conditional results
+remain useful modular lemmas; their assumptions are discharged by the new ones.
+
+1. Finite-cube concentration and common gaps
+-------------------------------------------
+CubeEntropy proves the two-point entropy inequality using log(t)<=t-1. Its
+induction uses the exact entropy decomposition and the reverse Euclidean
+triangle inequality for the root mean square. CubeMGF applies this to exp(tf/2)
+and uses flip invariance of the uniform finite law. Herbst proves the
+finite-sum differentiation, differential inequality, limit at zero, MGF bound,
+and exponential Markov step. The resulting theorem is
+
+  if sum_i (f(x)-f(flip_i x))^2 <= B for every x, B>0, then
+  Pr(f < E f-a) <= exp(-a^2/(2B)), for a>0.
+
+SmoothGap defines h_delta(z)=(z^2+delta^2)/(2delta) for |z|<=delta, and |z|
+otherwise. It proves |z|<=h_delta(z)<=|z|+delta/2, the slope bounds, and the
+Taylor remainder between zero and (y-z)^2/(2delta). No differentiability
+assumption about the nonsmooth absolute value is introduced.
+
+For the small-shift rows, SmoothEnergy bounds the sum of squared changes of
+the smoothed proxy by 2*T*V+T*V^2/(2delta^2), where ||L||^2<=V. It proves both
+the gradient bound and the squared column-energy budget. Large-shift rows
+retain their constant M/4 contribution. GapConcentration combines this with
+the earlier checked first moments and deterministic clipping.
+
+ProfileParameters instantiates the result for the ACTUAL rational comparison
+averages. Its row matrix has the T prefix rows and n columns, with all columns
+outside the earlier prefix zero. This is the paper's T-by-T matrix padded
+with zero columns. EarlierInPrefix ensures the raw signed-row energy is <=T*V,
+not n*V. Each row's squared energy is at most V.
+
+Set A=g*n*sqrt(D), V=K_L*D, M=alpha*sqrt(V), delta=sqrt(V)/alpha, with
+alpha>=2 and 2*T*sqrt(V)<=alpha*A. The clipping loss is <=A/2; smoothing loses
+at most A/4; the proxy mean is >=2A. Its squared-flip budget is <=alpha^2*T*V.
+Consequently
+
+  Pr(sum min(|Delta_t|,M) < 3*A/4)
+     <= exp(-A^2/(8*alpha^2*T*V))
+     <= exp(-g^2*n/(8*tau*alpha^2*K_L)).
+
+This replaces the earlier unverified Talagrand/mean-to-median argument and its
+stronger intermediate rate. It is sufficient for the same final input classes.
+The inherited sufficient lower bound on n in the paper is retained; the new
+analytic proof does not use it. Positive prefix size is explicit in the Lean
+application theorems. It follows in the paper regime from the positive gap
+profile and n>0; an empty prefix has zero profile.
+
+2. Sufficient quadratic concentration
+--------------------------------------
+QuadraticTail proves, for any zero-diagonal real m-by-m matrix W, ||W||^2<=V,
+B>0 with m*V<=B, and e>0,
+
+  Pr(-u^T W u/4 < -e) <= exp(-e^2/(2B)).
+
+Symmetry is not needed for this estimate. A random independent partition S
+has E_S sum_{i in S,j outside S} W_ij*u_i*u_j = u^T W u/4. Jensen's inequality
+reduces the quadratic MGF to a cross-partition bilinear form. The proof checks
+the exact product law obtained by using independent bits on the two sides.
+Conditioning on one side leaves a linear sign sum whose squared coefficients
+are <=m*V. The checked linear MGF and Markov bounds finish the proof.
+
+This norm-only estimate is weaker than full Hanson-Wright but sufficient here.
+It does not assert or depend on a general Hanson-Wright theorem. B=T*K*D is a
+common positive budget for empty and nonempty round blocks. The actual block
+law, zero diagonal, restriction, conjugation, and averaging over earlier
+histories were already checked and are used by CompletePassing.
+
+3. Structural reductions, constants, and runtime
+-------------------------------------------------
+ProfileNorms proves the two row-matrix norm bounds:
+- sequential: ||L||^2 <= ||R||^2;
+- k prefix rounds: ||L||^2 <= (k-1)*||N||^2.
+The second groups output rows by round, with the first contributing zero.
+All matrices explicitly use Matrix.Norms.L2Operator, the Euclidean operator
+norm. No function/Pi norm is substituted for it.
+
+With alpha=max(2,9*tau*sqrt(K_L)/(4g)), ScalarRates proves the profile
+normalization, clipping-scale condition, and cancellation of the variance
+scale. VerifiedAccumulation proves the paper rates and per-run bounds:
+
+  Sequential: K_L=K, c_s=g^2/(64*tau*alpha^2*K),
+              Pr(pass) <= 3*exp(-c_s*n).
+
+  k rounds: K_L=(k-1)*K,
+            c_r=min(g^2/(32*tau*alpha^2*K_L),
+                    g^2/(8192*k^2*tau*K)),
+            Pr(pass) <= (3+2*k)*exp(-c_r*n).
+
+No probability or concentration estimate appears among these theorems'
+hypotheses. Their premises are the deterministic norm, row-profile, slack,
+round-order, and size conditions of the paper. All event inclusions concern
+the implemented comparisonBudget.Holds, not an unrelated surrogate.
+
+VerifiedNodes proves that FiniteLaw's fair-bit sum equals the recursive
+FairCoin expectation/probability used by the enumeration analysis, including
+n=0. It combines the per-run probabilities with the actual Runs.nodeCount:
+
+  sequential nodes <= |guesses|*(2+6*n)*b_s^n;
+  round nodes      <= |guesses|*(2+2*n*(3+2*k))*b_r^n;
+  b=exp(max(tau*log(2),log(2)-c)) < 2.
+
+Counts include failed suffix tests as well as accepted assignments. The
+conversion does not assume an oracle enumerating only feasible completions.
+
+4. Original formulas, counts, and grids
+----------------------------------------
+GuessInvariance proves that varying a count/projection guess changes only the
+constant terms of the gains. It also proves count preprocessing preserves all
+interaction coefficients. ProgramBounds therefore requires norm/profile
+hypotheses on the original formula at one reference guess, then discharges
+them for every executed run. Symmetry and zero diagonal are derived from the
+actual formula gains, not additional assumptions about the input formula.
+The formal model permits multiplicities and hence includes simple formulas.
+
+TwoRounds defines round 0 for indices below floor(n/4), round 1 for the rest
+below floor(n/2), and round 2 for the suffix. It proves order, range, prefix
+cardinality floor(n/2), T<=n/2, and zero first-round rows. count_two_round_nodes
+specializes the analytic theorem to tau=1/2, k=2, the original formula and all
+implemented count guesses, with at most n+1 runs. Its node multiplier is
+(n+1)*(2+14*n). The total row profile can omit first-round rows because they
+are zero. D may be any positive scale satisfying the hypotheses, so it includes
+the paper's D_N defined by the mean squared interaction.
+
+GridPrograms applies both accumulation variants to the constructed rational
+projection grids. It substitutes the proved (2*sqrt(n)/delta+3)^r cardinality
+and sum_i |lambda_i|*(delta*sqrt(n)+1) allowance bounds. Correctness follows
+from grid_search_correct and projectionComparisons_correct, already checked
+for the same procedures. Supplied rational representations need not be exact
+eigenvectors. Discovery of such a representation is a separate theorem.
+
+Remaining paper work
+---------------------
+Random-sign expected/high-probability node bounds are now complete, including
+original labels, conditioning, and observed-support averaging; see
+RANDOM_COMPLETE.txt. The remaining tasks are:
+
+- The regular-graph corollary is now checked_core, including its spectral
+  estimates, bounded-degree branch and full node bound; see REGULAR_GRAPHS.txt.
+  Named Paley/Ramanujan constructions and their cited eigenvalue facts remain
+  outside the formalization.
+- Independent-pair and SBM membership/concentration, bounded-rank discovery,
+  the hidden-community numerical wrapper, and fallback integration.
+- The biased-subset appendix target remains an unproved proposal.
+
+None of those are certified by completion of the deterministic accumulation
+engine. Consult paper-correspondence.json for each numbered statement.
+
+Audit and submission boundary
+------------------------------
+All new public theorems are included in Audit.lean. At this milestone the
+complete build ran ten example modules, including odd/empty prefix boundaries, smoothing endpoints,
+the zero-coordinate probability bridge, and the need for a zero diagonal in
+the quadratic estimate. The universal theorems, not these examples, supply the
+guarantees. Only propext, Classical.choice, and Quot.sound are allowed. No
+proof placeholder, custom axiom, or native-evaluation proof dependency is used.
+
+Statement/source hashes and the manuscript snapshot support independent
+correspondence review; they do not prove that the informal and formal statements
+have the same intended meaning. result.json records the exact audited sources.

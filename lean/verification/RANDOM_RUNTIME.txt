@@ -1,0 +1,155 @@
+Random-input search accounting and fixed-support runtime
+========================================================
+
+Scope
+-----
+Historical milestone report. RANDOM_COMPLETE.txt supersedes the remaining
+obligations listed below: the arbitrary-support theorems are now checked_core.
+
+This batch connects the completed random-input candidate estimates to the
+actual initialized RandomFormula search. It formalizes Step 3 of the proof
+of thm:random_main, on a fixed nonempty support whose indexed vertices are
+all active, and the corresponding step for thm:weighted. It does not yet
+complete these two arbitrary-support runtime theorems. Their status remains
+PARTIAL. The algorithm, input families, and theorem constants are unchanged.
+
+The deterministic accounting below works for every formula, including
+inactive variables. The final probabilistic specialization uses Fin n for
+the active vertices in their fixed order: here n is the paper's r. This
+distinction is the remaining assembly obligation, not a new restriction
+on the paper's claimed input families.
+
+All recursive calls and outputs
+-------------------------------
+Random.nodes mirrors the existing Random.enumerate/Random.fold recursion.
+It charges one for every invocation, including a call that immediately
+rejects its assignment. At the stopping depth it uses the previously
+verified Weighted.nodes suffix-enumeration count. Random.nodeCount applies
+the exact formula-only initialization: active variables, increasing original
+labels, original neighbor weights, fixed unit-only values, core restriction,
+preprocessing, and stopping depth ceil(r/2). Computing this initialization
+has polynomial overhead; it is not included as machine instructions in the
+recursive-call count.
+
+SearchNodes proves, for prefix length T and suffix length k,
+
+  nodes <= 2^(T+1)-1 + 2*k*(number of outputs).
+
+The outputs have no duplicates. In particular, the initialized search has
+
+  nodeCount F <= 2^(ceil(r/2)+1)-1 + 2*r*(number of outputs),
+  r = card (Random.active F).
+
+An empty active set has one terminal call and one initialized output.
+The streaming fold is already proved equivalent to folding its conceptual
+output list; the implementation does not materialize that list.
+
+Why the mathematical count is an upper bound
+--------------------------------------------
+PathBudget defines the sum of comparisons along a complete assignment's
+prefix, even if an earlier accumulated sum would have rejected that path.
+The residual formula, preferred polarity and created constraint depend only
+on values already assigned; agreement on those values is sufficient.
+output_path_budget proves that every actual output satisfies its full-prefix
+sum. There is no assertion that all assignments satisfying the final sum
+are output: early rejection may remove some of them. This implication is
+all the counting argument needs.
+
+SearchCounts defines initialized pathCandidates with the inactive coordinates
+fixed to their actual initial values. The no-duplicate and path-budget facts
+give outputs_le_candidates and nodes_le_candidates for every formula.
+expected_nodes_of_candidates is a generic finite-distribution consequence;
+its candidate-expectation assumption is discharged in FixedSupportNodes.
+
+Exact connection to score comparisons
+--------------------------------------
+ScorePaths.branch_cut_excess identifies the real value of the actual rational
+constraint's left side minus its bound with
+
+  sign(preferred polarity) * gain(original formula, variable, assignment) + 1.
+
+Residual score offsets cancel. The formula is well formed (binary clauses
+use two distinct variables); multiplicities and arbitrary unit lists are
+permitted. path_excess_score sums this identity with the actual rational
+weights. list_comparison_preprocess proves that preprocessing preserves the
+comparison statistic, including the preferred-value tie rule. The strict
+offset +1 is present throughout.
+
+CanonicalOrder proves that taking the first ceil(n/2) elements of the
+increasing Fin n list gives precisely the ordered suffixes in the analytic
+exposure. Its CanonicalPrefix condition is discharged, not assumed of the
+input distribution. It also connects full-active initialization to the
+original formula. initialized_candidate_identity proves equality between
+Random.candidateCount and the analytic RandomInput.candidateCount on this
+prefix, using the previously checked identity between observed rational
+weights and supportWeight.
+
+Fixed-support expectation and tail
+----------------------------------
+Let E be a fixed support on n>0 vertices, every vertex incident to an edge.
+The pair laws satisfy the paper's PairLaw m0 kappa hypotheses, with m0>0 and
+kappa>0. For fixed_support_search_expectation/tail, every positive-probability
+edge pattern is nonempty. Thus E is indeed the observed support and every
+variable is active. The generated formula is well formed by construction.
+Arbitrary fixed unit clauses are allowed.
+
+For c0 = runtimeConstant m0 kappa, Lean proves
+
+  E nodeCount <= 2^(ceil(n/2)+1) + 6*n*2^n*exp(-c0*n),
+
+  P(nodeCount > 2^(ceil(n/2)+1) + 2*n*2^n*exp(-c0*n/2))
+    <= 3*exp(-c0*n/2).
+
+These results apply the actual candidate expectation and tail theorems;
+they assume no concentration inequalities or candidate bounds.
+retained_support_search_expectation/tail instantiate exactly the retained
+pair law after conditioning on nonempty edge patterns. The nonemptiness
+condition is derived from that law, not assumed again of its samples.
+The earlier observed-support conditioning theorem supplies this product law;
+its full integration over changing active sets is still pending below.
+
+RuntimeRates proves c0>0 and absorbs the rounded prefix cost. With
+
+  b(c) = exp(max((log 2)/2, log 2-c)),
+
+it proves b(c)<2 for c>0, and hence
+
+  E nodeCount <= (4+6*n)*b(c0)^n,
+  P(nodeCount > (4+2*n)*b(c0/2)^n) <= 3*exp(-c0*n/2).
+
+This maximum also accounts for the prefix cost when c is large; no hidden
+assumption comparing c with log 2 is needed in the rate-conversion lemma.
+It does not improve the paper's stated constants or claim a new input class.
+
+Remaining obligations
+----------------------
+1. Reindex the active vertices of an arbitrary observed support in increasing
+   original-label order, preserving its pair distribution, unit offsets,
+   branching decisions, and initialized node count. General deterministic
+   initialization and the fixed-support statistical bound are each checked;
+   this probability/count transfer between them remains to be proved.
+2. Combine observed-support conditioning with that transfer, including the
+   empty support, compare r with the original n, and average over supports.
+3. Complete the original input-model wrappers for the expected and
+   high-probability runtime theorems. Polynomial arithmetic overhead and
+   streamed space remain the ordinary paper implementation arguments,
+   distinct from the recursive-call model and any compiler-level cost claim.
+
+Count/projection accumulation keeps its preceding checked_core status.
+The newly added lem:slice is separately checked in Counts.Slice, with direct
+proofs of both its exact gain identity and its comparison inequality for
+either polarity. It uses the existing clause-score count-adjustment identity.
+Regular-graph and SBM membership/runtime proofs, hidden-community numerical
+discovery and fallback integration, and the unproved appendix target are
+outside this batch.
+
+Audit and correspondence
+------------------------
+All new public theorems are included in Audit.lean. RuntimeExamples has
+kernel-checked empty-support and immediate-rejection boundary cases, plus
+executable evaluations on a Max-Cut pair and an early-pruning example.
+The evaluations supplement the universal proofs; they are not certificates.
+The full build, dependency audit, and source/manuscript fingerprints are in
+result.json. Only propext, Classical.choice, and Quot.sound are permitted.
+The mathematical translation between paper and Lean still requires human
+review; fingerprints and successful kernel checking do not establish it.

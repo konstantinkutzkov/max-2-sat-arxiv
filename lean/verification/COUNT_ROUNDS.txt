@@ -1,0 +1,154 @@
+HISTORICAL BATCH REPORT. The common-gap and quadratic concentration inputs,
+parameter substitutions, and count/projection node-bound assembly described
+as remaining below are now complete. See COUNT_COMPLETE.txt for current
+status, revised constants, and the precise remaining obligations. The older
+conditional lemmas remain valid dependencies of the complete proofs.
+
+COUNT AND PROJECTION GUESSING: FIXED-ROUND ANALYSIS
+=================================================
+
+Scope and correspondence
+------------------------
+This batch checks 34 supporting theorems for res:counts and its specialization
+lem:count_accumulation. It completes the conditioning and exceptional-event
+assembly for the ACTUAL summed comparison, conditional on two concentration
+estimates that remain unverified. No numbered paper result changes status.
+The algorithm, input classes, and stated theorem constants are unchanged.
+
+H_t is the implemented rational comparison expression; N_tw=(H_t).coeff w,
+cast to the reals. interactionMatrix explicitly has Matrix type, and every
+matrix norm in these modules uses Matrix.Norms.L2Operator. This is the Euclidean
+operator norm, not the default norm of a function of two indices. The restriction
+and sign-conjugation constructions also explicitly return Matrix values.
+
+The paper indexes prefix rounds 1,...,ell and assigns the suffix to ell+1.
+Lean indexes the prefix rounds 0,...,k-1 and the suffix round k; k=ell. The
+rounds are nondecreasing in the original variable order (OrderedRounds), and
+all variables have round at most k. P=roundPrefix round k is exactly the
+prefix. Empty intermediate rounds are permitted. The final passing theorem
+requires k>0 and T=|P|>0, as in the nontrivial paper regime.
+
+Actual compensation, not a replacement statistic
+-------------------------------------------------
+RoundSplit proves
+
+  compensation H P round x = Q_later(x) + sum_{j<k} Q_j(x)
+
+for the compensation already identified with the implemented comparison sum.
+The identity does not assume that creators or contributions are independent.
+LaterIncoming sums u_t*N_tw only over actual creators in strictly earlier
+rounds, where u_t=2*x_t-1. Q_later=-sum_w u_w*LaterIncoming(w)/2.
+Q_j contains all same-round interactions from actual creators in block j.
+The decomposition is exact, including the suffix contribution and both
+orientations of pairs within a block. LaterRound's first block has zero
+incoming contribution. RoundExamples includes a three-variable instance
+where Q_later=-1 and Q_0=-1 simultaneously, hence total compensation=-2.
+It also checks an empty intermediate round.
+
+Later-round concentration: a simpler proof of the same bound
+------------------------------------------------------------
+LaterRounds proves that the coefficient incoming at w is fixed by the bits
+before w, because its creators lie in strictly earlier rounds and their
+preferences depend only on rounds before them. The bits can therefore be
+exposed individually using the previously checked predictable-sign bound.
+There is no need for an additional block-valued martingale theorem.
+
+For each destination block, form the vector z whose coordinates are u_t for
+eligible earlier creators and zero elsewhere. Pathwise, sum_t z_t^2<=T.
+If ||N||^2<=V, the squared norm of that block's incoming coefficients is at
+most V*T. This remains valid when z depends on the assignment. The first
+block contributes zero, so at most k blocks contribute, including the suffix.
+Consequently the total squared coefficient budget is k*V*T, and
+
+  Pr(Q_later < -b) <= exp(-2*b^2/(k*V*T)).
+
+The manuscript now explains this individual-bit exposure. With V=K*D_N,
+this is precisely the bound used there, with no change to its constants.
+
+Conditional current-round laws and norms
+----------------------------------------
+RoundHistory proves that observing all earlier rounds fixes the entire
+preference mask in the current block. Conditional on any such history, the
+restriction of x to the current block has the JOINT fair-bit product law.
+All histories arising from an assignment have positive probability; this
+is proved from the uniform product mass. The conditional expectation and
+probability identities then average fixed-mask bounds over these histories.
+No independent-creator or independent-round-event assumption is introduced.
+
+BlockNorms proves that restricting N to a principal block, and conjugating
+that restriction by preference signs, preserve the squared norm upper bound.
+WithinRounds combines these facts with the quadratic-plus-linear expansion:
+
+  Q_j = -beta^T M beta/4 - <M*1,beta>/4,
+  M_tw=c_t*c_w*N_tw, c_t=2*p_t-1, beta_t=-c_t*u_t.
+
+For B>0 with |B_j|*V<=B, the actual linear contribution obeys
+
+  Pr(Q_linear,j < -e) <= exp(-8*e^2/B), e>0.
+
+The quadratic term is transferred to a generic uniform tail bound for fair
+signs and symmetric zero-diagonal matrices of squared norm at most V. That
+generic bound is an EXPLICIT HYPOTHESIS, not a postulate or a checked version
+of Hanson--Wright. All its structural premises for the actual current-round
+matrix are discharged. GainStructure separately proves that the original
+formula gains, exact count adjustments, and arbitrary supplied projection
+adjustments have symmetric interactions and zero diagonal. These proofs use
+the actual clause scores and the already checked gain representation.
+
+Combined passing theorem
+-------------------------
+RoundPassing.round_passing_probability assumes M,V,a>0, the norm budget above,
+nonnegative comparison allowances of total at most a, and the following two
+remaining probability inputs:
+
+  Pr(sum_{t in P} min(|Delta_t|,M) < 6*a) <= qProfile;
+
+  for every prefix block j and every symmetric zero-diagonal matrix W on
+  that block with ||W||^2<=V,
+  Pr(-beta^T W beta/4 < -a/(8*k)) <= qQuad.
+
+It proves, for the IMPLEMENTED comparisonBudget.Holds event,
+
+  Pr(pass) <= qProfile + exp(-2*a^2/(T*M^2))
+              + exp(-2*(a/4)^2/(k*V*T))
+              + k*(exp(-8*(a/(8*k))^2/(V*T)) + qQuad).
+
+The creator concentration and allowance subtraction yield S'>=a outside
+the first two events. The later contribution is >=-a/4 outside the third.
+Within-round union bounds give sum_j Q_j>=-a/4 outside the fourth. Thus the
+tested sum is at least a/2>0, so a passing assignment must belong to an
+exceptional event. No independence between these events is used.
+
+The paper substitution is a=g*n*sqrt(D_N)/8, V=K*D_N, k=ell. This gives its
+later threshold g*n*sqrt(D_N)/32 and its within-round individual threshold
+g*n*sqrt(D_N)/(64*ell). The formal theorem uses strict lower-tail events;
+the paper's non-strict upper bounds also bound these events. Using V*T in
+the linear term uniformly over blocks avoids division by an empty block's
+cardinality and is the same relaxation used in the paper's final estimate.
+The final substitution into c_* and the full runtime theorem is still work.
+
+Remaining proof obligations
+----------------------------
+1. Complete the common-gap lemma: convexity and Lipschitz bound, Talagrand
+   concentration, mean/median conversion, structural row hypotheses, and
+   final numerical estimates. Existing first moments and clipping remain
+   checked, but do not imply this concentration theorem by themselves.
+2. Prove the generic quadratic tail (Hanson--Wright, or a sufficient substitute)
+   and instantiate its constants to supply qQuad uniformly for all blocks.
+3. Substitute the paper parameters and structural hypotheses in the sequential
+   and fixed-round passing bounds; connect the resulting per-run bounds to
+   the already checked multi-run enumeration bound.
+4. Verify graph-family membership, random graph/spectral hypotheses, and the
+   hidden-community numerical wrapper, as documented in COUNT_GUESSING.txt.
+5. Finish the separate random-sign runtime assembly. This batch does not
+   discharge its executable-node or support-averaging obligations.
+
+Audit and trust
+---------------
+The full build runs nine example modules, with transitive axiom checks for
+all new public theorems. Only propext, Classical.choice, and Quot.sound are
+permitted. No new axiom, proof placeholder, or native-evaluation dependency
+is introduced. The source/statement hashes support correspondence review;
+they do not prove that the prose and Lean express the same claim. Independent
+review of that translation is still valuable. The checked node counts are
+not compiler-level bit-cost or memory certificates.

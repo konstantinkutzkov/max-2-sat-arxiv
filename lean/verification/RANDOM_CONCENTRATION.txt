@@ -1,0 +1,133 @@
+Random-input concentration: scope and paper correspondence
+==========================================================
+
+Completed paper result: lem:random_ranges
+----------------------------------------
+The paper now states this lemma on a finite probability space. Every
+sampling experiment in the paper has finitely many outcomes for fixed n.
+This explicit scope restriction changes no main theorem, input model,
+algorithm, exponent, or constant. It is not a verification claim about
+arbitrary infinite filtrations. The general-space moment result from the
+previous milestone remains unchanged.
+
+HistoryAverage defines a history as a map H from outcomes to a finite
+set. Its conditional law is the original law restricted and renormalized
+to H = h. Zero-probability classes receive an arbitrary law; every claim
+about their contents is restricted to positive probability, and their
+contribution to total expectations is zero. expect_conditional proves
+the law of total expectation. mean is the exact conditional expectation.
+
+AdaptiveRanges.Exposure records refining histories, increments known
+after each step, conditional centering, and intervals known before each
+step. Bounds are needed only on positive-mass outcomes. The public theorem
+conditional_ranges subtracts conditional means itself; centering is not
+left as a new assumption about the original X_j. It proves precisely
+
+  P(sum_j (X_j - E[X_j | H_j]) < -a) <= exp(-2 a^2 / B)
+
+from a > 0, B > 0 and a deterministic pathwise squared-width budget B.
+Lean uses zero-based steps: H_j is known before X_j, corresponding to
+H_{j-1} in the paper's one-based notation. The key exponential_budget
+lemma retains the random budget inside the exponential. It does not
+replace adaptive widths by separate worst-case bounds. No independence
+of successive increments or of the pruning constraints is assumed.
+
+BoundedDifferences proves the independent-input corollary for arbitrary
+finite coordinate laws, not only fair bits. Each coordinate has a law on
+a common finite alphabet; different possible coordinate values may be
+encoded in a common finite set. The proof inducts on the number of inputs,
+averaging the unrevealed coordinates. The exact 1/8 MGF constant and
+exp(-2 a^2 / sum c_j^2) tail are preserved. If all c_j = 0, the statistic
+is proved constant and the deviation probability is exactly zero.
+
+BitHistory connects the general history-class conditional laws to the
+existing fair-bit history laws and to the full base-pattern/endpoint-bit
+exposure experiment. This is an equality of conditional probability laws,
+not merely an informal identification of notation.
+
+Local components of lem:random_requirements (now completed)
+---------------------------------------------
+RequirementMean defines truncatedRequirement using the actual delta of
+the generated formula's residual comparison. Its nonpreferred event is
+assignment_i != decide(0 <= delta), with the same tie rule as the paper.
+The fresh assignment bit and the entire fresh sign vector have their
+proved joint product law; fair_nonpreferred_expectation contributes the
+factor 1/2 even though the preferred bit depends on that vector.
+
+conditional_truncated_requirement proves the lower bound
+  (1/4)(sqrt(Y/3) - Y/(4 cap)).
+truncated_mean_constant proves this is at least sqrt(Y)/13 when
+cap >= sqrt(Y). conditional_requirement_mean includes a nonnegative
+weight. truncated_requirement_le_full compares it to the actual full
+requirement [nonpreferred] omega (|delta| + 1).
+
+WeightBounds proves the bounds for Random.weight, the implemented
+rational 1/(Nat.sqrt(d-1)+1), not a substituted real weight. For d > 0,
+  1/(2 sqrt(d)) <= omega <= 1/sqrt(d).
+weight_squared_degree proves omega^2 d <= 1, including d = 0.
+RequirementDegree applies the earlier observed-degree variance bound to
+cap = m0 sqrt(d). normalized_requirement_mean and
+normalized_requirement_bounds prove the local conditional drift and
+0 <= X <= m0 for the actual degree and weight.
+
+RequirementTail.drift_lower_tail proves the sequential comparison of A
+with the sum of lower bounds on the conditional means. two_deviation_bound
+and summed_constraint_failure combine exceptional events by inclusion
+and a union bound, without independence assumptions.
+
+These local components are now assembled into the complete paper result.
+The prefix instantiation, mean estimate, sensitivity budget, and input-law
+transfer are proved in the accumulation milestone; see RANDOM_ACCUMULATION.txt.
+The new mean argument replaces the variance calculation without changing c1.
+
+Local components of lem:random_compensation (now completed)
+---------------------------------------------
+PredictableSigns proves concentration for past-dependent coefficients
+times fresh fair signs, with an adaptive pathwise budget. signed_sum_mgf
+proves the exponential estimate for a whole independent signed sum.
+ConditionalMGF proves sequential composition of whole-block conditional
+exponential bounds and the resulting tail estimate.
+
+CompensationRow defines comparisonMultiplier from the actual residual
+preferred value and the event of taking its nonpreferred branch.
+later_coefficient_known proves the coefficient from an earlier comparison
+is known before the later vertex is exposed. later_coefficient_bound
+proves its magnitude is at most omega_j*m0/2. The previous endpoint-bit
+exposure lemma supplies the joint law of the current theta signs, even
+though they share one assignment bit. conditional_compensation_row_mgf
+proves the entire row estimate with exponent t^2 sum_e a_e^2 / 2.
+
+The complete Q_T identity, fixed-order process, global m0^2*T budget,
+and averaging over base patterns are now proved. The paper proof now uses
+whole incoming rows, and lem:random_compensation is checked in full.
+See RANDOM_ACCUMULATION.txt for the completed application.
+
+Remaining main runtime work
+---------------------------
+thm:random_main and thm:weighted remain partial. The subsequent accumulation
+milestone checks the joint feasibility probability and expected/high-probability
+candidate counts on a fixed support. The executable node-count connection,
+initialization/active-variable accounting, and complete averaging over possible
+observed supports remain obligations. See RANDOM_ACCUMULATION.txt.
+
+Regression cases, audit, and translation review
+------------------------------------------------
+ConcentrationExamples verifies an adaptive three-bit process: the first
+bit chooses which of two later signs contributes. Every path spends
+squared-width budget 4, whereas separate worst-case widths sum to 8.
+Other cases cover a degenerate independent coordinate, zero influences,
+the rational degree-five weight, and a data-dependent preferred bit.
+These are checked proofs of examples, not random testing or replacements
+for the universal theorems.
+
+All public declarations listed in paper-correspondence.json occur in
+Audit.lean. The audit rejects nonstandard axioms, proof placeholders,
+and native-evaluation proof dependencies. Only propext, Classical.choice,
+and Quot.sound are allowed. The build and source/manuscript fingerprints
+are recorded in result.json. The concentration milestone made the finite-space scope of
+lem:random_ranges explicit and expanded its pathwise exponential proof.
+The later accumulation milestone changes proof prose only.
+
+The correspondence record describes the intended mathematical translation.
+Lean's kernel verifies the Lean statements; independent human review is
+still needed to assess whether they express the intended paper claims.

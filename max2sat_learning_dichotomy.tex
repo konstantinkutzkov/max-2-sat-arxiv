@@ -1,0 +1,991 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem*{desiredtheorem}{Desired theorem (unproved)}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\Pcal}{\mathcal P}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\title{A Learning and Coverage Dichotomy for Max 2-SAT\\
+\large Two-sided comparisons, conditional dominance, and shared constraints}
+\author{}
+\date{7 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We investigate how overlapping learned constraints might yield a
+density-independent exponential saving for Max 2-SAT. Fractional packing,
+strengthened by conditioning on shared variables, gives a computable
+completion bound compatible with branching. We prove the required
+inheritance inequalities and construct logarithmic-width clauses with
+linear joint information. Two-sided comparisons lead to an entropy
+dichotomy: nearly implied comparisons give either immediate pruning or
+information already present. Joint infeasibility certificates exploit one
+case, including balanced variables with identical comparison profiles.
+Small exact experiments show both useful pruning and substantial overhead.
+A family with almost $2^n$ strict local optima identifies a remaining
+obstruction. A precise desired frontier theorem combines certified pruning
+with structural solutions; it remains unproved. No fixed-base algorithm
+for growing density is established.
+\end{abstract}
+
+\section{What the dichotomy should accomplish}
+
+The target is a deterministic polynomial-space algorithm taking
+$\Ostar((2-\delta)^n)$ time for a fixed $\delta>0$, independently of a
+growing density bound. We use the canonical unweighted $B=1$ setting of the
+earlier notes unless stated otherwise. A bound on average clause density is
+not a bound on maximum variable degree.
+
+The useful alternatives are not merely ``large neighborhood'' and
+``dominated variable''. They are:
+\begin{enumerate}
+\item Large residual neighborhoods permit shared exposure: a small selected
+set of variables affects many targets, potentially creating useful gaps.
+\item Smaller residual neighborhoods permit learning; accumulated learned
+constraints can then be exploited through their joint restrictions.
+\end{enumerate}
+The second alternative permits learned widths tending to infinity. The
+Kulikov--Kutzkov learning method motivates this alternative~\cite{KK}.
+The present note studies the accounting and exploitation of already sound
+constraints. It does not establish a new sound rule for learning arbitrary
+clauses, nor a theorem that the useful constraint families must arise.
+
+At a node, all hard constraints must be valid for that node's search
+responsibility. Constraints justified only in one subtree must not be
+copied unconditionally into its sibling. The certificates below can ignore
+some valid constraints, but never introduce an unjustified one.
+
+\paragraph{Exposure is available.}
+For reference, suppose a neighborhood hypergraph has $n$ vertices,
+minimum edge size $s$, maximum incidence degree $d$, and $1\le k\le s$.
+There is a $k$-transversal of size at most
+\[
+ \min\left\{n,\frac n s\bigl(3k+8\ln(d+1)\bigr)\right\}.
+\]
+To prove this, select each vertex with probability
+$p=(2k+8\ln(d+1))/s$ if $p<1$, and repair deficient edges by adding at most
+$k$ vertices each. A Chernoff bound makes each edge deficient with
+probability at most $1/(d+1)$, and there are at most $nd/s$ edges.
+The displayed bound follows by expectation. If $p\ge1$, select all vertices.
+Thus in a $d$-regular graph with $d\to\infty$, $k=o(d)$ exposures per
+neighborhood cost $o(n)$ selected variables. This is an unsigned statement.
+Under uniform assignments, $t$ exposed neighbors change one target's
+effective gap by a signed sum with standard deviation $\sqrt t$, not by
+$t$ deterministically. Covering does not settle the signed analysis.
+
+\section{Exact information and two barriers}
+
+Let $R$ be the set of $r$ free variables and $\Pcal$ the active hard
+constraints. Put
+\[
+ Z(\Pcal)=\#\{x\in\{0,1\}^R:x\models\Pcal\},\qquad
+ I(\Pcal)=r-\log_2 Z(\Pcal).
+\]
+An inconsistent family has $I=+\infty$. Adding a constraint $C$ to a
+nonempty family changes the information by
+\[
+ I(\Pcal\cup\{C\})-I(\Pcal)
+ =-\log_2\Prb[C\mid\Pcal],
+\]
+where the conditional distribution is uniform on the satisfying assignments.
+The quantity is joint information, not the sum of unconditional clause
+contributions. Computing it exactly is generally difficult.
+
+\begin{proposition}[Residual-width barrier]\label{prop:width}
+For $m$ ordinary non-tautological clauses, each on distinct variables and
+with residual length at least $w$, if $m2^{-w}<1$, then
+\[
+ Z\ge2^r(1-m2^{-w}),\qquad
+ I\le-\log_2(1-m2^{-w}).
+\]
+\end{proposition}
+\begin{proof}
+A length-$\ell$ clause is false on a $2^{-\ell}$ fraction of the Boolean
+cube. Apply the union bound to all clause-violation events. Overlap and
+literal signs do not invalidate that bound.
+\end{proof}
+
+Consequently, polynomially many ordinary clauses all of length
+$\omega(\log n)$ carry $o(1)$ bits of joint information at that state.
+This does not exclude savings later, once clauses become shorter, or from
+succinct cardinality constraints representing many ordinary clauses.
+It also does not exclude logarithmic or slower-growing learned widths.
+
+\begin{proposition}[Exposure alone preserves assignment mass]
+For a fixed ordinary clause $C$ of length $\ell$, assign any $t$ of its
+variables uniformly. It remains unsatisfied with probability $2^{-t}$;
+conditional on this, its residual length is $\ell-t$. Hence its expected
+remaining violation probability is $2^{-\ell}$. More generally, for any
+fixed hard family and variable $x$,
+\[
+ Z(\Pcal)=Z(\Pcal\mid x=0)+Z(\Pcal\mid x=1).
+\]
+\end{proposition}
+
+Shortening exposes existing restrictions and can make them easier to
+detect. It does not by itself create new exact information after the cost
+of all branches is included. A running-time proof must credit new learning,
+forced assignments, stronger certificates, or cheaper solution of the
+remaining objective. In particular, analysis must account for both the
+branches satisfying a learned clause and those shortening it.
+
+\section{A fractional-packing completion certificate}
+
+For each active constraint $C_i$, let $E_i\subseteq R$ be a support on
+which it depends and let
+\[
+ p_i=2^{-|E_i|}\#\{x\in\{0,1\}^{E_i}:x\models C_i\},\qquad
+ c_i=-\log_2p_i.
+\]
+Ignore identically true constraints. An individually false constraint
+immediately refutes the node. For the remaining constraints, choose
+nonnegative weights satisfying
+\begin{equation}
+ \sum_{i:v\in E_i}w_i\le1\quad(v\in R).             \label{eq:packing}
+\end{equation}
+Define
+\begin{equation}
+ W_w=\sum_iw_ic_i,\qquad
+ U_w=2^r\prod_i p_i^{w_i}=2^{r-W_w}.                  \label{eq:bound}
+\end{equation}
+Zero weights omit their factors. A weight-one factor is allowed for an
+identically false constraint and makes $U=0$.
+
+\begin{theorem}[Completion bound and inheritance]\label{thm:packing}
+For every feasible weight vector, $Z(\Pcal)\le U_w$. If a variable is
+branched on, retaining the same weights in the two restricted children
+gives
+\begin{equation}
+ U_{w,0}+U_{w,1}\le U_w.                             \label{eq:split}
+\end{equation}
+Weights may be reoptimized in each child, provided the inherited witness
+remains an option. Newly learned constraints receive inherited weight zero.
+The same inequality then continues to hold.
+\end{theorem}
+\begin{proof}
+Let $J$ be the constraints containing the branching variable $x$.
+For $i\in J$, $p_i=(p_{i,0}+p_{i,1})/2$. Other probabilities are unchanged.
+By~\eqref{eq:packing}, $\sum_{i\in J}w_i\le1$, so the weighted geometric
+mean $g(z)=\prod_{i\in J}z_i^{w_i}$ is concave on the nonnegative orthant.
+Consequently
+\[
+ \frac12\prod_{i\in J}p_{i,0}^{w_i}
+ +\frac12\prod_{i\in J}p_{i,1}^{w_i}
+ \le\prod_{i\in J}\left(\frac{p_{i,0}+p_{i,1}}2\right)^{w_i}.
+\]
+Multiplying by $2^r$ and the unchanged factors proves~\eqref{eq:split}.
+Feasibility persists after removing an assigned variable. Repeat the
+inequality to complete assignments. Every satisfying assignment has leaf
+bound one; other assignments have a nonnegative bound. Summing proves
+$Z\le U$. Further valid restrictions and minimization over candidates
+including the inherited one can only decrease child bounds.
+\end{proof}
+
+The static bound is a product-space inequality of Finner/Shearer type;
+it is not a new probability inequality. Read-$k$ versions and their
+limitations are discussed in~\cite{GLSS}. The point here is the explicit
+branching-compatible witness and its extension to conditioning below.
+
+\paragraph{Computability.}
+For an ordinary clause of residual width $\ell$,
+$p_i=1-2^{-\ell}$. For an unweighted cardinality constraint permitting
+at most $b$ true literals among $\ell$ distinct variables,
+\[
+ p_i=2^{-\ell}\sum_{j=0}^{\min(b,\ell)}\binom\ell j,
+\]
+with $p_i=0$ if $b<0$. Numerically polynomially bounded integer-weight
+constraints can use a knapsack dynamic program. General constraints do
+not automatically have efficiently computable probabilities.
+
+For a fixed family, maximizing $W_w$ subject to~\eqref{eq:packing} is a
+linear program with coefficients $c_i$. Exact optimality is unnecessary:
+any rational feasible vector supplies a valid witness. Numerical LP
+outputs must be repaired or certified for feasibility before use.
+
+\paragraph{How much ordinary packing can certify.}
+If every variable appears in at most $D$ active supports, $w_i=1/D$ is
+feasible and gives $I\ge D^{-1}\sum_i c_i$. Here $D$ is the incidence
+degree of the \emph{learned} family; it need not equal the original graph's
+degree. This is a useful sufficient bound but can deteriorate with $D$.
+
+There is a stronger limitation on the certificate itself. If
+$c_i\le\eta|E_i|$ for every factor, then
+\begin{equation}
+ W_w\le\eta\sum_iw_i|E_i|\le\eta r.                 \label{eq:efficiency}
+\end{equation}
+For ordinary clauses all of width at least $w$, one can take
+\[
+ \eta=\frac{-\log_2(1-2^{-w})}{w}=O\!\left(\frac1{w2^w}\right).
+\]
+Thus fractional packing of long ordinary clauses alone cannot certify a
+linear information gain, regardless of how many clauses there are.
+For a cardinality constraint with allowance $\beta\ell$, $\beta<1/2$
+fixed, its information can instead be $\Theta(\ell)$. The framework
+therefore treats ordinary clauses and strong cardinality clauses differently.
+
+\section{Conditioning on shared variables}
+
+Choose a set $H\subseteq R$, with $h=|H|$. It will be called a core;
+this means only a chosen set of shared variables, not a graph separator.
+For every assignment $a\in\{0,1\}^H$, compute the residual probabilities
+$p_i(a)$ and choose weights $w_i(a)$ subject to
+\[
+ \sum_{i:v\in E_i\setminus H}w_i(a)\le1
+ \qquad(v\in R\setminus H).
+\]
+The choices may differ between core assignments. Write
+$W(a)=\sum_iw_i(a)(-\log_2p_i(a))$. A locally contradicted assignment
+has $W(a)=+\infty$. Define
+\begin{equation}
+ U_H=2^{r-h}\sum_{a\in\{0,1\}^H}2^{-W(a)},\qquad
+ I_H=r-\log_2U_H
+     =-\log_2\E_a[2^{-W(a)}].                         \label{eq:core}
+\end{equation}
+
+\begin{theorem}[Conditional certificate]\label{thm:core}
+We have $Z(\Pcal)\le U_H$. Store $H$ and its assignment-indexed weight
+vectors as the witness. Restrict that witness in each child and retain it
+among the candidates. Then
+\[
+ U_{H,0}+U_{H,1}\le U_H.
+\]
+For $h=O(\log n)$, polynomially many constraints with polynomial-time
+local counting permit polynomial-size witnesses and polynomial work per
+certificate evaluation, up to the numerical issue discussed below.
+\end{theorem}
+\begin{proof}
+Apply Theorem~\ref{thm:packing} independently under each fixed core
+assignment and sum. Branching on $x\in H$ partitions the sum exactly.
+For $x\notin H$, apply~\eqref{eq:split} separately to each summand.
+The number of summands is $2^h$. New cores and stronger weight vectors may
+be tried, while retaining the restricted old witness guarantees inheritance.
+\end{proof}
+
+Enlarging the core never worsens the best certificate: reuse each old
+weight vector in both extensions and apply the same concavity argument.
+Feasible weights can improve further because variables moved into the core
+no longer impose packing capacities.
+
+\paragraph{Numerical implementation.}
+Unlike the earlier integer weighted-sum certificate, $U_H$ need not be
+an integer. For rigorous search, compute an upper approximation
+$\widetilde U\in[U,(1+\epsilon)U]$, with exact handling of zero factors.
+Use rational feasible weights and directed error bounds for logarithms,
+exponentials, and summation. Polynomial precision suffices when the family,
+weight representations, and local probability representations have
+polynomial size. Inheritance gives
+$\widetilde U_0+\widetilde U_1\le(1+\epsilon)\widetilde U$.
+For $\epsilon=n^{-2}$, the inflation over at most $n$ branching levels is
+bounded by a constant. Cut only when the certified upper bound is less
+than one. The prototype below checks mathematical inequalities numerically;
+it does not implement directed rounding and is not a certified solver.
+
+\paragraph{Rare core assignments cannot be ignored.}
+For every $a$ with finite $W(a)$,
+\begin{equation}
+ I_H\le h+W(a).                                      \label{eq:worstcore}
+\end{equation}
+This follows by retaining only its summand in~\eqref{eq:core}.
+If $h=O(\log n)$, one core assignment with $W(a)=o(n)$ prevents this
+certificate from giving $\Omega(n)$ information. A high average of $W(a)$
+is insufficient. Such surviving branches need further learning or a
+different structural argument. This is an explicit place where the
+proposed dichotomy must continue recursively.
+
+\section{Long clauses can jointly be very strong}
+
+Let $Y=\{y_1,\ldots,y_q\}$ and $X=\{x_1,\ldots,x_t\}$.
+For each $a\in\{0,1\}^q$, let $D_a(Y)$ be the ordinary clause falsified
+exactly by the pattern $a$.
+
+\begin{proposition}[A linear-size family with logarithmic width]
+The family
+\begin{equation}
+ \Pcal=
+ \{D_a(Y):a\ne0^q\}
+ \ \cup\ 
+ \{x_i\lor y_1\lor\cdots\lor y_q:1\le i\le t\}       \label{eq:gate}
+\end{equation}
+has exactly one satisfying assignment. It has $2^q-1+t$ clauses of
+width $q$ or $q+1$. Taking $t=2^q$ gives $n=t+q$, $O(n)$ clauses,
+and every width $\Theta(\log n)$. Nevertheless its joint information is
+exactly $n$ bits.
+\end{proposition}
+\begin{proof}
+The first group forces $Y=0^q$. The second group then forces every
+$x_i=1$. Conditioning on $H=Y$ detects a false core clause on every
+nonzero pattern; at the zero pattern, disjoint unit factors on $X$ have
+weights one. Hence the conditional certificate also gives $U_H=1$.
+\end{proof}
+
+Without conditioning, all supports contain $Y$, so the packing weights
+sum to at most one. The optimal unconditioned information is only
+$-\log_2(1-2^{-q})$. This separates the conditional construction from
+ordinary fractional packing by a linear amount.
+
+A second family, containing $x_i\lor D_a(Y)$ for every $i,a$, is equivalent
+to $\bigwedge_i x_i$. Its core is free, and conditioning on $Y$ gives
+$U_H=2^q$, again exactly. Both examples are abstract hard-constraint
+families. No claim is made that the Max 2-SAT learning rules generate
+them with the required frequency or cost.
+
+\paragraph{Growing degree does not prevent the example.}
+Take disjoint copies of~\eqref{eq:gate}, each with $t=2^q$ targets.
+The learned hypergraph has maximum incidence degree $d=2t-1$, widths
+$q$ or $q+1=\Theta(\log d)$, and $O(n)$ clauses. It still has a unique
+satisfying assignment. With $q\to\infty$ this gives examples at growing
+degree, not only when the degree is linear in the total number of variables.
+The union of all local cores has size
+$nq/(t+q)=O(n\log d/d)=o(n)$, while each individual core is logarithmic.
+The example also has many low-degree target variables; no regularity claim
+is intended.
+
+\begin{proposition}[Composing disjoint local certificates]
+Suppose valid subfamilies have pairwise disjoint variable supports $B_j$.
+For each, let $U_j$ be a completion upper bound satisfying the inherited
+branching inequality, possibly obtained using its own core. Then
+\[
+ U=2^{r-|\bigcup_jB_j|}\prod_j U_j
+\]
+is a completion upper bound for their conjunction and satisfies the same
+branching inequality. Other active constraints may be ignored or used in
+additional candidate certificates.
+\end{proposition}
+\begin{proof}
+The subfamily completion counts multiply on disjoint supports. A branch
+in $B_j$ changes only its factor; an uncovered-variable branch splits its
+free factor exactly in half. Apply the local branching inequality.
+\end{proof}
+
+Thus many local cores can be used without enumerating their entire union
+at once. In the disjoint-copy example every local bound equals one, so
+their product certifies the unique global assignment with polynomial work.
+This suggests looking for a packing of useful local cores as well as one
+globally shared core. It does not require the full Max 2-SAT objective to
+decompose: the bound concerns the selected hard constraints only.
+
+At the other extreme, if every ordinary learned clause contains the same
+positive literal $z$, then at least $2^{r-1}$ assignments satisfy the whole
+family. Thus $I\le1$, however many distinct clauses accumulate.
+Branching on $z$ exposes a potentially constrained child and a child in
+which the learned family disappears. The latter child's original Max
+2-SAT objective may still be arbitrary. Clause redundancy alone therefore
+does not establish useful structure in that objective.
+
+\section{What covering and duality provide}
+
+For ordinary learned clauses, a useful core-selection objective is to meet
+selected supports $E_i$ in at least $|E_i|-b$ variables. Under any core
+assignment, each selected clause is either satisfied or becomes a clause
+of width at most $b$. This is a multicover problem with nonuniform demands.
+Signs decide which clauses survive, so a support-only objective must be
+followed by the conditional sum in~\eqref{eq:core}.
+
+The fractional-packing LP also supplies an exact, but quantitatively
+limited, covering alternative. Its dual is
+\begin{equation}
+ \min\sum_{v\in R}y_v
+ \quad\text{subject to}\quad
+ y_v\ge0,\quad \sum_{v\in E_i}y_v\ge c_i.             \label{eq:dual}
+\end{equation}
+We consider nonconstant factors with $0<p_i<1$, so their supports are
+nonempty and the usual $w_i\le1$ restrictions are redundant.
+
+\begin{proposition}[Packing or a hitting set]\label{prop:dual}
+Suppose a selected group of factors has $|E_i|\le b$ and $c_i\ge a>0$.
+Let $W^*$ be the optimal packing value for the full family. There is a set
+meeting every support in the selected group, of size at most $bW^*/a$.
+\end{proposition}
+\begin{proof}
+Take an optimal dual vector and put $H=\{v:y_v\ge a/b\}$.
+If a selected support missed $H$, its at most $b$ coordinates would
+sum to less than $a$, contradicting its dual constraint. Also
+$|H|a/b\le\sum_vy_v=W^*$.
+\end{proof}
+
+This gives a genuine packing-or-covering statement: either $W^*$ is large,
+or all selected supports meet a set bounded in terms of $W^*$.
+But it hits each support only once, and for long ordinary clauses
+$a$ can be about $2^{-b}$. Its bound then becomes too weak. It does not
+establish a logarithmic core, near-complete coverage, or a small graph
+separator. A stronger theorem must use clause provenance, repeated
+shortening, or interactions between opposite literals.
+
+\paragraph{Stronger factors.}
+The factors need not be individual clauses. Any consequence with an
+efficiently countable satisfying set may be used. Two useful choices are:
+\begin{itemize}
+\item a conjunction of constraints whose union of supports has
+$O(\log n)$ variables, counted by enumeration;
+\item a nonnegative weighted sum of cardinality inequalities, counted by
+the integer dynamic program from the earlier branching note.
+\end{itemize}
+These can be inserted as additional factors or maintained as separate
+candidate certificates. Inherited witnesses are retained in either case.
+The approaches are complementary: two opposite cardinality inequalities
+may sum to a contradiction that marginal packing misses completely.
+Conversely, resolving sign patterns through a shared core can reveal
+restrictions hidden from a single weighted-sum relaxation.
+
+\section{Two-sided comparisons and conditional dominance}
+\label{sec:comparison}
+
+The question ``does a fresh constraint add information?'' is incomplete
+if it refers only to the second child. A comparison that is redundant
+there may exclude the corresponding part of the first child.
+
+\begin{proposition}[Partition by the better value]\label{prop:partition}
+Write an assignment as $(x,y)$, let $f_b(y)=f(b,y)$, and suppose the hard
+constraint $C(y)$ does not involve $x$. Define the exact comparison
+\[
+ c_x(y)\quad\Longleftrightarrow\quad f_1(y)>f_0(y).
+\]
+With ties assigned to $x=0$,
+\[
+ \max_{x,y:C(y)} f(x,y)
+ =\max\left\{
+     \max_{y:C(y)\wedge\neg c_x(y)} f_0(y),\quad
+     \max_{y:C(y)\wedge c_x(y)} f_1(y)
+   \right\}.                                      \label{eq:partition}
+\]
+An empty maximization has value $-\infty$.
+\end{proposition}
+\begin{proof}
+For each fixed feasible $y$, the displayed partition keeps exactly the
+better of its two extensions, with the stated tie convention.
+\end{proof}
+
+Consequently, $C\Rightarrow c_x$ eliminates the entire $x=0$ child.
+If the implication holds only under a partial assignment $\alpha$,
+then $C\wedge\alpha\Rightarrow c_x$ eliminates that portion of the child.
+When the implication is only approximate, the first child needs to search
+only the exceptional set $C\wedge\neg c_x$. This gives a concrete meaning
+to exploiting constraints that are already present.
+
+For Max 2-SAT, $f_1-f_0$ is an affine function of the other Boolean
+variables, so the exact comparison is a threshold constraint. In the
+earlier notes' notation, the preferred literal has flip difference
+$L-p$: its child keeps $L\ge p$, and its opposite child keeps
+$L\le p-1$. The asymmetric weak/strict thresholds assign every tie
+to the preferred literal. A learned clause may be a weaker consequence
+of this threshold. Merely knowing that such a necessary consequence
+holds does \emph{not} prove which value is better. A sufficient improvement
+certificate can eliminate its certified region; an exact comparison gives
+the full partition~\eqref{eq:partition}.
+
+\paragraph{Feasibility and scope are part of the rule.}
+If genuine hard constraints involve $x$, put $C_b(y)=C(b,y)$.
+The correct two retained domains are
+\begin{align*}
+ &C_0(y)\wedge\bigl(\neg C_1(y)\vee f_0(y)\ge f_1(y)\bigr),\\
+ &C_1(y)\wedge\bigl(\neg C_0(y)\vee f_1(y)>f_0(y)\bigr).
+\end{align*}
+For example, $C_0\Rightarrow C_1\wedge c_x$ suffices to discard the first
+child. The implication $C\wedge(x=1)\Rightarrow c_x$ alone does not:
+it can express a relation between $x$ and its neighbors rather than
+a globally preferred value of $x$.
+
+Optimization-preserving pruning constraints need a further distinction:
+they describe the node's search responsibility, not necessarily the full
+original feasible domain. Transferring a solution to the other value of
+$x$ must respect the established search invariant, possibly because a
+dominating solution is covered elsewhere. The prototype below avoids a
+new transfer assumption: it forms the children of the existing sound
+two-sided search and only refutes conjunctions within those children.
+Likewise, a certificate available only after solving the first child
+does not retroactively remove the cost of solving it. Prospective
+comparison certificates are needed to save that work.
+
+\subsection{Disagreement mass measures both children}
+
+Let $\Omega\subseteq\{0,1\}^R$ be the nonempty current hard domain,
+with $r=|R|$, and let $A$ be uniform on $\Omega$.
+Let $b_x(y)$ be the comparison-preferred value of $x$.
+For a genuine hard domain it is feasibility-aware: choose $1$ precisely
+when $C_1(y)$ holds and either $C_0(y)$ fails or $f_1(y)>f_0(y)$.
+Otherwise choose $0$ on the projection of $\Omega$.
+For a pruning domain, use a comparison whose filtering is justified by
+the search invariant. Define
+\[
+ \beta_x=\Prb\bigl[A_x\ne b_x(A_{-x})\bigr].
+\]
+Filtering both children by this comparison leaves exactly
+$(1-\beta_x)|\Omega|$ assignments in total. Its exact information gain is
+\begin{equation}
+ g_x=-\log_2(1-\beta_x).                         \label{eq:disagreement}
+\end{equation}
+Thus a comparison can be useful even when its second-child constraint
+adds no new information there. If $C$ is independent of $x$, every
+feasible $y$ has two extensions and $\beta_x=1/2$. This does not yield
+one bit of gain at every later step: accumulated constraints can couple
+$x$ to $y$, making $\beta_x$ very small.
+
+\section{A proved near-implication entropy dichotomy}
+\label{sec:entropy}
+
+Let $h_2(q)=-q\log_2q-(1-q)\log_2(1-q)$ denote binary entropy, with
+the usual endpoint convention. The following is a counting statement;
+it does not assume that the conditional probabilities are efficiently
+computable.
+
+\begin{theorem}[Nearly fixed comparisons: pruning or existing information]
+\label{thm:entropy}
+Let $\Omega\subseteq\{0,1\}^R$ be nonempty, $A$ uniform on $\Omega$,
+and $T\subseteq R$ nonempty. For every $x\in T$, suppose there is a
+constant $a_x\in\{0,1\}$ such that
+\[
+ \Prb\bigl[b_x(A_{-x})\ne a_x\bigr]\le\eta.
+\]
+For $\varepsilon>0$, $\eta\ge0$, and
+$\eta+\varepsilon<1/2$, at least one of the following holds:
+\begin{enumerate}
+\item Some $x\in T$ has $\beta_x\ge\varepsilon$, so its two-sided
+comparison removes at least an $\varepsilon$ fraction of $\Omega$.
+\item The existing domain already satisfies
+\begin{equation}
+ \log_2|\Omega|
+ \le r-|T|\bigl(1-h_2(\eta+\varepsilon)\bigr).
+                                                        \label{eq:entropy}
+\end{equation}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+If the first alternative fails, then for every $x\in T$,
+\[
+ \{A_x\ne a_x\}\subseteq
+ \{A_x\ne b_x(A_{-x})\}\cup\{b_x(A_{-x})\ne a_x\}
+\]
+gives $\Prb[A_x\ne a_x]\le\varepsilon+\eta$.
+Subadditivity of entropy and monotonicity of $h_2$ on $[0,1/2]$ give
+\[
+ \log_2|\Omega|=H(A)
+ \le\sum_{x\in R}H(A_x)
+ \le r-|T|+|T|h_2(\eta+\varepsilon).
+\]
+\end{proof}
+
+For example, with $\eta=\varepsilon=1/8$, either one comparison removes
+at least $12.5\%$ of the current domain, or that domain already contains
+at least $0.18872|T|$ bits of information. If $|T|\ge\tau r$ for a
+fixed $\tau>0$, the second alternative is linear in $r$.
+The theorem formalizes the proposed dichotomy when many comparison
+outcomes are almost constant under the old constraints. No degree gap
+assumption is needed for the statement.
+
+There are two remaining gaps between this result and an algorithmic
+running-time bound. First, true conditional probabilities and model counts
+are not supplied by the theorem. An upper bound on the exception count
+divided by an upper bound on the total count is not, in general, an upper
+bound on the exception probability. Efficient certificates must justify
+the required implication, mass reduction, or completion bound directly.
+Second, small $\beta_x$ need not mean that $b_x$ is almost constant.
+The old constraints may already encode balanced, nonconstant response
+relations. That case is not covered by the theorem's hypothesis and can
+have very little information, as Section~\ref{sec:stable} shows.
+
+\section{Exploiting implication before opening a child}
+\label{sec:joint}
+
+\subsection{Identical comparison profiles without initial imbalance}
+
+Suppose $T$ is an independent set of variables in the interaction graph,
+$Y=R\setminus T$, and all centers $x\in T$ have the same difference
+\[
+ f(x=1,y)-f(x=0,y)=h(y),\qquad y\in\{0,1\}^Y.
+\]
+The difference is independent of the other centers because there are no
+clauses between them. Use a common tie convention. In the unconstrained
+soft optimization problem, or whenever the relevant transfers are sound,
+the partition $h(y)>0$ versus $h(y)\le0$ simultaneously determines a
+best value for every center. The optimum is attained with all centers
+equal to that common best response.
+
+After the first center's comparison is imposed, the opposite comparison
+for every later center is inconsistent. For integral $h$, the two
+inequalities $h\ge1$ and $h\le0$ sum to a contradiction. Thus joint
+constraints can force the remaining centers even if each inequality
+alone has no unit consequence and every initial literal gap is zero.
+The construction in Section~\ref{sec:experiments} demonstrates this effect.
+This is a mechanism example, not a new general algorithm for independent
+sets: a large independent set is already useful structure. Its relevance
+is that repeated comparison information can be exploited before a large
+literal imbalance appears.
+
+\subsection{A checkable joint-infeasibility certificate}
+
+After assigning a candidate value and applying the existing propagation
+rules, write the residual child constraints as
+\[
+ \sum_j c_{ij}^{z_j}\le k_i \quad (i=1,\ldots,m),
+ \qquad c_{ij}^0,c_{ij}^1\ge0.
+\]
+Here $c_{ij}^b$ is the contribution of variable $j$ to row $i$ when
+$z_j=b$; these superscripts are labels, not powers. For weights $w_i\ge0$
+define
+\begin{equation}
+ M(w)=\sum_j\min_{b\in\{0,1\}}\sum_i w_i c_{ij}^b
+                  -\sum_i w_i k_i.                    \label{eq:margin}
+\end{equation}
+
+\begin{proposition}[Joint refutation]\label{prop:refutation}
+If $M(w)>0$, the child constraint system is infeasible.
+\end{proposition}
+\begin{proof}
+Every assignment has weighted left-hand side at least
+$\sum_j\min_b\sum_iw_ic_{ij}^b$, whereas satisfying all rows would make
+it at most $\sum_iw_ik_i$.
+\end{proof}
+
+For example, refuting $C\wedge\neg c_x$ proves $C\Rightarrow c_x$.
+In the implemented search we instead test the complete, correctly scoped
+constraint system of each proposed child. One refuted child fixes the
+other value; two refuted children cut the parent. The same certificate
+can be used under partial assignments to cover portions of an exceptional
+first branch. This is the zero-completion case of the weighted-sum
+method, used prospectively for the two-sided comparison.
+
+The prototype first tests equal weights on all rows and on every pair
+of rows. If these fail, it solves the normalized linear program
+\begin{align*}
+ \text{maximize }&\sum_j t_j-\sum_iw_i k_i,\\
+ \text{subject to }&t_j\le\sum_iw_i c_{ij}^b
+                     \quad(j,\ b\in\{0,1\}),\\
+ &w_i\ge0,\qquad\sum_iw_i=1.
+\end{align*}
+A floating-point solution only proposes multipliers. They are converted
+to nonnegative rationals, and~\eqref{eq:margin} is verified exactly before
+any cut. An unverified proposal is ignored. The certificate also refutes
+the continuous box relaxation, so it is incomplete for Boolean
+infeasibility. Its use does not claim a new linear-programming duality
+principle. Polynomially many rows and polynomial certificate bit lengths
+permit polynomial verification and polynomial-size linear programs.
+
+\section{The balanced-relation obstruction}
+\label{sec:stable}
+
+The remaining case is not just ``large, balanced neighborhoods without
+new clauses.'' It can be a domain in which the comparison relations are
+already encoded, yet almost all of the exponential search space remains.
+The following example uses $B=2$, with a complementary pair of clauses
+on each edge; it is not a $B=1$ lower-bound construction.
+
+\begin{proposition}[Almost $2^r$ strict local optima]\label{prop:stable}
+For even $r$, place the two clauses
+$(x_i\vee x_j)$ and $(\neg x_i\vee\neg x_j)$ on every pair $i<j$.
+There are exactly $\binom r{r/2}=\Theta(2^r/\sqrt r)$ strict
+one-variable local maxima, all globally optimal. On their domain every
+$\beta_x$ is zero and every variable has marginal $1/2$.
+\end{proposition}
+\begin{proof}
+If $k$ variables are one, the number of satisfied clauses is
+\[
+ f(x)=\binom r2+k(r-k).
+\]
+It is maximized at $k=r/2$. Flipping any one variable there decreases
+the objective by one. At any other cardinality, a flip toward $r/2$
+increases it. Hence the strict local maxima are precisely the balanced
+layer. Each coordinate is balanced on that layer by complementation,
+and no assignment disagrees with its unconstrained best response.
+\end{proof}
+
+Consequently, retaining all assignments satisfying every one-variable
+best-response relation can leave information only
+$r-\log_2\binom r{r/2}=\tfrac12\log_2 r+O(1)$.
+This also gives a growing-degree example: for odd $d\to\infty$ with
+$d+1$ dividing $r$, take disjoint copies of $K_{d+1}$ with the same
+encoding. Interaction degree is $d$, binary clause density is $d$, and
+the number of surviving strict local maxima is
+\[
+ \binom{d+1}{(d+1)/2}^{\,r/(d+1)}
+   =2^{\,r-\Theta(r\log d/d)}.
+\]
+Thus pure elimination of assignments that fail a one-variable local
+optimality test cannot by itself guarantee a fixed exponential saving
+for growing degree. This is not a lower bound on branching algorithms:
+the example is easy to optimize by the aggregate cardinality $k$, and
+its components are explicit. It explains why the desired theorem must
+permit structural solutions, aggregation, or additional symmetry-breaking
+rules. A small separator is one possible form of structure, not a
+necessary conclusion of redundant comparisons.
+
+\section{A concrete strategy and the desired global theorem}
+
+A possible implementation maintains the original formula, valid active
+learned constraints, and the best inherited completion witness.
+For candidate branching variables:
+\begin{enumerate}
+\item Form both children with the established learning and propagation
+rules, preserving their scope and tie-breaking conventions.
+\item Test their joint constraints for certified infeasibility as in
+Section~\ref{sec:joint}, before exploring either subtree.
+\item Evaluate the inherited witness, weighted-sum candidates, fractional
+packings, and a polynomial-size list of cores of size at most
+$h=c\log_2 n$ for fixed $c$.
+\item Select the variable minimizing $U_0+U_1$, or maximizing
+$\log_2 U-\log_2(U_0+U_1)$.
+\end{enumerate}
+Candidate cores can come from high incidence, the dual weights in
+\eqref{eq:dual}, or a greedy multicover routine aimed at short residual
+clauses. Greedily extending a core by trying each next variable is
+polynomial for fixed $c$, because each trial evaluates at most $2^h$
+assignments. Searching all $n^h$ cores would not be polynomial.
+
+\paragraph{Why this is a running-time measure, not only a model count.}
+For exact witnesses, every kept node has $U\ge1$, and total child mass
+is at most parent mass. A subtree rooted at mass $U$ has at most
+$O(nU)$ kept nodes under inherited certificates. Discarded children and
+polynomial lookahead add only polynomial work. The relative-rounding
+implementation changes this by a bounded multiplicative factor.
+
+At an unconstrained root $U=2^n$, so this observation alone gives no
+improved base. Let $G_t$ be accumulated certified log-decrease under
+the normalized walk taking child $i$ with probability
+$U_i/(U_0+U_1)$. As proved in the earlier branching note~\cite{Frontier},
+a sufficient condition is, for fixed $\alpha,\gamma,\xi>0$,
+\[
+ \Prb\left[G_{\lfloor(1-\alpha)n\rfloor}<\gamma n\right]
+ \le2^{-\xi n}.
+\]
+It yields $\Ostar(2^{(1-\min\{\alpha,\gamma,\xi\})n})$ time.
+The conditional packing certificates can be used in that theorem just
+like the weighted-sum certificates. The missing condition is global
+availability of enough progress, not the validity of the local measure.
+
+\subsection{Desired theorem: amortized dominance or structure}
+
+The local results suggest three sources of progress: fresh comparisons
+remove appreciable mass; old constraints certify that the mass is already
+small; or balanced response relations permit a cheaper structural
+solution. Theorem~\ref{thm:entropy} proves a restricted counting version
+of the first two alternatives. Proposition~\ref{prop:stable} shows why
+they cannot replace the third in a universal statement.
+
+Here is a quantitative target that accounts for all branches. It is
+intentionally called a \emph{desired theorem}, rather than a conjecture
+already supported in its full generality. An algorithm realizing its
+conditions is still missing.
+
+\begin{desiredtheorem}
+There are constants $\alpha,\gamma\in(0,1)$, a density bound
+$\rho(n)\to\infty$, and a deterministic polynomial-space comparison-and-learning
+algorithm for canonical unweighted Max 2-SAT of density at most $\rho(n)$
+with the following property. Count binary branching decisions from the
+root, and stop the initial search at depth
+$t_0=\lfloor(1-\alpha)n\rfloor$, or earlier when a node can be discharged
+by a certified structural routine. The initial search uses polynomial
+work per node, and its boundary consists of:
+\begin{enumerate}
+\item live nodes $v\in\mathcal F$ with inherited completion bounds $U_v$
+that support a continuation of cost $\Ostar(U_v)$;
+\item terminal nodes $v\in\mathcal S$ with valid solution routines of
+cost $\Ostar(B_v)$ and polynomial space.
+\end{enumerate}
+The routines and certificates preserve an optimum, have polynomial-size
+representations, and satisfy the global frontier budget
+\begin{equation}
+ \sum_{v\in\mathcal F} U_v+\sum_{v\in\mathcal S} B_v
+       \le 2^{(1-\gamma)n}.                         \label{eq:desired}
+\end{equation}
+Polynomial factors in this budget may be absorbed into $\Ostar$.
+The constants are independent of $n$ and of the allowed growing density.
+The initial target may restrict to $B=1$; the stronger target allows
+$B=2$, with the ultimate density range $\rho(n)=\Theta(n)$.
+\end{desiredtheorem}
+
+A refuted terminal has $B_v=0$, and an ordinary evaluated leaf can have
+$B_v=1$. A structural terminal's $B_v$ bounds its \emph{solution cost},
+not its number of feasible assignments. This distinction is essential:
+the balanced clique layer has almost $2^r$ assignments but admits a
+polynomial-time solution. A demand that every terminal have a small
+completion count would rule out exactly the useful structural exits.
+
+\begin{proposition}[Consequence of the desired budget]
+If the desired theorem holds, then the algorithm runs in
+\[
+ \Ostar\bigl(2^{(1-\kappa)n}\bigr)
+   =\Ostar\bigl((2-\delta)^n\bigr),\qquad
+ \kappa=\min\{\alpha,\gamma\},\quad
+ \delta=2-2^{1-\kappa}>0,
+\]
+using polynomial space.
+\end{proposition}
+\begin{proof}
+There are at most $O(2^{t_0})$ binary prefixes. Forced assignments and
+polynomial local processing add only a polynomial factor. The total
+continuation and terminal work is bounded by~\eqref{eq:desired}.
+Depth-first traversal, polynomial-size active certificates, and the
+assumed polynomial-space terminal routines give the space bound.
+\end{proof}
+
+The missing assertion is availability of this budget on states reached
+by a specified sound learning algorithm. No uniform one-step dichotomy
+for arbitrary hard constraints is claimed. A proof must exploit clause
+provenance and the residual objective, account for exceptional core
+assignments in~\eqref{eq:worstcore}, and pay for all children. The earlier
+normalized-walk condition is one route for the completion-bound part;
+it must be supplemented by structural exits when local comparisons
+saturate. Neither the entropy theorem nor the experiments establish
+these global requirements.
+
+\section{Checks and their limits}
+\label{sec:experiments}
+
+\subsection{Completion certificates and shared cores}
+
+The companion experiment uses exact Boolean enumeration for reference
+counts, exact rational checks of packing feasibility, and floating-point
+certificate evaluation with tolerance $10^{-7}$. It does not implement
+the interval-arithmetic variant described above.
+
+\begin{itemize}
+\item On 250 random systems of ordinary/cardinality constraints on
+3--10 variables, every certificate upper-bounded the exact count.
+All 1,368 inherited branching checks, 250 added-constraint checks, and
+223 core-extension checks passed. The largest positive numerical excess
+in a branching inequality was $5.7\cdot10^{-13}$.
+\item For the construction~\eqref{eq:gate} with $q=4,t=12$, there are
+16 variables and 27 clauses of width 4 or 5. The exact count is one.
+The certificate progresses as follows:
+\end{itemize}
+\begin{center}
+\begin{tabular}{rrr}
+\toprule
+Core size & Completion upper bound & Certified bits\\
+\midrule
+0 & 61,440 & 0.093\\
+1 & 57,344 & 0.193\\
+2 & 49,152 & 0.415\\
+3 & 32,768 & 1.000\\
+4 & 1 & 16.000\\
+\bottomrule
+\end{tabular}
+\end{center}
+This illustrates a threshold effect: most of the benefit appears only
+when the entire shared core is conditioned on.
+
+\begin{itemize}
+\item The all-patterns construction with the same $q,t$ has 192
+width-5 clauses; conditioning on its four core variables gives the exact
+count 16.
+\item For $\sum_{j=1}^6x_j\le2$ and
+$\sum_{j=1}^6(1-x_j)\le2$, unconditioned packing gives 22 completions,
+whereas their sum refutes the system immediately.
+\item We sampled 48 residual states from 12 random canonical Max 2-SAT
+formulas on 14 variables, with edge probability $0.85$ and independent
+balanced signs. States had 4--10 free variables and at least two active
+nonvacuous pruning constraints, after domination and propagation.
+Conditioning on the two most frequent variables improved packing in
+24 states. It beat the earlier heuristic weighted-sum certificate in
+4 states; the sum certificate was better in 34 states, with 10 ties.
+All bounds remained above the exact intersection count.
+\end{itemize}
+
+These first experiments compare certificates, not whole-search runtime.
+They support keeping both certificate families, without establishing
+that logarithmic cores suffice in the worst case.
+
+\subsection{Two-sided search with joint refutations}
+
+Code and results are in
+{\small\nolinkurl{explore_conditional_dominance.py}} and
+{\small\nolinkurl{conditional_dominance_checks.json}}. The experiment compares the established
+two-sided branching search, with domination and propagation, against
+the same search with the joint-refutation test from
+Section~\ref{sec:joint}. Both use the same variable order within each
+comparison. Rejected children count as leaves in \emph{both} searches.
+Floating-point linear programming proposes witnesses; exact rational
+verification authorizes every additional cut.
+
+\paragraph{Random instances.}
+The 26 instances have 10, 12, or 14 variables (ten, ten, and six instances).
+Edge probabilities lie in $[0.65,1]$, signs are independently balanced,
+and complementary-pair probability is $0$ or $0.15$, with random units.
+Both searches use maximum-degree branching:
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+Quantity & Total\\
+\midrule
+Baseline leaves & 433\\
+Leaves with joint refutations & 384\\
+Additional joint cuts & 29\\
+Branch decisions reduced to one surviving child & 23\\
+Linear-program calls & 270\\
+Baseline elapsed time (seconds) & 0.0129\\
+Elapsed time with joint refutations (seconds) & 0.3941\\
+\bottomrule
+\end{tabular}
+\end{center}
+Both searches match exhaustive optima on all 26 instances. Leaves decrease
+by $11.3\%$, but the prototype is about 30 times slower: the extra pruning
+does not give a practical speedup here. Separately, 150 random weighted
+constraint systems yielded 71 multiplier refutations, all checked by
+exhaustive enumeration.
+
+\paragraph{Identical balanced centers.}
+For each of $t$ independent centers $x$, use $(x\vee y_j)$ on the first
+$D/2$ common neighbors and $(\neg x\vee\neg y_j)$ on the remaining $D/2$.
+Add a random signed clique on the neighbors and units to reduce their
+unary fields. All centers have the same comparison profile and initial
+deficits $(D/2,D/2)$, hence zero gap. Both searches process centers first.
+\begin{center}
+\begin{tabular}{rrrrrr}
+\toprule
+$n$ & $t$ & $D$ & Baseline leaves & Joint-test leaves & Fixings\\
+\midrule
+12 & 4 & 8 & 127 & 11 & 6\\
+16 & 6 & 10 & 1,130 & 14 & 10\\
+18 & 8 & 10 & 4,136 & 16 & 14\\
+\bottomrule
+\end{tabular}
+\end{center}
+One center's decision forces the others in each subtree. Exhaustive
+optimization checks the first two instances; the baseline checks the
+18-variable result. These illustrate conditional dominance, not a
+worst-case bound.
+
+\paragraph{A negative control.}
+For the complete-graph Max-Cut encoding on ten variables, both searches
+have 252 leaves; 248 linear-program calls find no new cuts. Exhaustive
+enumeration on 12 variables gives the predicted 924 strict local optima
+and only 2.1483 bits of information. As Proposition~\ref{prop:stable}
+indicates, saturated comparisons require collective structural progress.
+
+Local identities, counting bounds, and certificate rules are proved;
+whole-search evidence is experimental. The global frontier budget and a
+fixed-base algorithm for growing density remain desired results. No
+comprehensive literature survey or general novelty claim is intended.
+
+\begin{thebibliography}{9}
+\small
+\bibitem{KK}
+A. S. Kulikov and K. Kutzkov,
+\emph{New Bounds for MAX-SAT by Clause Learning}, CSR 2007,
+LNCS 4649, pp. 194--204.
+\href{https://doi.org/10.1007/978-3-540-74510-5_21}{Publisher DOI};
+\href{https://pdfs.semanticscholar.org/45e9/3f8020eea4fea5a70c624e149e6a9b275a23.pdf}{authors' presentation consulted}.
+\bibitem{GLSS}
+D. Gavinsky, S. Lovett, M. Saks and S. Srinivasan,
+\emph{A Tail Bound for Read-$k$ Families of Functions},
+Random Structures \& Algorithms 47(1), 2015, pp. 99--108.
+\href{https://arxiv.org/abs/1205.1478}{arXiv:1205.1478}.
+\bibitem{Frontier}
+\emph{Exploring the Branching Frontier for Max 2-SAT},
+working note, 7 October 2026, Sections 3--4.
+Local source: \texttt{max2sat\_branching\_frontier.tex}.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,974 @@
+{
+  "summary": {
+    "seed": 87123,
+    "group_count_instances": 48,
+    "exception_column_instances": 24,
+    "aligned_sorting_instances": 16,
+    "exhaustive_assignments": 25584,
+    "flip_identity_checks": 232432,
+    "strict_improvement_implication_checks": 93613,
+    "group_a_evaluations": 4352,
+    "group_b_evaluations": 9632,
+    "all_checks_passed": true
+  },
+  "instances": [
+    {
+      "n": 7,
+      "trial": 0,
+      "exceptions": [],
+      "optimum": 21,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 7,
+      "trial": 1,
+      "exceptions": [],
+      "optimum": 16,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 7,
+      "trial": 2,
+      "exceptions": [],
+      "optimum": 18,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 7,
+      "trial": 3,
+      "exceptions": [],
+      "optimum": 20,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 7,
+      "trial": 4,
+      "exceptions": [],
+      "optimum": 24,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 7,
+      "trial": 5,
+      "exceptions": [],
+      "optimum": 21,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 7,
+      "trial": 6,
+      "exceptions": [],
+      "optimum": 18,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 7,
+      "trial": 7,
+      "exceptions": [],
+      "optimum": 20,
+      "groups_before_exposure": [
+        2,
+        1
+      ],
+      "group_sizes": [
+        2,
+        1
+      ],
+      "count_vectors": 6,
+      "gamma": 0.4150374992788439,
+      "a_evaluations": 16,
+      "b_evaluations": 96
+    },
+    {
+      "n": 8,
+      "trial": 0,
+      "exceptions": [
+        6
+      ],
+      "optimum": 28,
+      "groups_before_exposure": [
+        2,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 8,
+      "trial": 1,
+      "exceptions": [
+        6
+      ],
+      "optimum": 23,
+      "groups_before_exposure": [
+        2,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 8,
+      "trial": 2,
+      "exceptions": [
+        6
+      ],
+      "optimum": 26,
+      "groups_before_exposure": [
+        2,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 8,
+      "trial": 3,
+      "exceptions": [
+        6
+      ],
+      "optimum": 32,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 8,
+      "trial": 4,
+      "exceptions": [
+        6
+      ],
+      "optimum": 27,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 8,
+      "trial": 5,
+      "exceptions": [
+        6
+      ],
+      "optimum": 29,
+      "groups_before_exposure": [
+        2,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 8,
+      "trial": 6,
+      "exceptions": [
+        6
+      ],
+      "optimum": 20,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 8,
+      "trial": 7,
+      "exceptions": [
+        6
+      ],
+      "optimum": 28,
+      "groups_before_exposure": [
+        2,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 64,
+      "b_evaluations": 144
+    },
+    {
+      "n": 9,
+      "trial": 0,
+      "exceptions": [],
+      "optimum": 33,
+      "groups_before_exposure": [
+        3,
+        2
+      ],
+      "group_sizes": [
+        3,
+        2
+      ],
+      "count_vectors": 12,
+      "gamma": 1.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 192
+    },
+    {
+      "n": 9,
+      "trial": 1,
+      "exceptions": [],
+      "optimum": 36,
+      "groups_before_exposure": [
+        3,
+        2
+      ],
+      "group_sizes": [
+        3,
+        2
+      ],
+      "count_vectors": 12,
+      "gamma": 1.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 192
+    },
+    {
+      "n": 9,
+      "trial": 2,
+      "exceptions": [],
+      "optimum": 30,
+      "groups_before_exposure": [
+        3,
+        2
+      ],
+      "group_sizes": [
+        3,
+        2
+      ],
+      "count_vectors": 12,
+      "gamma": 1.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 192
+    },
+    {
+      "n": 9,
+      "trial": 3,
+      "exceptions": [],
+      "optimum": 28,
+      "groups_before_exposure": [
+        3,
+        2
+      ],
+      "group_sizes": [
+        3,
+        2
+      ],
+      "count_vectors": 12,
+      "gamma": 1.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 192
+    },
+    {
+      "n": 9,
+      "trial": 4,
+      "exceptions": [],
+      "optimum": 25,
+      "groups_before_exposure": [
+        5
+      ],
+      "group_sizes": [
+        5
+      ],
+      "count_vectors": 6,
+      "gamma": 2.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 96
+    },
+    {
+      "n": 9,
+      "trial": 5,
+      "exceptions": [],
+      "optimum": 31,
+      "groups_before_exposure": [
+        3,
+        2
+      ],
+      "group_sizes": [
+        3,
+        2
+      ],
+      "count_vectors": 12,
+      "gamma": 1.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 192
+    },
+    {
+      "n": 9,
+      "trial": 6,
+      "exceptions": [],
+      "optimum": 36,
+      "groups_before_exposure": [
+        3,
+        2
+      ],
+      "group_sizes": [
+        3,
+        2
+      ],
+      "count_vectors": 12,
+      "gamma": 1.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 192
+    },
+    {
+      "n": 9,
+      "trial": 7,
+      "exceptions": [],
+      "optimum": 24,
+      "groups_before_exposure": [
+        3,
+        2
+      ],
+      "group_sizes": [
+        3,
+        2
+      ],
+      "count_vectors": 12,
+      "gamma": 1.415037499278844,
+      "a_evaluations": 64,
+      "b_evaluations": 192
+    },
+    {
+      "n": 10,
+      "trial": 0,
+      "exceptions": [
+        8
+      ],
+      "optimum": 46,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 10,
+      "trial": 1,
+      "exceptions": [
+        8
+      ],
+      "optimum": 39,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 10,
+      "trial": 2,
+      "exceptions": [
+        8
+      ],
+      "optimum": 35,
+      "groups_before_exposure": [
+        2,
+        1,
+        1,
+        2
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 10,
+      "trial": 3,
+      "exceptions": [
+        8
+      ],
+      "optimum": 43,
+      "groups_before_exposure": [
+        2,
+        1,
+        1,
+        2
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 10,
+      "trial": 4,
+      "exceptions": [
+        8
+      ],
+      "optimum": 44,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 10,
+      "trial": 5,
+      "exceptions": [
+        8
+      ],
+      "optimum": 37,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 10,
+      "trial": 6,
+      "exceptions": [
+        8
+      ],
+      "optimum": 41,
+      "groups_before_exposure": [
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 10,
+      "trial": 7,
+      "exceptions": [
+        8
+      ],
+      "optimum": 46,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "group_sizes": [
+        2,
+        2,
+        2
+      ],
+      "count_vectors": 27,
+      "gamma": 1.2451124978365318,
+      "a_evaluations": 256,
+      "b_evaluations": 432
+    },
+    {
+      "n": 9,
+      "trial": 0,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 33,
+      "groups_before_exposure": [
+        2,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 128,
+      "b_evaluations": 288
+    },
+    {
+      "n": 9,
+      "trial": 1,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 34,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 128,
+      "b_evaluations": 288
+    },
+    {
+      "n": 9,
+      "trial": 2,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 35,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 128,
+      "b_evaluations": 288
+    },
+    {
+      "n": 9,
+      "trial": 3,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 29,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 128,
+      "b_evaluations": 288
+    },
+    {
+      "n": 9,
+      "trial": 4,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 34,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 128,
+      "b_evaluations": 288
+    },
+    {
+      "n": 9,
+      "trial": 5,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 37,
+      "groups_before_exposure": [
+        3,
+        1
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 128,
+      "b_evaluations": 160
+    },
+    {
+      "n": 9,
+      "trial": 6,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 35,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 128,
+      "b_evaluations": 288
+    },
+    {
+      "n": 9,
+      "trial": 7,
+      "exceptions": [
+        6,
+        7
+      ],
+      "optimum": 33,
+      "groups_before_exposure": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "group_sizes": [
+        2,
+        2
+      ],
+      "count_vectors": 9,
+      "gamma": 0.8300749985576878,
+      "a_evaluations": 128,
+      "b_evaluations": 288
+    },
+    {
+      "n": 8,
+      "trial": 0,
+      "exceptions": [],
+      "optimum": 21,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    },
+    {
+      "n": 8,
+      "trial": 1,
+      "exceptions": [],
+      "optimum": 30,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    },
+    {
+      "n": 8,
+      "trial": 2,
+      "exceptions": [],
+      "optimum": 29,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    },
+    {
+      "n": 8,
+      "trial": 3,
+      "exceptions": [],
+      "optimum": 25,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    },
+    {
+      "n": 8,
+      "trial": 4,
+      "exceptions": [],
+      "optimum": 27,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    },
+    {
+      "n": 8,
+      "trial": 5,
+      "exceptions": [],
+      "optimum": 31,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    },
+    {
+      "n": 8,
+      "trial": 6,
+      "exceptions": [],
+      "optimum": 27,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    },
+    {
+      "n": 8,
+      "trial": 7,
+      "exceptions": [],
+      "optimum": 31,
+      "groups_before_exposure": [
+        4
+      ],
+      "group_sizes": [
+        4
+      ],
+      "count_vectors": 5,
+      "gamma": 1.6780719051126378,
+      "a_evaluations": 16,
+      "b_evaluations": 80
+    }
+  ]
+}

@@ -1,0 +1,332 @@
+{
+  "seed": 20261012,
+  "block_instances": 36,
+  "block_certificates": 638,
+  "conditional_checks": 1280,
+  "instances": [
+    {
+      "n": 8,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 225,
+      "optimal": 9,
+      "certificates": 2
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 225,
+      "optimal": 12,
+      "certificates": 2
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 225,
+      "optimal": 6,
+      "certificates": 2
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 225,
+      "optimal": 9,
+      "certificates": 2
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 1,
+      "retained": 1,
+      "candidates": 240,
+      "optimal": 17,
+      "certificates": 16
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 225,
+      "optimal": 5,
+      "certificates": 2
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 225,
+      "optimal": 16,
+      "certificates": 2
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 1,
+      "retained": 1,
+      "candidates": 240,
+      "optimal": 13,
+      "certificates": 16
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 1,
+      "retained": 1,
+      "candidates": 240,
+      "optimal": 22,
+      "certificates": 16
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 1,
+      "retained": 1,
+      "candidates": 240,
+      "optimal": 24,
+      "certificates": 16
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 2,
+      "retained": 1,
+      "candidates": 240,
+      "optimal": 4,
+      "certificates": 16
+    },
+    {
+      "n": 8,
+      "q": 2,
+      "r": 2,
+      "retained": 1,
+      "candidates": 240,
+      "optimal": 1,
+      "certificates": 16
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 18,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 17,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 25,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 23,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 0,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 6,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 1,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 15,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 1,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 41,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 1,
+      "retained": 2,
+      "candidates": 900,
+      "optimal": 9,
+      "certificates": 8
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 3,
+      "retained": 1,
+      "candidates": 960,
+      "optimal": 7,
+      "certificates": 64
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 2,
+      "retained": 1,
+      "candidates": 960,
+      "optimal": 11,
+      "certificates": 64
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 2,
+      "retained": 1,
+      "candidates": 960,
+      "optimal": 14,
+      "certificates": 64
+    },
+    {
+      "n": 10,
+      "q": 2,
+      "r": 3,
+      "retained": 1,
+      "candidates": 960,
+      "optimal": 15,
+      "certificates": 64
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 0,
+      "retained": 3,
+      "candidates": 3375,
+      "optimal": 20,
+      "certificates": 3
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 0,
+      "retained": 3,
+      "candidates": 3375,
+      "optimal": 46,
+      "certificates": 3
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 0,
+      "retained": 3,
+      "candidates": 3375,
+      "optimal": 20,
+      "certificates": 3
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 0,
+      "retained": 3,
+      "candidates": 3375,
+      "optimal": 30,
+      "certificates": 3
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 1,
+      "retained": 2,
+      "candidates": 3600,
+      "optimal": 6,
+      "certificates": 32
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 0,
+      "retained": 3,
+      "candidates": 3375,
+      "optimal": 25,
+      "certificates": 3
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 0,
+      "retained": 3,
+      "candidates": 3375,
+      "optimal": 22,
+      "certificates": 3
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 1,
+      "retained": 2,
+      "candidates": 3600,
+      "optimal": 41,
+      "certificates": 32
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 2,
+      "retained": 2,
+      "candidates": 3600,
+      "optimal": 24,
+      "certificates": 32
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 2,
+      "retained": 2,
+      "candidates": 3600,
+      "optimal": 26,
+      "certificates": 32
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 2,
+      "retained": 2,
+      "candidates": 3600,
+      "optimal": 26,
+      "certificates": 32
+    },
+    {
+      "n": 12,
+      "q": 3,
+      "r": 3,
+      "retained": 2,
+      "candidates": 3600,
+      "optimal": 38,
+      "certificates": 32
+    }
+  ]
+}

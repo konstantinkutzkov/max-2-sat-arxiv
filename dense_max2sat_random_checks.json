@@ -1,0 +1,10 @@
+{
+  "distribution_cases": 19,
+  "instances": 36,
+  "score_identities": 5376,
+  "flip_identities": 39936,
+  "candidate_tests": 50688,
+  "optimum_survival_checks": 172,
+  "status": "passed",
+  "scope": "Finite identities and correctness checks; not an asymptotic proof."
+}

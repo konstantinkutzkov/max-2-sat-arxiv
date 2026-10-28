@@ -1,0 +1,140 @@
+Random-formula milestone: deterministic correctness
+===================================================
+
+This milestone verifies manuscript Lemma lem:exactA. It does not verify
+any probability estimate or exponential running-time guarantee for random
+inputs. The executable procedure makes no random choices.
+
+FORMULA-ONLY INITIALIZATION
+
+Random.active computes the endpoints of binary clauses in the input.
+Random.neighbors deduplicates neighboring variable labels, ignoring signs
+and clause multiplicities. Every active variable has positive degree.
+The fixed weights are computed before preprocessing:
+
+  weight(i) = 1 / (sqrt_nat(degree(i)-1) + 1).
+
+For positive degree the denominator is exactly ceil(sqrt(degree(i))).
+Its positivity and this integer-square characterization are proved.
+The order is the active labels sorted by the original input indices.
+The stopping depth is ceil(r/2), where r is the number of active labels.
+There is no generating graph, planted information, or density parameter
+among the algorithm inputs.
+
+Variables outside the observed support occur only in unit clauses.
+Random.initial sets each such bit to the value satisfying more units,
+with ties choosing false. Random.extend_score proves this optimization
+never lowers the original score, while leaving the active values intact.
+Residual.restrict constructs the core and its exact satisfied-clause
+offset. The already verified Preprocess then acts on that core.
+All original active variables remain in the fixed order even when they
+disappear from the preprocessed or later residual formulas.
+
+RESIDUAL FORMULAS AND PREFERENCES
+
+A full bit vector together with a list of unassigned variables represents
+a partial assignment; only values outside that list are fixed.
+Residual.restrict removes satisfied clauses, drops falsified units,
+converts binary clauses to units when appropriate, and returns an offset.
+Residual.restrict_score proves the exact score identity for every compatible
+completion. Well-formedness is preserved.
+
+Random.branchLiteral uses the signed effective gap of the current residual
+formula, preferring the positive value on ties. Random.branchCut uses the
+paper's strict pruning inequality on that same residual formula. Thus
+preferences can and do change with earlier assignments. They are not the
+fixed preferences used in the literal-gap algorithm.
+
+For a simple functional representation, the implementation recomputes the
+residual from the fixed preprocessed formula at each branching node.
+Constraints retain their bounds from creation; the partial assignment is
+substituted when testing their sum. This has the paper's substitution
+semantics, without requiring a mutable state or a cache. The score-offset
+identities justify evaluating the fixed formula during best-solution
+selection and the original formula when returning the answer.
+
+RATIONAL WEIGHTED SUMS AND EXACT ENUMERATION
+
+Weighted.Budget stores a rational cost for each value of each variable
+and one rational bound. The costs are computed by adding whole-constraint
+weights times literal occurrences. Weighted.sum_lhs proves that this is
+exactly the weighted inequality in eq:weighted. Weighted.sum_holds proves
+that simultaneous satisfaction of the individual constraints implies
+satisfaction of their sum for nonnegative weights.
+
+For a partial assignment, assigned variables contribute their fixed cost.
+Each unassigned variable contributes the smaller of its two costs to the
+minimum. This is complementary cancellation: subtract the smaller cost,
+orient toward the cheaper Boolean value, and retain the nonnegative
+difference as the coefficient. The formal minimum comes with an explicit
+assignment attaining it. Weighted.feasible_iff establishes an exact
+feasibility test for this single sum. No joint-feasibility oracle for the
+individual constraints is used.
+
+Weighted.enumerate visits exactly the completions satisfying the sum.
+Weighted.enumerate_nodup proves there are no duplicate outputs, and
+Weighted.nodes_bound gives at most 1+2kN recursion nodes for k unassigned
+variables and N outputs. Weighted.fold_eq_foldl connects the streaming
+implementation to this list-valued specification. Rational coefficients
+are retained as rational numbers, never expanded into literal copies.
+
+EARLIEST-OPTIMUM ARGUMENT
+
+Random.fullTree is the restored decision tree used only in the proof.
+At each node its first child uses the preferred value of the current
+residual formula. The complete tree covers exactly all compatible
+assignments. The full tree and its leaf list are not constructed by the
+executable procedure.
+
+ComparisonTree.winner recursively defines its earliest maximum-score leaf.
+Random.fullTree_valid proves that a leaf excluded by a new nonpreferred
+cut has an at-least-as-good counterpart in the earlier preferred child.
+The counterpart need not satisfy constraints from ancestors.
+
+Random.winner_survives proves the key invariant. If this subtree's earliest
+optimum satisfies its inherited constraints, it survives the search. On
+a preferred child the induction hypothesis applies directly. On a
+nonpreferred child, a violation of the new cut would produce an equally
+good or better leaf in the earlier child, contradicting the chosen winner.
+The inherited constraints and the new cut therefore all hold on the
+winner's own path. Their weighted sum cannot reject it. At the stopping
+depth the exact suffix enumeration includes that optimum.
+
+The suffix procedure can also emit assignments violating individual cuts;
+this is intentional. Evaluating their actual score cannot harm optimality.
+
+EXECUTABLE ALGORITHM AND FINAL THEOREM
+
+Random.fold implements the adaptive prefix recursion and then invokes the
+streaming weighted suffix enumerator. Its equivalence to Random.enumerate
+is proved, and the shared best-solution update retains a maximum-score
+visited assignment. Random.solveOn_correct proves optimality among all
+completions of an arbitrary initial partial assignment, for a fixed
+nonrepeating variable order, any stopping depth, and nonnegative weights.
+
+Random.solve instantiates everything from the original formula, including
+unit-only optimization and preprocessing. Random.randomFormula returns
+both the original score and its complete assignment. The theorem
+Random.randomFormula_correct proves it returns an optimum for every
+well-formed formula, including repeated clauses, empty support, and zero
+variables. No unchecked rejection, comparison, coverage, or enumeration
+assumption is a premise of that final theorem.
+
+SCOPE AND NEXT OBLIGATIONS
+
+This completes deterministic correctness of the paper's random-formula
+algorithm. It does not prove the random-input probability models, exposure
+and conditional-independence lemmas, random requirement and compensation
+estimates, or the expected/high-probability sub-2^n time guarantees.
+The exponential runtime statement thm:random_main is therefore partial.
+Subsequent sampling and observed-support conditioning work is documented in
+RANDOM_PROBABILITY.txt. The completed exposure, moment, and finite-space
+concentration lemmas are documented in RANDOM_EXPOSURE.txt,
+RANDOM_MOMENTS.txt, and RANDOM_CONCENTRATION.txt. RANDOM_ACCUMULATION.txt records
+the completed accumulation lemmas and fixed-support candidate bounds.
+The executable-node and observed-support runtime assembly remains partial.
+Formal storage and bit-cost estimates for this weighted procedure also
+remain separate work. Existing literal-gap bounds are unaffected.
+
+The appendix biased-subset extension remains an unproved research target.
+No declaration or axiom asserting that target has been introduced.

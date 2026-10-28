@@ -1,0 +1,157 @@
+Independent-pair scalar estimates
+=================================
+
+Historical scalar milestone; its checked results remain valid. The subsequent
+matrix application and current external-result policy are documented in
+EXTERNAL_RESULTS.txt. Remaining-work lists below describe the scalar milestone.
+
+Paper target: prop:pairmembership. Status: partial.
+This batch verifies the scalar concentration and empirical-centering stage.
+It does not verify the complete proposition or a new runtime theorem.
+
+What is proved
+---------------
+For independent centered finite-law variables Z_i, |Z_i|<=B on positive-mass
+outcomes, and sum E[Z_i^2]<=V>0, the formalization proves
+
+  E exp(t*sum Z_i) <= exp(t^2*V)      when |t|*B<=1.
+
+The proof uses exp(z)<=1+z+z^2 for |z|<=1, averages, and factors the product
+law exactly. Exponential Markov with t=a/(2V) gives upper and lower tails
+exp(-a^2/(4V)) when a>0 and a*B<=2V, and a two-sided bound twice as large.
+Inflating V to V+B*a/2 gives an upper bound exp(-a^2/(4V+2B*a)) for all a>0.
+No Bernstein inequality is assumed as a formal hypothesis.
+
+For 0<=Y<=U, Lean proves |Y-EY|<=U and
+  E[(Y-EY)^2] <= U*EY.
+Taking Y=X^2 and U=B^2 supplies the variance-sensitive bound needed for
+squared mass. If r entries have nu<=E[X_i^2]<=chi*nu, the resulting lower
+and upper tails have exponents
+  -eta^2*r*nu/(4*B^2*chi),  -eta^2*r*chi*nu/(4*B^2).
+This avoids replacing the variance budget by r*B^4, which would lose the
+sparse regime. The paper includes this elementary argument. Its sufficient
+row/column and earlier-row exponents use denominators 8 and 40, respectively,
+instead of 5 and 30; the same large C0 and all stated theorem conclusions
+remain valid. These final C0 substitutions are not yet formally checked.
+
+The empirical mean of r centered independent entries satisfies
+  Pr(|mean|>=a) <= 2*exp(-r*a^2/(4*v))
+when each second moment is <=v and a*B<=2v. The same result bounds error
+around a common nonzero mean. Bounds are required only on positive-mass
+outcomes. Probability masses may be arbitrary real numbers; no uniform-law
+or equal-distribution assumption is made.
+
+Matrix correspondence and centering
+-------------------------------------
+The index Edge n is the subtype of ordered vertex pairs u<v: exactly one
+independent coordinate is sampled per unordered pair. pairMatrix reflects
+that coordinate into both orientations and has diagonal zero. Lean proves
+symmetry, individual entries, the pair count 2*m=n*(n-1), and
+
+  pairEnergy(z) = (sum_{u,v} pairMatrix(z)_{u,v}^2)/n
+                = 2*(sum_e z_e^2)/n.
+
+There is no assumption that the two symmetric orientations are independent.
+The earlier-row map is injective. Its pushforward law is exactly the product
+of the selected original pair laws; earlierEnergy is the corresponding
+squared row sum, with t earlier neighbors for the zero-based label t.
+This is t-1 for the paper's one-based label.
+
+Subtracting the empirical mean is a deterministic transformation, not a
+second independent sampling step. Its exact effect is
+
+  D_centered = D_raw - (n-1)*mean(z)^2.
+
+Lean also proves the row norm inequality
+
+  sqrt(sum (x_i-delta)^2) >= sqrt(sum x_i^2) - |delta|*sqrt(r).
+
+On raw energy between .99*(n-1)*nu and 1.01*(n-1)*chi*nu and mean magnitude
+at most .001*sqrt(nu), centered energy is between .98*(n-1)*nu and the same
+upper bound. Raw row mass >=.99*r*nu gives centered row norm >=.993*sqrt(r*nu).
+All of these are statements about the actual symmetric matrix or its rows.
+
+Simultaneous scalar event
+--------------------------
+scalar_event_probability works directly under the original product law.
+Let m=n*(n-1)/2 and S be any set of positive earlier-row indices. Its
+hypotheses are n>=2, B,nu,a>0, chi>=1, centered coordinates, second moments
+in [nu,chi*nu], support bounds B, and the explicit inequalities
+
+  a*B <= 2*chi*nu,    a <= .001*sqrt(nu).
+
+It proves that, except with probability at most
+
+  2*exp(-m*a^2/(4*chi*nu))
+  + exp(-(.01)^2*m*nu/(4*B^2*chi))
+  + exp(-(.01)^2*m*chi*nu/(4*B^2))
+  + sum_{t in S} exp(-(.01)^2*t*nu/(4*B^2*chi)),
+
+all three conclusions hold simultaneously:
+- |empirical mean|<=a;
+- centered total energy lies in the .98 to 1.01 interval above;
+- every selected centered row norm is >=.993*sqrt(t*nu).
+
+The proof derives each concentration estimate and uses a union bound.
+No independence between the mean, energy, or row events is assumed.
+It does not assume the desired probability bound. It has no operator-norm
+hypothesis or conclusion. The paper's choice of a=delta_0 and the final
+n^-3 and 1-1/n simplifications are subsequent obligations.
+
+Concrete graph inputs and independent copies
+---------------------------------------------
+bernoulli_scalar_event instantiates the theorem for independent edges with
+arbitrary individual probabilities q_e. The actual Max-Cut coefficient is
+-2 when an edge is present and 0 otherwise. Its mean is -2*q_e and its
+variance is 4*q_e*(1-q_e); both are checked. A stochastic block probability
+matrix can supply q_e, but block structure, low rank and discovery are not
+used or proved in this scalar instantiation. The positive lower-variance
+hypothesis excludes deterministic edge probabilities from the event theorem.
+Endpoint examples q=0 and q=1 check the moment identities only.
+
+For an independent copy X', Lean proves the moment identity for X-X', its
+bound 2B, and symmetry under sign reversal. For centered X its second
+moment is 2*E[X^2]. These are inputs for the remaining matrix estimate;
+that estimate itself has not been formalized.
+
+Source map
+-----------
+All new modules are in Max2SAT/IndependentPairs/:
+- Scalar: direct exponential-moment and tail estimates;
+- Squares: bounded-square variance and upper/lower concentration;
+- MeanTail: empirical means and a common nonzero mean;
+- Centering: exact shift identities and row norm bounds;
+- MatrixModel: unordered-pair matrix, pair count, Frobenius normalization;
+- RowTails: earlier-neighbor sampling law and squared-row tails;
+- EnergyTails: total-energy tails and empirical-energy intervals;
+- ScalarEvent: simultaneous event and its explicit failure bound;
+- Bernoulli: actual independent Bernoulli Max-Cut interactions;
+- Symmetrization: scalar independent-copy identities;
+- Examples: factor-of-two normalization, zero/one-pair boundaries, first
+  row, centering, Bernoulli endpoints, and zero-probability outcomes.
+
+52 new public theorems are in the transitive axiom audit. The complete build
+now includes fourteen example modules. Only propext, Classical.choice, and
+Quot.sound are allowed. No placeholders, custom axioms, or native-evaluation
+proof dependencies are used. result.json records the checked sources.
+
+Exact remaining scope
+----------------------
+Still unverified for prop:pairmembership:
+- the sharp random-matrix expectation estimate;
+- convex concentration for the operator norm;
+- the final summed row profile, comparison allowance, and all C0/n
+  substitutions leading to the combined 1-1/n membership conclusion;
+- the stated generality beyond finite input laws.
+
+Thus the complete independent-pair proposition is partial, not checked.
+The SBM runtime and hidden-mean discovery results remain unverified, and
+hidden-community numerical preprocessing/fallback correctness is partial.
+The proposed biased-subset appendix remains an unproved research target.
+Previously checked literal-gap, random-input, count/projection and regular-
+graph results retain their status; their arithmetic/space implementation
+arguments remain outside the formal recursive-call model.
+
+The manuscript contains the supporting arguments. Its correspondence record
+and fingerprints assist review but cannot certify the translation of the
+informal statements into Lean. Reproduce with python3 verify.py.

@@ -1,0 +1,9 @@
+{
+  "pair_moment_checks": 34,
+  "mean_rank_checks": 18,
+  "graphs": 18,
+  "assignment_checks": 1344,
+  "group_gain_identities": 8640,
+  "optimum_survival_checks": 35,
+  "clique_field_checks": 7
+}

@@ -1,0 +1,57 @@
+{
+  "imbalance": {
+    "positive_degree": 6,
+    "negative_degree": 6,
+    "k": 4,
+    "raw_binary_gap": -4,
+    "effective_gap_histogram": {
+      "-4": 1,
+      "-2": 4,
+      "0": 6,
+      "2": 4,
+      "4": 1
+    }
+  },
+  "exact_soundness_formulas": 120,
+  "variants_per_formula": 4,
+  "random_comparisons": [
+    {
+      "n": 12,
+      "formulas": 8,
+      "one_sided_leaves": 128,
+      "two_sided_leaves": 128
+    },
+    {
+      "n": 16,
+      "formulas": 8,
+      "one_sided_leaves": 416,
+      "two_sided_leaves": 412
+    },
+    {
+      "n": 20,
+      "formulas": 8,
+      "one_sided_leaves": 2827,
+      "two_sided_leaves": 2816
+    }
+  ],
+  "circulant_comparisons": [
+    {
+      "n": 13,
+      "eps": 0.5,
+      "one_sided_leaves": 495,
+      "two_sided_leaves": 495
+    },
+    {
+      "n": 17,
+      "eps": 0.5,
+      "one_sided_leaves": 1820,
+      "two_sided_leaves": 1820
+    },
+    {
+      "n": 21,
+      "eps": 0.2,
+      "one_sided_leaves": 125970,
+      "two_sided_leaves": 125970
+    }
+  ]
+}

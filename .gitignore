@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# LaTeX build files (the .bbl file is kept for arXiv)
+*.aux
+*.log
+*.out
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+
+# Python
+__pycache__/
+*.pyc
+
+# Lean build cache, rebuilt by `lake build`
+lean/.lake/
+
+# Scratch work
+tmp/

@@ -1,0 +1,304 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype,booktabs}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}[lemma]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[lemma]{Definition}
+\newtheorem{example}[lemma]{Example}
+\newcommand{\E}{\mathbb E}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\hypersetup{pdftitle={The Soft-Count Measure for Adaptive Branching}}
+\title{The Soft-Count Measure for Adaptive Branching\\
+\large Definition, one branching step, and examples}
+\author{}
+\date{8 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We define a complexity measure for the adaptive branching algorithm with
+learned pruning constraints and final enumeration. It is a soft count of the
+completions that respect the learned constraints. It is exactly additive under
+branching, it bounds the remaining work, and a new constraint changes it by an
+explicit factor. A constraint has a weight that grows as the constraint
+tightens and becomes infinite when the constraint assigns its variables. A new
+constraint lowers the measure exactly when, under the current soft count, its
+expected number of bad values exceeds its allowance. This is a precise form of
+a sufficiently new constraint. We work out one branching step and three small
+examples, and run the search on small formulas.
+\end{abstract}
+
+\section{The search and its constraints}
+
+The algorithm branches on one free variable at a time, chosen adaptively. When
+it branches on $x$ with preferred literal $\ell$, the child in which $\ell$ is
+false learns a constraint on the free neighbours of $x$. For each clause
+$(\ell\lor m)$ the value of the neighbour that makes $m$ false is \emph{bad},
+and for each clause $(\neg\ell\lor m)$ the value that makes $m$ true is bad.
+The constraint says that at most $k$ neighbours take their bad value, where
+$k=p-1$ and $p$ is the deficit of $\ell$. Indeed, if $p$ or more are bad,
+flipping $x$ back to $\ell$ is no worse. Simplification rules such as
+domination and propagation may be applied. At the end, the completions
+respecting the learned constraints are enumerated.
+
+At a node, a learned constraint $i$ has a \emph{support} $N_i$ (its free
+variables), a bad value $\beta_i(w)$ for each $w\in N_i$, and a current
+\emph{allowance} $k_i$. For a completion $y$ of the free variables, $L_i(y)$ is
+the number of $w\in N_i$ with $y_w=\beta_i(w)$. When a support variable is
+assigned it leaves $N_i$, and if it took its bad value, $k_i$ drops by one.
+The constraint is violated when $k_i<0$, and \emph{vacuous} when
+$k_i\ge|N_i|$.
+
+\section{The measure}
+
+\begin{definition}[Soft count]
+Give each constraint a weight $\lambda_i\ge0$. For a free variable $w$ and a
+value $b$, let $A_w^b$ be the sum of $\lambda_i$ over the constraints in which
+$b$ is the bad value of $w$. The soft count of the node is
+\[
+ \Phi=\sum_y\ \prod_i e^{\lambda_i(k_i-L_i(y))}
+     =e^{\sum_i\lambda_ik_i}\prod_{w\text{ free}}
+      \bigl(e^{-A_w^0}+e^{-A_w^1}\bigr),
+\]
+where $y$ ranges over the completions of the free variables.
+\end{definition}
+
+The two expressions agree because $\sum_i\lambda_iL_i(y)=\sum_wA_w^{y_w}$.
+Each completion is discounted exponentially in how much it violates each
+constraint. Under the \emph{soft distribution}, the distribution on completions
+proportional to these terms, the free variables are independent, and $w$
+takes the value $b$ with probability
+\[
+ \pi_w(b)=\frac{e^{-A_w^b}}{e^{-A_w^0}+e^{-A_w^1}} .
+\]
+
+\begin{proposition}[Basic properties]\label{prop:basic}
+The soft count has three properties.
+\begin{enumerate}
+ \item $\Phi$ is at least the number of completions that respect every learned
+ constraint. If $\Phi<1$, no completion respects them all, and the node can
+ be cut.
+ \item At the root, $\Phi=2^n$.
+ \item \emph{Additivity.} If $x$ is free and the weights are kept, the
+ children $x=0$ and $x=1$ have soft counts $\Phi\,\pi_x(0)$ and
+ $\Phi\,\pi_x(1)$; together they make up exactly $\Phi$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+A completion respecting all constraints has $k_i-L_i(y)\ge0$ for every $i$,
+so its term is at least $1$. At the root there are no constraints. Fixing
+$x=b$ keeps the completions with $y_x=b$; in the product this replaces the
+factor of $x$ by $e^{-A_x^b}$, and the constraints in which $b$ is bad lose
+one unit of allowance. That gives $\Phi\,\pi_x(b)$.
+\end{proof}
+
+\section{One branching step}
+
+Branch on $x$, with preferred value $v$ and other value $\bar v$.
+\begin{itemize}
+ \item \emph{Preferred child} $x=v$. Every constraint containing $x$ loses
+ $x$ from its support, and its allowance drops by one if $v$ is its bad
+ value. No constraint is learned. Its soft count is $\Phi\,\pi_x(v)$.
+ \item \emph{Other child} $x=\bar v$. The same updates, plus the new
+ constraint $c$ on the free neighbours of $x$, with allowance $k_c=p-1$.
+ Before $c$ is added, its soft count is $\Phi\,\pi_x(\bar v)$.
+\end{itemize}
+
+\begin{lemma}[The factor of a new constraint]\label{lem:factor}
+Adding $c$ with weight $\lambda$ multiplies the soft count of the child by
+\[
+ F_c(\lambda)=e^{\lambda k_c}\prod_{w\in N_c}
+ \Bigl(1-q_w\bigl(1-e^{-\lambda}\bigr)\Bigr),
+ \qquad q_w=\pi_w(\beta_c(w)),
+\]
+where $q_w$ is the probability, under the soft distribution of the child,
+that $w$ takes its bad value for $c$. In particular $F_c(0)=1$, and the best
+weight gives $F_c\le1$.
+\end{lemma}
+
+\begin{proof}
+The new constraint adds $\lambda$ to $A_w^{\beta_c(w)}$ for $w\in N_c$ and
+$\lambda k_c$ to the exponent, so the factor of $w$ becomes
+$\pi_w(\text{good})+\pi_w(\text{bad})e^{-\lambda}$.
+\end{proof}
+
+The derivative of $\ln F_c$ at $\lambda=0$ is $k_c-\sum_{w\in N_c}q_w$. So:
+
+\begin{quote}
+\emph{A new constraint lowers the measure exactly when, under the current soft
+count, its expected number of bad values exceeds its allowance.}
+\end{quote}
+
+This is the precise version of a sufficiently new constraint. On a fresh
+variable $q_w=\frac12$. On a variable where the earlier constraints have the
+\emph{same} bad value, $q_w$ is small, so the new constraint adds little: it is
+redundant there. Where they have the \emph{opposite} bad value, $q_w$ is
+large, so it adds a lot.
+
+The \emph{information} of the step is the decrease of $\log_2\Phi$:
+\[
+ I_x=-\log_2\Bigl(\pi_x(v)+\pi_x(\bar v)\,F_c\Bigr)\ \ge\ 0 .
+\]
+The adaptive rule branches on the free variable with the largest $I_x$. A
+constraint that becomes vacuous gets weight $0$: its factor was at least $1$,
+so this lowers $\Phi$.
+
+\section{The weights}
+
+\paragraph{A single constraint.} With $r$ free variables and allowance
+$k<r/2$, on fresh variables, the best weight is
+\[
+ \lambda=\ln\frac{r-k}{k},
+\]
+and then the constraint's factor is $2^{rH(k/r)}/2^r$, where $H$ is the binary
+entropy. So the weight grows as the constraint tightens. For $k=0$ it is
+infinite: the bad values get weight $0$, the constraint assigns all its
+variables, and propagation is the limiting case.
+
+\paragraph{Re-optimizing at every node.} We may choose all weights afresh at
+every node to minimize $\Phi$. Write $\Phi^*$ for this minimum. For the two
+children,
+\[
+ \Phi^*(x=0)+\Phi^*(x=1)\ \le\ \Phi^*(\text{parent}).
+\]
+Evaluate both children at the parent's optimal weights, with weight $0$ for
+the new constraint. By additivity their soft counts add up to
+$\Phi^*(\text{parent})$, and each child's minimum is at most this value. So
+re-optimized weights still give a valid measure, and constraints near
+assigning their variables automatically receive large weights.
+$\ln\Phi$ is convex in the weights, so the minimum can be computed.
+
+\section{Examples}
+
+\begin{example}[One constraint, allowance zero]\label{ex:A}
+Let $x_1$ have the clauses $(x_1\lor x_2)$, $(x_1\lor x_3)$,
+$(x_1\lor\neg x_4)$ and $(\neg x_1\lor x_5)$. Its preferred value is $1$, and
+$p=1$. The child $x_1=0$ learns
+\[
+ [x_2=0]+[x_3=0]+[x_4=1]+[x_5=1]\le0 .
+\]
+Here $\Phi=(1+e^{-\lambda})^4$, which is $16$, $3.50$, $1.66$ and $1$ for
+$\lambda=0,1,2,\infty$. Exactly one completion is permitted. Branching on
+$x_2$ at $\lambda=1$ splits $3.501$ into $2.559$ for $x_2=1$ and $0.942$ for
+$x_2=0$. At $\lambda=\infty$ the child $x_2=0$ has soft count $0$ and is cut:
+this is propagation.
+\end{example}
+
+\begin{example}[Redundant and new constraints]\label{ex:B}
+The constraint ``at most one of $y_1,\dots,y_4$ is $1$'' (bad value $1$
+everywhere, allowance $1$) is present with weight $\ln3$. Then $\Phi=9.48$,
+while $5$ completions are permitted, and $q_w=\frac14$ for bad value $1$. A
+second constraint with allowance $1$ arrives on the same variables.
+
+\medskip
+\centering
+\begin{tabular}{lccccc}
+\toprule
+bad values of the new constraint & $q_w$ & best $F_c$ & $\Phi$ &
+$\Phi^*$ & permitted\\
+\midrule
+$1,1,1,1$ (agrees) & $\frac14$ each & $1$ & $9.48$ & $9.48$ & $5$\\
+$1,1,0,0$ (half) & $\frac14,\frac14,\frac34,\frac34$ & $0.51$ & $4.79$ &
+$4.00$ & $2$\\
+$0,0,0,0$ (disagrees) & $\frac34$ each & $0.11$ & $1.05$ & $0$ & $0$\\
+\bottomrule
+\end{tabular}
+\par\medskip
+\raggedright
+The agreeing constraint is redundant and gains nothing. The disagreeing one
+makes the node infeasible, and the re-optimized measure $\Phi^*$ detects this.
+\end{example}
+
+\begin{example}[A full branching step]\label{ex:C}
+Take the formula with the nine clauses
+\begin{gather*}
+ (x_1\lor x_2),\ (x_1\lor\neg x_3),\ (\neg x_1\lor x_4),\
+ (\neg x_2\lor x_3),\ (x_2\lor x_5),\\
+ (x_3\lor\neg x_6),\ (x_4\lor\neg x_5),\ (\neg x_4\lor x_6),\
+ (x_5\lor x_6).
+\end{gather*}
+At the root, $x_1$ has gap $+1$ over three clauses, so its preferred value is
+$1$ and $p=1$. The child $x_1=0$ learns $[x_2=0]+[x_3=1]+[x_4=1]\le0$,
+with infinite weight, so $\Phi=4$: the variables $x_2=1$, $x_3=0$, $x_4=0$
+are forced and $x_5,x_6$ are free. The candidates in this child:
+\begin{itemize}
+ \item $x_2$ has gap $+2$ over two free neighbours, so $p=0$. Its other child
+ is cut at once, and the measure splits as $4+0$: $I=0$, because the
+ constraint had already forced $x_2$.
+ \item $x_3$ has gap $0$, so its preferred value is $1$, which the learned
+ constraint forbids. The other child learns $[x_2=1]+[x_6=1]\le0$, which
+ contradicts $x_2=1$. Both children have soft count $0$: the whole node is
+ cut, because $x_3=0$ is dominated whenever $x_2=1$.
+ \item $x_4$ has gap $0$; its preferred child is forbidden, and the other
+ child learns $[x_5=1]+[x_6=1]\le0$. The split is $0+1$, so $I=2$ bits.
+ \item $x_5$ and $x_6$ each give the split $2+1$, so $I=\log_2(4/3)=0.415$
+ bits.
+\end{itemize}
+The adaptive rule takes $x_3$ and cuts the node. In a fixed order starting
+with $x_2$, this step gains nothing.
+\end{example}
+
+\section{Small searches}
+
+The search branches by the adaptive rule or in index order. A new constraint
+gets its best weight, vacuous constraints get weight $0$, and a node is cut
+when a constraint is violated or $\Phi<1$. Every search returned the optimum.
+
+\begin{center}
+\begin{tabular}{rrrrr}
+\toprule
+$n$ & $d$ & no learning & fixed order & adaptive\\
+\midrule
+10 & 3 & 2047 & 57 & 21\\
+10 & 5 & 2047 & 81 & 37\\
+12 & 4 & 8191 & 65 & 25\\
+12 & 6 & 8191 & 99 & 29\\
+12 & 8 & 8191 & 241 & 81\\
+14 & 6 & 32767 & 219 & 101\\
+16 & 6 & 131071 & 623 & 89\\
+16 & 10 & 131071 & 991 & 255\\
+\bottomrule
+\end{tabular}
+\end{center}
+Here $d$ is the expected degree of a random formula with one clause per pair
+and random signs, and the entries are numbers of search-tree nodes. The
+aligned circulant formula $C_{9,2}$ needs $429$ nodes in both orders, with
+$42$ leaves against $70$ for domination alone. The information collected along
+a root-to-leaf path is only $0.5$ to $5.2$ of its $9$ bits: on aligned
+formulas new constraints are largely redundant, and the measure shows it.
+
+\section{What comes next}
+
+The running time is bounded by the total soft count at the leaves. By
+additivity, this total is $2^n$ times the expected value of $2^{-\sum_tI_t}$
+along one random root-to-leaf walk. The walk moves to a child with
+probability proportional to the child's soft count. With weights fixed at
+creation, this walk is explicit: at each step the branching variable takes
+value $b$ with probability $\pi_x(b)$, and the new constraint's factor follows
+Lemma~\ref{lem:factor}. So a bound $c^n$ with $c<2$ for a class of formulas
+reduces to the following. Along this walk, show that the information
+$\sum_tI_t$ is at least a constant times $n$, except with exponentially small
+probability. That is the next step.
+
+\paragraph{Checks.} \texttt{explore\_soft\_count.py}, each mode in seconds:
+\begin{itemize}
+ \item \texttt{examples} gives Examples~\ref{ex:A}--\ref{ex:C}.
+ \item \texttt{search} gives the table and checks, at every branching step,
+ additivity and Lemma~\ref{lem:factor} ($3{,}387$ steps). At sampled nodes it
+ compares the closed form with the sum over completions and checks the bound
+ of Proposition~\ref{prop:basic} ($358$ nodes). It also checks the optimum.
+ \item \texttt{reopt} re-optimizes all weights from scratch at $170$ sampled
+ steps and confirms
+ $\Phi^*(x=0)+\Phi^*(x=1)\le\Phi^*(\text{parent})$. It also measures that
+ re-optimization lowers $\ln\Phi$ by $2.7$ on average.
+ \item \texttt{aligned} runs $C_{9,2}$.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,104 @@
+Rational spectral postprocessing and truncation
+==============================================
+
+Later batch: RATIONAL_DIAGONALIZATION.txt constructs Q, proves termination
+and its residual, and connects the concrete formula-only algorithm to the
+probability bound. It also replaces the n<r representation by zero. The
+remaining-work list below describes the earlier batch, not current status.
+
+This batch follows COMMUNITY_ASSEMBLY.txt and adds 35 audited mathematical
+declarations. The hidden-mean discovery lemma cor:planted remains PARTIAL;
+the full SBM theorem remains unverified. No external-result hypothesis was
+added. These matrix lemmas use mathlib's checked spectral theorem.
+
+1. Rank and Frobenius norm
+-------------------------
+RankGeometry.lean proves ||H||_F^2 = sum_i eigenvalue_i(H)^2 for real
+symmetric H by trace invariance under orthogonal conjugation. The number
+of nonzero eigenvalues is rank(H), and each has absolute value <=||H||.
+Thus ||H||_F<=sqrt(rank(H))*||H||. All operator norms are Euclidean.
+
+A range-subspace argument proves rank(A-P)<=rank(A)+rank(P). Factoring
+the actual representation matrix through its r columns proves rank(P)<=r;
+its symmetry is checked directly. Hence rank(A)<=r and symmetric A imply
+  ||A-P||_F <= sqrt(2*r)*||A-P||.
+FrameGuarantees.lean checks the paper's concrete size substitution:
+  ||A-P||<=16*sqrt(n*chi*nu), n>=5120000*r*chi
+imply ||A-P||_F<=.01*n*sqrt(nu), for nonnegative chi and nu.
+
+2. Elementary truncation, without a singular-value perturbation input
+---------------------------------------------------------------------
+DiagonalTruncation.lean first proves that a matrix within operator error e
+of diag(d), with every |d_i|>e, has trivial kernel. This follows by applying
+the squared Euclidean norm bound to a hypothetical nonzero kernel vector.
+Applying this argument to the principal block indexed by |d_i|>e proves
+that at most rank(A) such diagonal entries exist. Therefore, retaining the
+largest |T| entries with |T|>=rank(A) leaves discarded norm at most
+||diag(d)-A||. Equal magnitudes and zero entries are permitted.
+
+SpectralTruncation.lean transfers this bound through orthogonal coordinates.
+If Q is orthogonal, ||J-Q diag(d) Q^T||<=zeta, and rank(A)<=|T|, then
+  ||J-Q diag(d restricted to T) Q^T|| <= ||J-A||+2*zeta.
+The explicit Frobenius stopping criterion implies the needed operator error.
+The proof is stronger than the particular symmetric mean application; A
+need not be symmetric for this truncation step. The paper now gives the
+same elementary argument and explicitly derives the subsequent rank bound.
+No algorithm or input-family claim changes.
+
+3. Actual rational representation and largest-entry selection
+------------------------------------------------------------
+RationalFrame.lean defines frameDiagonal(J,Q)=diag(Q^T J Q) over rationals
+and frameRepresentation from selected columns. Exact rational orthogonality
+Q^T Q=I implies real unit columns. The retained coefficients are proved to
+be exactly their Rayleigh quotients. The sum of rational rank-one terms
+(cast to reals) is precisely the selected orthogonal diagonalization.
+
+TopSelection.lean implements merge sorting of all indices by descending
+absolute rational diagonal value. It proves length, distinctness and order,
+and constructs an injective selection of r indices when r<=n. The largest-
+entry property is proved for this actual computed selection, including ties.
+
+FrameGuarantees.lean defines the rational coefficient matrix of the formula
+and identifies its cast with the matrix used by the search. Its executable
+sortedFrameRepresentation computes the directions and coefficients from Q;
+withComputedSpacing subsequently supplies the already verified spacing.
+The theorem sorted_frame_approximation_guarantees derives ALL FOUR fields
+of the prior ApproximationGuarantees structure. In addition to the original
+mean-rank/model/noise/size conditions, it requires only:
+  - exact rational orthogonality Q^T Q=I;
+  - Frobenius residual <=zeta for diag(Q^T J Q).
+The rank correction and truncation quality are conclusions, not separate
+numerical hypotheses. This result supplies the input to the previously
+verified computed_nodes_on_event and discovered_search_probability theorems.
+
+4. Precise remaining boundary
+-----------------------------
+The code does not yet compute Q from J. In particular, no existence,
+termination, residual accuracy or bit-complexity theorem for the rational
+Jacobi routine is claimed. The executable selection is postprocessing of
+an already supplied Q. The paper's rational plane-rotation construction
+still needs formal verification. The original asymptotic density/size
+substitutions, bounded-size runtime and hidden-SBM specialization also remain.
+The r<=n hypothesis is sufficient in the large-size branch; the paper keeps
+all columns when r>n, and the final bounded-size assembly is still open.
+
+The existing runtime interface is unchanged. Exact search correctness for
+arbitrary rational representations was proved earlier; this batch narrows
+the explicit conditions for its fast branch. It does not prove the full
+hidden-community theorem or add an assumed numerical oracle.
+
+The two recorded external probability results remain exactly as before.
+The independent-pair proposition still has its general non-finite-law gap.
+Conventional bit-operation and polynomial-space arguments are not compiler-
+level cost proofs. Independent review of the paper-to-Lean translation is
+still appropriate.
+
+5. Checks
+---------
+The Community example module adds tied signed diagonal values, empty and
+full selections, and a nontrivial rational orthogonal 2-by-2 frame. Its
+Rayleigh coefficients are computed exactly. These are supplementary checks;
+the guarantees above are universally quantified Lean proofs.
+Run python3 verify.py for the complete pinned build, fifteen example
+modules, public-declaration axiom audit, external-dependency register and
+paper statement fingerprints. See result.json for the recorded outcome.

@@ -1,0 +1,176 @@
+HISTORICAL BATCH REPORT. The common-gap and quadratic concentration inputs,
+parameter substitutions, and count/projection node-bound assembly described
+as remaining below are now complete. See COUNT_COMPLETE.txt for current
+status, revised constants, and the precise remaining obligations. The older
+conditional lemmas remain valid dependencies of the complete proofs.
+
+Count guessing: gap and compensation analysis
+============================================
+
+This batch verifies dependencies of lem:counts-profile and res:counts in the
+active manuscript. The common gap lemma moves from unverified to partial.
+No numbered result becomes fully checked in this batch. The algorithms,
+input classes, theorem statements, and claimed constants are unchanged.
+All previously checked results retain their status. See COUNT_GUESSING.txt
+for the actual formula, comparison, grid, and enumeration constructions.
+
+Actual comparisons and the common gap
+-------------------------------------
+GapBridge.average_signed_form proves, over the exact rational values used
+by the algorithm,
+
+  average(A,S,x) = A.constant + sum_w A.coeff(w)/2
+                    + sum_{w in S} A.coeff(w)*direction(x_w)/2.
+
+average_real_signed_form casts this identity to the real-valued probability
+analysis. earlierRow is exactly the earlier-round interaction row L_t.
+comparison_gap_mean therefore bounds the first absolute moment of the
+computed average, not a separately specified random surrogate.
+
+GapProfile.shifted_absolute_mean proves that a fixed shift cannot lower
+E|Z| for a symmetric signed sum Z. It uses the joint sign-flip law and the
+triangle inequality, and then the previously verified fourth-moment bound.
+row_gap_mean supplies the factor 1/2 in E|Delta_t| >= sqrt(W_t/3)/2.
+There is no restriction on the constant shift (hence no restriction on units).
+
+For z=(Lu)_t, the two scalar clipping estimates are
+
+  |H_t| <= M/2: min(|H_t+z/2|,M) >= |H_t+z/2|-z^2/(8M),
+  |H_t| >  M/2: min(|H_t+z/2|,M) >= M/4-z^2/M.
+
+Their sum gives clipped_sum_lower: proxy - E/M <= clipped gap sum whenever
+sum z_t^2 <= E. This improves the paper's 9/8 loss to 1, but no theorem
+constant is changed. The paper proof now explains this simpler row-by-row
+argument before retaining its original weaker bound. gap_proxy_mean proves
+the proxy's expected lower bound from the explicit per-row square-root
+condition. It does not assume independent rows: all rows may share bits.
+
+The remaining common-gap obligations are convexity and the Euclidean
+Lipschitz estimate, Talagrand concentration, integration for the mean/median
+shift, and the full substitution of norm/profile/size hypotheses. The file
+contains no assumed Talagrand theorem and no axiom replacing this work.
+
+Creator indicators and allowance subtraction
+-------------------------------------------
+BitExposure observes the actual assignment bits in increasing label order.
+bit_history_fresh proves their fair conditional laws. assignment_sign_tail
+instantiates the existing finite martingale theorem with these exact histories
+and permits a pathwise total squared-coefficient budget. It does not replace
+that total by the sum of separate worst-case coefficients.
+
+OrderedRounds means that an earlier round implies an earlier variable label.
+Thus both singleton rounds and consecutive blocks from the paper satisfy it.
+average_known and preference_known prove that the implemented averages and
+preferences are determined before the current bit. All other earlier bits,
+including earlier members of the same round, may also be revealed.
+
+CreatorTail.creator_centering proves
+
+  [x_t != p_t]*w_t - w_t/2 = -sign(p_t)*w_t*sign(x_t)/2.
+
+For w_t=min(|Delta_t|,M), creator_gap_tail proves the exact estimate
+
+  P(sum creators w_t < sum_{t in P} w_t/2 - a)
+    <= exp(-2*a^2/(|P|*M^2)).
+
+This is for the algorithm's actual preferences; it does not assume that
+creator decisions are independent across steps. M,a and |P| are positive
+where they appear in denominators. accumulated_gap_lower handles the
+rational allowances, using their nonnegativity. accumulated_gap_of_profile
+checks the paper's constants with a=g*n*sqrt(D_N)/8: a clipped profile of
+at least 6a, creator deviation at most a, and total slack at most a imply
+S' >= a.
+
+Sequential compensation and the norm bridge
+------------------------------------------
+SequentialCompensation defines the incoming coefficient at w as
+
+  sum_{t in P, t<w, t creator} sign(x_t)*N_tw.
+
+incoming_known proves its dependence only on earlier bits. The exact cast
+of the IMPLEMENTED compensation is -1/2 times the sum of these coefficients
+multiplied by sign(x_w). The proof requires the zero diagonal, as in the
+paper's off-diagonal interaction matrix.
+
+SequentialEnergy expresses the squared Euclidean norm inequality for R^T
+on every vector. The random vector used in the proof has coordinate sign(x_t)
+at creators and zero elsewhere; its squared length is at most |P|. Its
+adaptivity does not prevent application of a deterministic operator bound.
+
+OperatorEnergy uses mathlib's explicit Matrix.Norms.L2Operator instance.
+This matters: the default norm on functions or matrices would not express
+the Euclidean hypothesis in the paper. sequentialMatrix is the rectangular
+matrix indexed by prefix variables and all variables, with coefficient N_tw
+when t<w and zero otherwise. The transpose norm equality and mulVec norm
+bound prove SequentialEnergy from ||R||^2 <= V. The resulting theorem is
+
+  P(Q < -b) <= exp(-2*b^2/(V*|P|)).
+
+The formal tail is strict. The passing-bound assembly below uses b=a/2 and
+S'>=a, so Q<=-a implies the strict event Q<-a/2. Thus equality cases at the
+constraint boundary are included without assuming a zero-probability tie.
+
+matrix_squared_energy also supplies generic signed-vector, row-sum, and
+Frobenius estimates. With ||N||^2 <= V they give the budgets |B|*V used in
+the within-round proof. Specific block restriction and norm-preservation
+instantiations are still part of the remaining round assembly.
+
+Actual passing event
+--------------------
+SequentialPassing.sequential_passing_probability combines the creator and
+compensation bounds with comparison_sum_identity and the rational budget.
+Its common-profile hypothesis is explicitly
+
+  P(sum clipped gaps < 6a) <= q.
+
+With total slack <= a and the squared operator bound V, it proves
+
+  P(the actual summed budget holds)
+    <= q + exp(-2*a^2/(|P|*M^2)) + exp(-a^2/(2*V*|P|)).
+
+No independence between these exceptional events is assumed. This supplies
+the passing probability to the already checked node-count conversion once
+the common profile bound and class parameters are established. It does NOT
+establish that profile bound, so it is not the full runtime theorem.
+
+Within one round
+----------------
+RoundCompensation verifies the pair identity for all four choices of each
+assignment/preference bit and for arbitrary real interactions, then sums it.
+For a fixed preference mask p, let c_t=sign(p_t), beta_t=-c_t*sign(x_t), and
+M_tw=c_t*c_w*N_tw. For symmetric N it proves exactly
+
+  Q_j = -beta^T M beta/4 - <M*1,beta>/4.
+
+Symmetry and zero diagonal are separately proved to survive conjugation.
+changed_sign_law proves the JOINT fair-bit law of beta for each fixed mask.
+The linear tail is proved from the checked cosh moment-generating-function
+bound: if sum a_t^2<=B, the probability that -sum a_t*beta_t/4<-e is at most
+exp(-8*e^2/B). Preferences in the actual algorithm are fixed by earlier rounds;
+the subsequent COUNT_ROUNDS.txt batch now verifies their conditional block
+instantiation, later-round compensation, and summation over blocks.
+The quadratic term's Hanson-Wright bound remains unverified. No custom axiom
+or assumed quadratic tail is used to label any result checked.
+
+Remaining work and trust boundary
+--------------------------------
+1. Finish lem:counts-profile, in particular the convex concentration theorem
+   and its mean/median constants; instantiate the full gap assumptions.
+2. Prove Hanson-Wright and supply its bound to the now-checked fixed-round
+   conditional assembly. COUNT_ROUNDS.txt describes the completed decomposition,
+   conditional block laws, later-round energy, and exceptional-event union bound.
+3. Instantiate sequential and block parameter choices and connect the derived
+   passing estimates to the already checked multi-run node theorem.
+4. Complete the regular-graph and SBM structural/probabilistic hypotheses and
+   hidden-community numerical wrapper, as documented previously.
+5. Complete the separate random-sign executable-runtime assembly; its remaining
+   obligations have not been removed or silently marked verified.
+
+The current artifact builds nine example modules, including these checks for zero, one, and two
+creators in a two-variable round (Q=0, 1/2, and -1), a zero-gap preference tie,
+and the large-shift clipping proxy. These supplement universal kernel proofs;
+they are not a substitute for them. The transitive axiom audit checks all new
+public theorems and permits only propext, Classical.choice, and Quot.sound.
+The correspondence file records every numbered paper result, but semantic
+translation still requires mathematical review. The formal node counts are
+not compiler-level running-time or memory certificates.

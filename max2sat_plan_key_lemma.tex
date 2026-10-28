@@ -1,0 +1,385 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=28mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{keylemma}[theorem]{Key Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prb}{\Pr}
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=2em
+\hypersetup{pdftitle={A Simplified Plan for Max 2-SAT: One Search, One Count, One Key Lemma}}
+
+\title{A Simplified Plan for Max 2-SAT:\\ One Search, One Count, One Key Lemma}
+\author{}
+\date{8 October 2026\\[3pt]\small Working notes}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We select one direction from the notes~\cite{N3,N4,N5,N6}: DPLL with the
+pruning clauses of~\cite{N3} and the sum check of~\cite{N4}, along a fixed
+variable order. Knuth's identity turns its running time into one probability,
+that a uniformly random partial assignment survives $t$ steps. An exact
+identity shows that the sum check is a race between the accumulated shortfall
+of the clauses, a martingale, and the uncertainty left on the free variables.
+Their expected values all scale like $\sqrt d$, which explains why the sum
+check, unlike single clauses, cuts a typical partial assignment after about
+$0.4n$ steps at every density, and why the search saves between $0.50n$ and
+$0.62n$ in our runs up to $n=1600$. We state the one result we need, a Key
+Lemma for random formulas of every density; the companion note~\cite{N8}
+proves it with $\gamma\approx0.02$, for every graph with random signs. The
+worst case reduces to the same argument under three cancellation conditions,
+together with aggregation for formulas that violate them. Everything else is
+parked.
+\end{abstract}
+
+\section{The choice}\label{sec:choice}
+
+We keep one search: the pruning clauses of~\cite{N3} with the sum check
+of~\cite{N4}. Three reasons.
+\begin{enumerate}
+ \item It is the only mechanism we have found that beats the timing
+ barrier~\cite[Remark~29]{N3}: single clauses cut only near the end of their
+ supports, while the sum decides early at every density (Tables~\ref{tab:death}
+ and~\ref{tab:trees}).
+ \item Its proofs are short. Soundness is already proved, and the running
+ time is a single probability (Section~\ref{sec:count}).
+ \item It isolates what remains. The sum fails exactly on aligned structure,
+ where every rule implied by single flips fails~\cite[Section~9]{N4}, so the
+ worst case needs one more ingredient, aggregation, and nothing else
+ (Section~\ref{sec:worst}).
+\end{enumerate}
+
+\paragraph{The redundancy question of~\cite{N6}.} In this view a new clause
+need not add information by itself. The sum adds up the shortfall of every
+active clause, whether or not the clause is implied by the others. What makes
+the sum decisive is cancellation: two clauses that contain opposite literals
+of a shared variable make one of the two literals true whatever its value.
+Only overlaps with the same literals defeat the sum, and if they dominate, the
+formula is aligned.
+
+\section{The search}\label{sec:search}
+
+The formula is canonical with $B=1$, notation as in~\cite[Section~2]{N3}. Fix
+the order $x_1,\dots,x_n$. A node at depth $t-1$ has $x_1,\dots,x_{t-1}$
+assigned and branches on $x_t$, trying both values. Let $p$ be the smaller
+deficit of $x_t$ at the node and $\ell$ the literal attaining it (ties: the
+positive literal). The child in which $\ell$ is false receives the pruning
+clause $P_t=\langle L_t\le p-1\rangle$ over the free neighbours of $x_t$; the
+other child receives nothing. A node is cut when
+\begin{itemize}
+ \item some pruning clause has more true literals than it allows, or
+ \item the \emph{sum check} fires: $\sum_{w\text{ free}}\min\{m^0_w,m^1_w\}
+ >\sum_{c\in I}k_c$, where $I$ is the set of live pruning clauses that are not
+ vacuous, $k_c$ is the allowance of $c$, and $m^b_w$ is the number of clauses
+ of $I$ in which the value $b$ of $w$ makes a literal true~\cite[Section~5]{N4}.
+\end{itemize}
+There is no domination and no propagation; both are sound and help in
+practice, but the analysis is for this plain version. If $p=0$, the pruned
+child is cut at once. Soundness: each branching adds a clause to one child
+only, so~\cite[Proposition~20]{N3} applies, and the sum is implied by the
+clauses.
+
+\section{Counting nodes}\label{sec:count}
+
+\begin{proposition}[Knuth's identity~\cite{Knu75}]\label{prop:knuth}
+Let $\sigma$ be uniform in $\{0,1\}^n$ and let $S_t$ be the probability that
+the partial assignment $\sigma_1,\dots,\sigma_t$ survives all checks at depths
+$1,\dots,t$, with $S_0=1$. The search tree has exactly $2^tS_t$ live nodes at
+depth $t$, and at most $1+2n\max_t2^tS_t$ nodes in total. Hence the search runs
+in time $\Ostar(\max_t2^tS_t)$ and polynomial space.
+\end{proposition}
+
+\begin{proof}
+The checks at depth $s$ depend only on $\sigma_1,\dots,\sigma_s$, so the live
+nodes at depth $t$ correspond to the surviving prefixes, each of probability
+$2^{-t}$. Every node other than the root is a child of a live node, and each
+live node has two children.
+\end{proof}
+
+So the whole running-time analysis is one probability estimate for a uniformly
+random partial assignment. No measure, no clause weights, no tilted walk and no
+availability argument are needed.
+
+\section{The sum check as a race}\label{sec:race}
+
+Let $c$ be the clause created at step $i$. Write $D_c$ for its support size,
+the number of free neighbours of $x_i$ at that time, and $\Delta_c$ for the
+effective gap of $x_i$ then, so that its threshold is $p_c=(D_c-|\Delta_c|)/2$
+by~\cite[(1)]{N3}. At a later node, $a_c$ of its support variables are
+assigned and $j_c$ of them took the value that makes their literal true. For a
+set $I$ of clauses and a free variable $w$ put $b_w=m^1_w-m^0_w$.
+
+\begin{lemma}[The race]\label{lem:race}
+For every set $I$ of pruning clauses that are not violated,
+\[
+ \sum_{w\text{ free}}\min\{m^0_w,m^1_w\}-\sum_{c\in I}k_c
+ =S(I)+Q(I)-U(I),
+\]
+where
+\[
+ S(I)=\sum_{c\in I}\Bigl(\frac{|\Delta_c|}2+1\Bigr),\qquad
+ Q(I)=\sum_{c\in I}\Bigl(j_c-\frac{a_c}2\Bigr),\qquad
+ U(I)=\frac12\sum_{w\text{ free}}|b_w| .
+\]
+So the sum check over $I$ fires if and only if $S(I)+Q(I)>U(I)$.
+\end{lemma}
+
+\begin{proof}
+$\min\{m^0_w,m^1_w\}=\frac12(m^0_w+m^1_w)-\frac12|b_w|$, and
+$\sum_w(m^0_w+m^1_w)=\sum_c(D_c-a_c)$. With
+$k_c=p_c-1-j_c=\frac12(D_c-|\Delta_c|)-1-j_c$, each clause contributes
+$\frac12(D_c-a_c)-k_c=\frac12|\Delta_c|+1+j_c-\frac12a_c$.
+\end{proof}
+
+$S$ is the \emph{shortfall}: every clause belongs to a variable set against
+its majority, and its bound lies $|\Delta_c|/2+1$ below the expected count of
+its support. $U$ is the \emph{uncertainty}: whatever values the free variables
+take, the clauses that disagree about a variable cancel, and only $|b_w|$ is
+left open. $Q$ records how far the assigned support variables deviated from
+fair coins. The identity was checked in exact arithmetic on $7{,}259$ random
+states.
+
+\begin{remark}[Which clauses to sum]\label{rem:vacuous}
+Removing a vacuous clause $v$ never weakens the check: its term
+$\frac12(D_v-a_v)-k_v$ is at most $-\frac12(D_v-a_v)$, while removing it changes
+$U$ by at most $\frac12(D_v-a_v)$. So the check of the search fires whenever
+the check over all non-violated clauses fires. For the analysis we take $I_t$
+to be all clauses created up to depth $t$ and write $S_t,Q_t,U_t$ and
+$Z_t=S_t+Q_t-U_t$. A partial assignment that survives depth $t$ has
+$Z_t\le0$.
+\end{remark}
+
+\begin{proposition}[One step]\label{prop:step}
+Along a uniformly random $\sigma$, at step $t$:
+\begin{enumerate}
+ \item $Q_t-Q_{t-1}=\frac12(2\sigma_t-1)\,b_{x_t}$, with $b_{x_t}$ taken at
+ depth $t-1$; so $Q$ is a martingale.
+ \item $U$ loses $\frac12|b_{x_t}|$, because $x_t$ is no longer free.
+ \item With probability $\frac12$, when $\sigma_t$ is the non-preferred value,
+ a clause is created: $S$ grows by $\frac12|\Delta_t|+1$, and $b_w$ changes by
+ $\pm1$ for each of its support variables $w$.
+\end{enumerate}
+In the random-sign model of Section~\ref{sec:key}, the signs added to the $b_w$
+in item~3 are independent fair coins given the history, since the sign of $w$
+in its clause with $x_t$ plays no role before step $t$. Hence
+\[
+ \E\bigl[Z_t-Z_{t-1}\bigm|\sigma_1,\dots,\sigma_{t-1}\bigr]
+ =\frac{|\Delta_t|}4+\frac12+\frac{|b_{x_t}|}2-\frac{z_t}4,
+\]
+where $z_t$ is the number of free neighbours $w$ of $x_t$ with $b_w=0$.
+\end{proposition}
+
+\begin{proof}
+Assigning $x_t$ raises $a_c$ for the clauses containing it and raises $j_c$ for
+those in which $\sigma_t$ is the bad value, which gives item~1. Items~2 and~3
+follow from the definitions. Adding an independent fair sign to $b_w$ raises
+$|b_w|$ by one in expectation if $b_w=0$ and leaves it unchanged otherwise.
+\end{proof}
+
+\section{The Key Lemma}\label{sec:key}
+
+\paragraph{Model.} In $R(n,d)$ each of the $\binom n2$ pairs carries one clause
+with probability $d/(n-1)$, independently, with independent uniform signs. By
+symmetry the fixed order does not matter.
+
+\begin{keylemma}\label{kl}
+There are constants $\gamma>0$ and $d_0$ such that for all $n$ and all
+$d_0\le d\le n-1$, with probability $1-o(1)$ over $F\in R(n,d)$,
+\[
+ \max_{0\le t\le n}2^tS_t(F)\le2^{(1-\gamma)n}.
+\]
+\end{keylemma}
+
+The Key Lemma is proved in~\cite[Corollary~3]{N8} for every $\gamma<0.0236$.
+By Proposition~\ref{prop:knuth}, the search of Section~\ref{sec:search}
+solves Max 2-SAT on $R(n,d)$ in time $\Ostar(2^{(1-\gamma)n})$ and polynomial
+space, with probability $1-o(1)$, for every density. This is an average-case
+statement, and its novelty still has to be checked against the literature.
+
+\paragraph{Evidence.} Table~\ref{tab:death} gives the depth at which a
+uniformly random partial assignment is cut, Table~\ref{tab:trees} the size of
+the whole tree, both in exactly this setting.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llcccc}
+\toprule
+ & & $d=16$ & $64$ & $256$ & $(n-1)/2$\\
+\midrule
+$n=400$ & single clauses & 0.19 & 0.52 & 0.76 & 0.72\\
+ & with the sum check & 0.19 & 0.41 & 0.43 & 0.43\\
+$n=1600$ & single clauses & 0.11 & 0.49 & 0.72 & 0.84\\
+ & with the sum check & 0.11 & 0.39 & 0.42 & 0.44\\
+\bottomrule
+\end{tabular}
+\caption{Median depth, as a fraction of $n$, at which a uniformly random
+partial assignment is cut; $30$ assignments per entry.}\label{tab:death}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+ & & $d=64$ & $256$ & $(n-1)/2$\\
+\midrule
+$n=400$ & single clauses & 0.36 & 0.20 & 0.26\\
+ & with the sum check & 0.52 & 0.51 & 0.54\\
+$n=800$ & single clauses & 0.40 & 0.24 & 0.21\\
+ & with the sum check & 0.56 & 0.53 & 0.50\\
+$n=1600$ & single clauses & 0.43 & 0.24 & 0.16\\
+ & with the sum check & 0.62 & 0.56 & 0.56\\
+\bottomrule
+\end{tabular}
+\caption{Saving $n-\log_2(\text{tree size})$ as a fraction of $n$, estimated by
+population splitting (unbiased; one formula per entry).}\label{tab:trees}
+\end{table}
+
+With single clauses the cut moves towards the last level as $d$ grows; with the
+sum check it stays near $0.4n$, and the saving stays between $0.50n$ and $0.62n$.
+
+\paragraph{Why the density cancels.} For $d\to\infty$ use the approximations
+that a free variable at time $\tau n$ lies in about $\tau d/2$ clauses, that
+$\Delta_t$ has variance about $d(1+\tau)$, and that $b_w$ is a sum of
+independent signs. Then Proposition~\ref{prop:step} gives drift $\sqrt d\,\mu(\tau)$
+per step with
+\[
+ \mu(\tau)=\frac14\sqrt{\frac{2(1+\tau)}\pi}+\frac12\sqrt{\frac\tau\pi}
+ -\frac{1-\tau}{4\sqrt{\pi\tau}},
+\]
+and $Z_{\tau n}\approx n\sqrt d\,F(\tau)$ with
+\[
+ F(\tau)=\int_0^\tau\mu
+ =\frac1{\sqrt\pi}\Bigl(\frac{\sqrt2}6\bigl((1+\tau)^{3/2}-1\bigr)
+ +\frac{\tau^{3/2}-\tau^{1/2}}2\Bigr).
+\]
+Early on, new clauses meet fresh variables and $U$ grows faster than $S$; the
+drift turns positive at $\tau_0\approx0.14$, and $F$ changes sign at
+$\tau^*\approx0.46$, independently of $d$. The measured cuts at $0.39$--$0.44$
+come slightly earlier, because single clauses and the removal of vacuous
+clauses also act. A single clause, by contrast, compares an imbalance of order
+$\sqrt d$ with a remaining support of order $d$, and so decides only at depth
+$1-O(1/\sqrt d)$.
+
+\section{How it is proved}\label{sec:proof}
+
+The proof in~\cite{N8} is simpler than the outline we had here (drift, noise,
+combine).
+\begin{enumerate}
+ \item \textbf{One depth.} $\max_t2^tS_t\le\max\{2^T,2^nS_T\}$, so it
+ suffices to show that a random partial assignment survives one depth
+ $T=\tau n$ only with probability $e^{-cn}$; then
+ $\gamma=\min\{1-\tau,\,c/\ln2\}$.
+ \item \textbf{Late signs.} The search never uses the signs of $x_t$ before
+ it reaches $x_t$. So, given the past, $\Delta_t$ is a sum of unseen signs
+ ($\pm1$ over the 2-clauses of $x_t$, $\pm2$ over its unit clauses), the bad
+ values of $x_t$ in the clauses that contain it are unseen fair coins, and at
+ depth $T$ so are the bad values of the free variables.
+ \item \textbf{Three tails.} Szarek's inequality and a one-sided bound for
+ nonnegative increments give the shortfall; $Q$ is a walk with fair steps
+ $\pm\frac12$ (Azuma); $U$ is controlled by Jensen's and McDiarmid's
+ inequalities. No drift analysis of $U$ is needed, because $U$ is evaluated
+ only at depth $T$, where the bad values of the free variables are still
+ unseen.
+\end{enumerate}
+The graph enters only through a few degree sums, so the result holds for every
+graph with random signs whose margin is of order $n\sqrt d$: every
+$\gamma<0.0236$ for $R(n,d)$, and every $\gamma<0.0132$ for every $d$-regular
+graph in any order~\cite[Corollaries~3 and~4]{N8}. The constant is far below
+the measured $0.50n$--$0.62n$ and the Gaussian estimate of about $0.2n$ from the
+drift above. The loss comes from four separately added tails, from Szarek's
+constant, and from using a single depth. A single exponential moment of $Z_t$
+near depth $0.5n$ is the natural way to improve it.
+
+\section{The worst case}\label{sec:worst}
+
+The proof of~\cite{N8} uses random signs in three places: the size and
+concentration of the shortfall, the step size of the martingale $Q$, and the
+size of the uncertainty $U$. For a fixed formula, $\sigma$ alone keeps $Q$ a
+martingale and gives the shortfall its mean, but nothing more. In particular
+our earlier claim that the shortfall part holds for every formula is true only
+for its mean.
+
+\paragraph{Cancellation conditions~\cite[Section~6]{N8}.} The proof goes
+through verbatim for a fixed formula if, except with probability
+$e^{-\Omega(n)}$ over $\sigma$: (W1) $U_T$ is a small constant times
+$n\sqrt d$; (W2) $\sum_{t\le T}b_{x_t}^2=O(nd)$; (W3) the effective gaps keep
+their typical size, $\sum_t|\Delta_t|=\Omega(n\sqrt d)$ and
+$\sum_t\Delta_t^2=O(nd)$. (W1) and (W2) say that the clauses containing a
+variable disagree about its value often enough that $|b_w|$ is of order
+$\sqrt{m_w}$ rather than $m_w$, at the free and at the assigned variables.
+
+\paragraph{When it fails.} If cancellation fails, many clauses agree about the
+values of many variables: the formula is aligned, as in the circulant formulas
+$C_{n,c}$, where every clause has the same bad value at every variable. By the
+barrier of~\cite[Section~9]{N4}, no rule implied by single flips can help
+there: Max-Cut on $K_m$ has $\binom m{m/2}$ strict local maxima, and $C_{n,c}$
+has exponentially many optimal assignments; even comparisons in both children
+with fixed tie-breaking keep $126$ assignments of $C_{9,2}$, more than the $70$
+leaves of plain domination. Both are solved by aggregation: counting the ones
+within exact interaction classes~\cite[Section~5]{N5}.
+
+\paragraph{The worst-case target.} (i) The Key Lemma under (W1)--(W3); this
+is the remark above. (ii) Formulas that violate them have enough aligned
+structure for aggregation to pay. (iii) A rule that decides between the two at
+a node. Part (ii) is the hard part; it is a statement about formulas whose
+active clauses agree about their variables, not about arbitrary graphs. By
+Corollary~4 of~\cite{N8} the graph alone is never the obstacle.
+
+\section{Parked}\label{sec:parked}
+
+Clause-weight measures and the availability analysis~\cite[Sections~6--8]{N4};
+packing and core certificates, coverage, exposure, the entropy dichotomy and the
+desired frontier theorem~\cite{N5,N6}; comparisons in both children~\cite{N6};
+pair decisions~\cite[Section~3]{N4} except as a possible form of aggregation.
+None of them was needed for the Key Lemma. The barrier and the
+linear-relaxation characterization of sums~\cite{N4} are kept, because they
+define the worst case and the strongest version of the check.
+
+\section{Checks}\label{sec:checks}
+
+\begin{itemize}
+ \item \texttt{explore\_death\_depth.py} (about $15$ seconds):
+ Table~\ref{tab:death}.
+ \item \texttt{explore\_key\_lemma.py}: \texttt{check} verifies
+ Lemma~\ref{lem:race} in exact arithmetic; \texttt{400 50} and similar give
+ the rows of Table~\ref{tab:trees} (minutes for $n\le800$, longer for $1600$).
+ \item \texttt{explore\_key\_lemma\_proof.py}: the checks of~\cite{N8}.
+\end{itemize}
+
+\begin{thebibliography}{9}
+\raggedright
+\bibitem{N3} Max 2-SAT and the domination rule: results and ideas so far.
+ Working note, 5 October 2026 (\texttt{max2sat\_results\_and\_ideas.tex}).
+\bibitem{N4} Max 2-SAT with pruning clauses: pair decisions, sums, and a
+ measure. Working note, 6--7 October 2026
+ (\texttt{max2sat\_pairs\_sums\_measure.tex}).
+\bibitem{N5} Exploring the branching frontier for Max 2-SAT. Draft,
+ 7 October 2026 (\texttt{max2sat\_branching\_frontier.tex}).
+\bibitem{N6} A learning and coverage dichotomy for Max 2-SAT. Draft,
+ 7 October 2026 (\texttt{max2sat\_learning\_dichotomy.tex}).
+\bibitem{N8} The Key Lemma for random signs. Working note, 8 October 2026
+ (\texttt{max2sat\_key\_lemma\_proof.tex}).
+\bibitem{Knu75} D.~E.~Knuth. Estimating the efficiency of backtrack
+ programs. \emph{Mathematics of Computation} 29(129):121--136, 1975.
+\end{thebibliography}
+
+\end{document}

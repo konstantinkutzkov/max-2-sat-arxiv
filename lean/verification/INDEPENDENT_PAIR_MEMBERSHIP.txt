@@ -1,0 +1,85 @@
+Independent-pair membership: complete finite-law application
+===========================================================
+
+Paper target: Proposition prop:pairmembership, equation eq:remainder, and
+its count-accumulation size condition. The proposition remains PARTIAL only
+because its statement permits arbitrary non-finite input laws. Both of its
+finite-law cases now have the full conclusion, conditional on the same two
+published matrix results recorded in external-results.json. No row-profile,
+allowance, concentration or final probability conclusion is assumed.
+
+1. Pointwise arithmetic and profile
+----------------------------------
+Profile.lean proves the elementary square-root increment and telescoping
+sum, then handles the floor T=floor(tau*n) and ceiling a=ceil(tau*n/10).
+Lean indices are zero-based: t.val equals the number of earlier neighbors;
+paper row t corresponds to Lean index t-1. lateRows contains a<=j<T.
+For H=tau*n>=1000, the truncated root sum is >=.62*H*sqrt(H).
+The .993 row bounds yield rowProfile >=.61*H*sqrt(H)*sqrt(nu).
+The required profile is <=.60*H*sqrt(H)*sqrt(nu). The former .635 proof
+constant was unnecessarily tight; g=tau^(3/2)/(12*sqrt(chi)) is unchanged.
+
+MembershipParameters.lean proves, from the original size/density hypotheses:
+- n>=100, tau*n>=1000, chi<=n;
+- nu<=B^2 from the entrywise variance lower bound and bounded support;
+- B>0 follows from positive variance, rather than an extra input condition;
+- 10^9*chi*log(n)<=tau*n;
+- 10^9*chi*B^2*log(n)<=tau*n*nu;
+- 10^9*chi^2*sigma0^2<=tau*n*nu.
+The chosen a=6*sqrt(chi*nu*log(n))/n is positive and satisfies every
+hypothesis of the mean and norm event lemmas. The comparison coefficient
+satisfies 100000*chi*sigma^2<=tau*n*nu in both centering cases. This implies
+the paper allowance. The count-accumulation size inequality is also proved.
+
+2. Full exceptional-probability assembly
+---------------------------------------
+MembershipProbability.lean substitutes the original parameters into the
+scalar bounds. The two mean tails together cost <=n^-3, each energy tail
+costs <=n^-3, and every selected row costs <=n^-3. Adding the matrix event
+cost gives <=(|lateRows|+4)/n^3<=1/n. No independence between these events
+or between the empirically centered coordinates is assumed.
+
+Membership.lean defines membershipGood as exactly the three inequalities
+in eq:remainder (K=9*chi), and proves empirical_membership and
+supplied_membership. Both conclude probability >=1-1/n. The empirical
+proof uses the actual sampled mean and |mu+mean(X)|; the supplied proof
+uses the original centered entries. raw_scalar_event_probability proves
+the supplied-mean scalar event directly; it is not an external hypothesis.
+
+3. Translation to the original sampled input
+-------------------------------------------
+InputMembership.lean proves empirical_input_membership with inputs J, mu
+and conclusion concerning J-mean(J), with allowance |mean(J)|. It proves
+supplied_input_membership with fixed P=EJ and conclusion concerning J-P.
+Their assumptions are the original bounded centered entries, centered
+second moments in [nu,chi*nu], size and density. B>0 is derived internally.
+membership_gap_rpow identifies the formal tau*sqrt(tau) with tau^(3/2).
+The supplied representation is needed downstream for count grids; this
+membership result only uses its mean entries and coefficient sum sigma.
+
+bernoulli_empirical_membership handles a common edge probability q, with
+Max-Cut coefficient -2 per present edge and empirical centering.
+bernoulli_supplied_membership handles arbitrary individual probabilities
+q_e, including supplied SBM means. The variance is 4*q_e*(1-q_e), and the
+entry bound is B=2. The lower variance requirement excludes deterministic
+edges from this particular sufficient criterion. Discovering a hidden
+representation is not part of these membership theorems.
+
+Trust and remaining scope
+-------------------------
+The only external hypotheses are the previously reviewed Bandeira--van
+Handel Rademacher expectation and Ledoux mean-centered convex upper-tail
+results. No new external result, custom axiom, or proof placeholder was
+introduced. All newly conditional theorem signatures are registered.
+See EXTERNAL_RESULTS.txt for the exact source review.
+
+The full arbitrary-distribution version of prop:pairmembership, numerical
+hidden-mean discovery, its fallback integration, and thm:sbm remain open
+formalization obligations. The finite-law membership result covers the
+sampling distributions actually used by our Bernoulli graph models.
+The appendix biased-subset extension remains an unproved research target.
+Polynomial arithmetic overhead and streamed space still use the paper's
+conventional implementation analysis rather than a compiler cost model.
+
+Reproduce the complete project and axiom/signature audit with python3 verify.py.
+Historical archives retain the status of their own milestone.

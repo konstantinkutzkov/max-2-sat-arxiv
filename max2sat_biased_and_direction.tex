@@ -1,0 +1,935 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=28mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{problem}[theorem]{Problem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\dS}{\bar d_S}
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=2em
+\hypersetup{pdftitle={Max 2-SAT: Biased Formulas, the Race for Every Branching Rule, and the Adaptive Direction}}
+
+\title{Max 2-SAT: Biased Formulas, the Race for Every Branching Rule,\\ and the Adaptive Direction}
+\author{}
+\date{8 October 2026\\[3pt]\small Working notes}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We take stock of the notes written since 22 September, keep one framework,
+and prove one new theorem inside it. The framework is the search with pruning
+clauses and the sum check, counted by Knuth's identity and analysed through the
+race identity $Z=S+Q-U$. We show that this analysis does not need a fixed
+order: along the uniform walk of any branching rule, adaptive or not, the gap
+of every variable performs a fair $\pm1$ walk, the shortfall is a fair-coin
+thinning and $Q$ is a martingale. The theorem is for \emph{biased} formulas:
+if a linear fraction of the variables have an effective gap at least $\varepsilon$
+times their own degree, and the degrees have bounded spread, then Max 2-SAT is
+solved in time $\Ostar(2^{(1-\gamma)n})$ and polynomial space with
+$\gamma=\varepsilon^2\eta^2/(3000R)$, at every clause density, by every
+branching rule. No cancellation and no spectral condition is used: a gap
+potential $\Phi=\sum_v|\Delta_v|$ is a submartingale, and bias beats the
+uncertainty of the last variables. This settles, for a different exponent and
+without the measure, the accumulation question left open in the note of
+6--7~October. We then organize the remaining work into three regimes, biased,
+balanced and aligned, each with its own tool, and describe the adaptive rule
+that the race suggests: branch on the clause with the largest shortfall whose
+bad values disagree most with the current aggregate of bad values. The slack of
+the summed inequality and its exact completion count are proposed as the
+measure; they generalize the clause weights $r-\log_\lambda V(r,k)$ to
+overlapping clauses with an exact Pascal recursion.
+\end{abstract}
+
+\section{Where we stand}\label{sec:state}
+
+\paragraph{Goal.} A deterministic polynomial-space algorithm for Max 2-SAT in
+time $\Ostar(c^n)$, $c<2$, for formulas of every clause density; failing that,
+natural classes of formulas of unbounded density on which such a bound is
+proved for every member.
+
+\paragraph{What is proved.} Table~\ref{tab:status} lists the pieces by the
+note that contains them. The rules are all sound for every branching order:
+domination, pruning clauses with cuts and propagation~\cite{N3}, sums and
+weighted sums of pruning clauses~\cite{N4}, chained pair decisions~\cite{N4},
+the three-state compression of near-twin pairs~\cite{NT}, and counting over
+exact interaction classes~\cite{N5}. The running-time results are of four
+kinds.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{@{}p{0.30\textwidth}p{0.36\textwidth}p{0.28\textwidth}@{}}
+\toprule
+Result & Class & Tool \\
+\midrule
+$2^{H((1-\varepsilon)/2)n}$, tight~\cite{N2,N3} & $\eta n$ variables with gap $\ge\varepsilon n$ & level budget; order-free with pruning clauses\\
+Key Lemma, $\gamma<0.0236$~\cite{N7,N8} & random signs on any graph, any density & race identity, late signs, Knuth\\
+spectral class~\cite{N9} & $\|J\|,\|L\|\le K\sqrt d$, $\sum h^2\le Knd$ & same race, Talagrand \\
+early enumeration~\cite{EE} & random signs, degree spread $D/d$ & count completions of the summed inequality\\
+counting criterion~\cite{CC,CA} & (C1) pair counts, (C2) gaps, (C3$'$) & same, deterministic\\
+near twins~\cite{NT} & $\beta n$ disjoint $r$-near-twin pairs & compression, $2^n(3/4)^{\beta n/(r+1)}$\\
+exact classes~\cite{N5} & $t$ interaction classes, exceptions $E$ & counting ones, $2^{|E|}(n+1)^t$\\
+\textbf{this note, Thm.~\ref{thm:biased}} & $\eta n$ variables with gap $\ge\varepsilon D_v$, degree spread $R$ & race for every rule, gap potential\\
+\bottomrule
+\end{tabular}
+\caption{Running-time results. The first row needs gaps linear in $n$; the
+new row needs gaps linear in the variable's own degree, so it covers every
+density including bounded degree.}\label{tab:status}
+\end{table}
+
+\paragraph{What is open.} The measure-and-conquer analysis with clause
+weights~\cite[Sections~6--8]{N4} is tight step by step but needs plain steps to
+be rare along the tilted walk; the accumulation over many clauses
+(\cite[Problem~17]{N4}) is open. The balanced regime needs cancellation of bad
+values at the free variables, which random signs provide and which the pair
+counts of~\cite{CC} certify; no clause-level condition without a quadratic form
+is known. The aligned regime (Max-Cut on $K_m$, the circulant $C_{n,c}$) defeats
+every rule implied by single flips~\cite[Section~9]{N4}; near-twin compression
+and exact classes solve the extreme cases, and the inverse question, whether a
+failure of cancellation forces such structure, is open~\cite{NT}.
+
+\paragraph{What to park.} The learning dichotomy~\cite{N6}: packing and core
+certificates, exposure, the entropy dichotomy. Its two lasting points are the
+$K_m$ barrier (also in~\cite{N4}) and the joint refutation test, which is the
+linear-relaxation cut of~\cite[Proposition~7]{N4}. From the frontier
+draft~\cite{N5} we keep the full-phase weights, the weighted-count certificate
+and exact interaction classes; the coverage dichotomy is subsumed by the three
+regimes below. The spectral class~\cite{N9} is superseded by~\cite{CC,CA} and,
+for the biased regime, by Theorem~\ref{thm:biased}, which needs no norm at all.
+
+\section{The race for every branching rule}\label{sec:race}
+
+\paragraph{Setting.} The formula is canonical with $B=1$: unit clauses with
+multiplicity, at most one binary clause per pair~\cite[Section~2]{N3}. For a
+variable $v$ let $D_v$ be its binary degree, $u_v$ its unit multiplicity after
+cancelling opposite units, and $h_v=\Delta_v(F)$ its effective gap at the root:
+positive minus negative binary occurrences plus twice the unit imbalance. Then
+$|h_v|\le D_v+2u_v$. Write $\bar d=\frac1n\sum_vD_v$ and, for a set $S$,
+$\dS=\frac1{|S|}\sum_{v\in S}D_v$. For $a\in\{\pm1\}^n$ the score is
+$c_0+\frac14\sum_vh_va_v-\frac14\sum_{u<v}J_{uv}a_ua_v$ with
+$J_{uv}\in\{0,\pm1\}$~\cite[Definition~1]{N9}.
+
+\paragraph{The search.} At a node some free variable $x$ is chosen by a
+\emph{branching rule}, a deterministic function of the node; both values are
+tried. Let $\Delta$ be the effective gap of $x$ at the node, $s=\sgn\Delta$ with
+$\sgn0=+1$ its preferred value in $\pm1$ notation, and $p=(D^f-|\Delta|)/2$ the
+smaller deficit, where $D^f$ is the number of free neighbours. The child with
+$a_x=-s$ receives the pruning clause $\langle L_x\le p-1\rangle$ over the free
+neighbours of $x$~\cite[Section~8]{N3}; the other child receives nothing. A
+node is cut when a clause is violated (this includes $p\le0$) or when the sum
+check fires: $\sum_{w\text{ free}}\min\{m^0_w,m^1_w\}>\sum_ck_c$ over the live
+non-vacuous clauses, with $k_c$ the remaining allowance of $c$ and $m^b_w$ the
+number of such clauses in which $b$ is the bad value of $w$~\cite[Section~5]{N4}.
+No domination and no propagation. Soundness for every rule: each branching
+adds a clause to one child only~\cite[Proposition~20]{N3}, and the sum is
+implied by the clauses.
+
+\begin{proposition}[Knuth's identity, any rule]\label{prop:knuth}
+Let the walk choose a uniform child at every live node, and let $\pi_t$ be the
+probability that it is alive after $t$ steps. The tree has $2^t\pi_t$ live
+nodes at depth $t$ and at most $1+2n\max_t2^t\pi_t$ nodes in all. Hence the
+search takes time $\Ostar(\max_t2^t\pi_t)$ and polynomial space.
+\end{proposition}
+
+\begin{proof}
+Every live node has two children and is reached by the walk with probability
+$2^{-t}$, whatever the rule.
+\end{proof}
+
+Write $x_t$ for the variable chosen at step $t$ of the walk, $\sigma_t$ for its
+value, $a_t=2\sigma_t-1$, $\Delta_t$ for its gap at that node and
+$\xi_t=[a_t=-\sgn\Delta_t]$ for the event that a clause is created. Let
+$H_{t}$ be the history $(x_1,\sigma_1,\dots,x_t,\sigma_t)$. The \emph{uncut
+process} runs the walk through all $n$ steps, creates every clause and keeps
+it. On the event that the walk is alive at depth $T$, the uncut process and
+the search agree up to depth~$T$.
+
+\begin{lemma}[The race]\label{lem:race}
+At any node, over all clauses created so far,
+\begin{gather*}
+ \sum_{w\text{ free}}\min\{m^0_w,m^1_w\}-\sum_ck_c=S+Q-U,\\
+ S=\sum_c\Bigl(\frac{|\Delta_c|}2+1\Bigr),\qquad
+ Q=\sum_c\Bigl(j_c-\frac{a_c}2\Bigr),\qquad
+ U=\frac12\sum_{w\text{ free}}|m^1_w-m^0_w|,
+\end{gather*}
+where $\Delta_c$ is the gap at the creation of $c$, $a_c$ the number of its
+support variables assigned since, and $j_c$ the number of those that took their
+bad value. If the walk is alive at depth $T$, then $Z_T=S_T+Q_T-U_T\le0$.
+\end{lemma}
+
+\begin{proof}
+This is~\cite[Lemma~2, Remark~3]{N7}: the identity is algebra at one node and
+does not mention the order; removing vacuous clauses only strengthens the
+check, so the check of the search fires whenever the check over all created
+clauses fires.
+\end{proof}
+
+\begin{lemma}[The values are the coins]\label{lem:coins}
+For every branching rule:
+\begin{enumerate}
+ \item[(a)] Given $H_{t-1}$, the variable $x_t$, its gap $\Delta_t$, the
+ counts $m^b_{x_t}$ and the free set are determined, and $a_t$ is uniform on
+ $\pm1$. Hence $\xi_t$ is a fair coin given $H_{t-1}$.
+ \item[(b)] The gap of a free variable $v$ is
+ $\Delta_v(t)=h_v-\sum_{s\le t,\,x_s\sim v}J_{vx_s}a_s$. When a neighbour
+ $x_s$ of $v$ is assigned, $\Delta_v$ changes by $\pm1$, each with probability
+ $\frac12$ given $H_{s-1}$. So, sampled at the times its neighbours are
+ assigned, $\Delta_v$ is $h_v$ plus a simple symmetric random walk.
+ \item[(c)] $Q_t-Q_{t-1}=\frac12a_tb_{x_t}$ with $b_{x_t}=m^1_{x_t}-m^0_{x_t}$
+ taken at depth $t-1$; so $Q$ is a martingale with
+ $|Q_t-Q_{t-1}|\le\frac12D_{x_t}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) The rule is a function of the node, and $\sigma_t$ is a fresh uniform bit.
+(b) The coefficient of $a_v$ in the score after substituting the assigned
+variables is $\frac14(h_v-\sum J_{vx_s}a_s)$, and in the residual canonical
+formula it is $\frac14\Delta_v$~\cite[Lemma~4(a)]{N9}; the increment
+$-J_{vx_s}a_s$ is $\pm1$ with probability $\frac12$ because $a_s$ is uniform
+given $H_{s-1}$ and $J_{vx_s}=\pm1$ is fixed. A $\pm1$ sequence in which every
+term is uniform given the past is a sequence of independent fair coins.
+(c) Assigning $x_t$ raises $a_c$ by one for every created clause containing
+it and $j_c$ by $[\sigma_t\text{ bad in }c]$, which sums to $\frac12a_tb_{x_t}$;
+$b_{x_t}$ is determined by $H_{t-1}$ and $|b_{x_t}|$ is at most the number of
+created clauses containing $x_t$, at most $D_{x_t}$.
+\end{proof}
+
+This is the deterministic form of the late-signs lemma of~\cite{N8}: there the
+unseen coins were the signs, here they are the values. The difference is that
+the bad values of the free variables are now fixed by the formula, so $U_T$ is
+not a sum of coins. For biased formulas we do not need it to be.
+
+\section{Biased formulas}\label{sec:biased}
+
+\begin{definition}[Biased formulas]\label{def:biased}
+Let $\varepsilon,\eta\in(0,1]$ and $R\ge1$. A canonical formula with $B=1$ is
+\emph{$(\varepsilon,\eta,R)$-biased} if there is a set $S$ of at least
+$\eta n$ variables such that
+\begin{enumerate}
+ \item[(B1)] every $v\in S$ has $|h_v|\ge\varepsilon D_v$: its majority
+ literal exceeds its minority literal by an $\varepsilon$-fraction of its
+ degree, counting a unit clause as two occurrences;
+ \item[(B2)] $\dS\ge1$ and $\sum_{v\in V}(D_v+u_v)^2\le R\,n\,\dS^{\,2}$: no
+ part of the formula is much denser than the biased variables.
+\end{enumerate}
+\end{definition}
+
+Condition (B1) is the gap condition of~\cite{N4} in its relative form, where
+the gap is compared with the variable's own degree and not with $n$; it allows
+every density, from bounded degree to complete graphs. Condition (B2) holds
+with $R=1$ for regular graphs without unit clauses and with $R=O(1)$ whenever
+all degrees are within a constant factor of $\dS$. The set $S$ need not be
+known to the algorithm.
+
+\begin{theorem}[Biased formulas, every branching rule]\label{thm:biased}
+Let $F$ be $(\varepsilon,\eta,R)$-biased. For every branching rule, the search
+of Section~\ref{sec:race} solves Max 2-SAT on $F$ in polynomial space and time
+\[
+ \Ostar\bigl(2^{(1-\gamma)n}\bigr),\qquad
+ \gamma=\frac{\varepsilon^2\eta^2}{3000\,R}.
+\]
+\end{theorem}
+
+The constant is not optimized; the order $\varepsilon^2$ is right
+(Remark~\ref{rem:tight}). The proof uses three estimates along the walk of
+Lemma~\ref{lem:coins}, one for each term of the race, and a potential that
+turns the initial gaps into a lower bound on the gaps at branching time.
+
+\begin{lemma}[Gap potential]\label{lem:potential}
+Fix a set $S$ and a branching rule, and let the uncut process apply the rule
+to every node, cut or not. Put $\Phi_t=\sum_{v\in S\text{ free at }t}|\Delta_v(t)|$
+and $G_t=\sum_{s\le t,\,x_s\in S}|\Delta_s|$. Then
+\[
+ G_T=\Phi_0-\Phi_T+\sum_{t\le T}z_t+M_T ,
+\]
+where $z_t\ge0$ is the number of free neighbours $v\in S$ of $x_t$ with
+$\Delta_v(t-1)=0$, and $M$ is a martingale with respect to $(H_t)$ with
+$|M_t-M_{t-1}|\le2D_{x_t}$. Consequently
+\[
+ \Pr\bigl[G_T<\Phi_0-\Phi_T-x\bigr]\le
+ \exp\Bigl(-\frac{x^2}{8\sum_{t\le T}D_{x_t}^2}\Bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+At step $t$ the variable $x_t$ leaves the free set, taking $|\Delta_t|$ with it
+if $x_t\in S$, and each free neighbour $v\in S$ of $x_t$ changes its gap by
+$\pm1$. So $\Phi_t-\Phi_{t-1}=-[x_t\in S]\,|\Delta_t|+Y_t$ with
+$Y_t=\sum_v(|\Delta_v(t)|-|\Delta_v(t-1)|)$ over these neighbours. By
+Lemma~\ref{lem:coins}(b) each term is $|\Delta\pm1|-|\Delta|$ with a uniform
+sign given $H_{t-1}$, whose conditional mean is $[\Delta=0]$; hence
+$\E[Y_t\mid H_{t-1}]=z_t$. Summing over $t\le T$ gives
+$\Phi_T-\Phi_0=-G_T+\sum_tY_t$, which is the identity with
+$M_T=\sum_{t\le T}(Y_t-z_t)$. The number of terms in $Y_t$ is at most
+$D_{x_t}$, so $Y_t\in[-D_{x_t},D_{x_t}]$ and $z_t\in[0,D_{x_t}]$, whence
+$|Y_t-z_t|\le2D_{x_t}$. The tail is the Azuma--Hoeffding
+inequality~\cite{Azu67,Hoe63}.
+\end{proof}
+
+The potential says that bias cannot be destroyed: assigning a neighbour moves
+a gap by one step of a fair walk, which does not lower $|\Delta_v|$ in
+expectation, whatever the rule does. The term $\sum_tz_t$ is the source of the
+$\sqrt d$ gaps of balanced formulas (a walk at $0$ moves away); for biased
+formulas we drop it.
+
+\begin{lemma}[Shortfall and martingale]\label{lem:tails}
+For every branching rule, with $V=\sum_{v}\bigl((D_v+u_v)^2+1\bigr)$ and
+$E=\sum_vD_v^2$:
+\begin{enumerate}
+ \item[(a)] $\Pr\bigl[S_T\le\tfrac14G^{\rm all}_T+\tfrac T2-\alpha\bigr]\le
+ e^{-\alpha^2/(2V)}$, where $G^{\rm all}_T=\sum_{t\le T}|\Delta_t|\ge G_T$;
+ \item[(b)] $\Pr[Q_T\le-\kappa]\le e^{-2\kappa^2/E}$;
+ \item[(c)] $U_T\le\frac12\sum_{w\text{ free at }T}D_w$ for every walk.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $S_T=\sum_{t\le T}X_t$ with $X_t=\xi_t(|\Delta_t|/2+1)\ge0$. By
+Lemma~\ref{lem:coins}(a), $\E[X_t\mid H_{t-1}]=|\Delta_t|/4+\frac12$ and
+$\E[X_t^2\mid H_{t-1}]=\frac12(|\Delta_t|/2+1)^2\le(D_{x_t}+u_{x_t})^2+1=:v_t$,
+using $|\Delta_t|\le|h_{x_t}|+D_{x_t}\le2(D_{x_t}+u_{x_t})$ and
+$(a+1)^2\le2a^2+2$. For $\lambda\ge0$, $e^{-\lambda X}\le1-\lambda X+\lambda^2X^2/2$
+gives $\E[e^{-\lambda X_t}\mid H_{t-1}]\le\exp(-\lambda\E[X_t\mid H_{t-1}]
++\lambda^2v_t/2)$, so $\exp(-\lambda\sum_{s\le t}(X_s-\E[X_s\mid H_{s-1}])
+-\frac{\lambda^2}2\sum_{s\le t}v_s)$ is a supermartingale, and $\lambda=\alpha/V$
+with $\sum_tv_t\le V$ gives the bound~\cite{Mau03}. (b) Lemma~\ref{lem:coins}(c)
+and Azuma--Hoeffding with $\sum_t(D_{x_t}/2)^2\le E/4$. (c) $|m^1_w-m^0_w|$ is
+at most the number of created clauses containing $w$, at most $D_w$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:biased}]
+Write $d=\dS$ and $\theta=\varepsilon\eta$. Put $\delta=\theta^2/(256R)$ and
+$T=\lceil(1-\delta)n\rceil$, so that the free set $W$ at depth $T$ has at most
+$\delta n$ variables. By Proposition~\ref{prop:knuth} and
+$\max_t2^t\pi_t\le\max\{2^T,2^n\pi_T\}$ (as $\pi_t$ is non-increasing), it
+suffices to show $\pi_T\le3e^{-cn}$ with $c=\theta^2/(4096R)$: then
+$\gamma=\min\{\delta,c/\ln2\}\ge\theta^2/(3000R)$.
+
+\emph{Sizes.} By (B2), $E=\sum_vD_v^2\le Rnd^2$ and
+$V=\sum_v((D_v+u_v)^2+1)\le Rnd^2+n\le2Rnd^2$. By Cauchy--Schwarz, any set
+$W$ of at most $\delta n$ variables has
+$\sum_{w\in W}(D_w+u_w)\le\sqrt{|W|\sum_v(D_v+u_v)^2}\le\sqrt{\delta R}\,nd
+=\tfrac\theta{16}\,nd$.
+
+\emph{The potential.} $\Phi_0=\sum_{v\in S}|h_v|\ge\varepsilon\sum_{v\in S}D_v
+=\varepsilon|S|d\ge\theta nd$ by (B1). At depth $T$,
+$|\Delta_w(T)|\le|h_w|+D_w\le2(D_w+u_w)$, so
+$\Phi_T\le2\sum_{w\in W}(D_w+u_w)\le\tfrac\theta8nd$. Take $x=\tfrac\theta4nd$
+in Lemma~\ref{lem:potential}: except with probability
+$\exp(-x^2/(8E))\le\exp(-\theta^2n/(128R))$,
+\[
+ G_T\ \ge\ \theta nd-\tfrac\theta8nd-\tfrac\theta4nd=\tfrac58\,\theta nd .
+\]
+
+\emph{The three terms.} Take $\alpha=\kappa=\tfrac\theta{32}nd$ in
+Lemma~\ref{lem:tails}. Except with probability
+$e^{-\alpha^2/(2V)}\le e^{-\theta^2n/(4096R)}$ we have
+$S_T\ge\frac14G_T-\alpha\ge\frac5{32}\theta nd-\frac1{32}\theta nd=\frac4{32}\theta nd$,
+and except with probability $e^{-2\kappa^2/E}\le e^{-\theta^2n/(512R)}$ we
+have $Q_T\ge-\frac1{32}\theta nd$. For every walk,
+$U_T\le\frac12\sum_{w\in W}D_w\le\frac1{32}\theta nd$.
+
+\emph{The race.} Outside the three exceptional events,
+$Z_T=S_T+Q_T-U_T\ge\frac{4-1-1}{32}\theta nd>0$, so by Lemma~\ref{lem:race} the
+walk is not alive at depth $T$. Hence $\pi_T\le3e^{-\theta^2n/(4096R)}$.
+\end{proof}
+
+\begin{remark}[Every density, every rule]
+Only (B1) and (B2) enter; $D_v$ may be $3$ or $n-1$. The branching rule is
+arbitrary, so the theorem covers in particular the adaptive rule
+of~\cite[Section~6]{N4} run without domination and propagation: for formulas
+in which every variable has ratio at most $\beta_0<\frac12$, which are
+$(1-2\beta_0,1,R)$-biased, the tree has $2^{(1-\gamma)n}$ nodes whatever the
+plain steps do. This answers the accumulation question
+of~\cite[Problem~17, open question~1]{N4} in the weak form ``some constant
+below $2$''; the exponent $H(\beta')$ hoped for there remains open and would
+need the measure.
+\end{remark}
+
+\begin{remark}[Order of the exponent]\label{rem:tight}
+The circulant formula $C_{n,c}$ with gap $\varepsilon n$ is
+$(\varepsilon,1,1)$-biased, and every rule of~\cite{N3} has exactly
+$\binom{n-1}{a}=2^{H((1-\varepsilon)/2)n-O(\log n)}$ leaves on it; the sum
+check does not change this~\cite[Section~5]{N4}. So no analysis of this search
+can give $\gamma>1-H((1-\varepsilon)/2)=\varepsilon^2/(2\ln2)+O(\varepsilon^4)$,
+and the order $\varepsilon^2$ in Theorem~\ref{thm:biased} is right. The
+constant $3000$ comes from three union-bounded tails and the crude bound
+$|\Delta_t|\le2(D+u)$; a single exponential moment of $Z_T$ would improve it.
+\end{remark}
+
+\begin{remark}[Why the sum check is needed]
+For a bounded-degree variable, the probability that it is undominated after
+its predecessors are assigned is a constant, so the level budget of~\cite{N3}
+cannot certify an exponential saving at the last levels; and a single pruning
+clause compares a shortfall $\varepsilon D_x/2$ with its whole free support,
+which is decided only at the end. In the race the shortfalls of all clauses add
+up, while only the variables still free at depth $T$ carry uncertainty; bias
+of order $\varepsilon\bar d$ per clause beats uncertainty of order $\bar d$ per
+free variable as soon as fewer than $\varepsilon n/2$ variables are free. This
+is the ``accumulation over many clauses'' that the measure with nearly disjoint
+counted clauses cannot do~\cite[Remark~12]{N4}.
+\end{remark}
+
+\begin{remark}[Better constants from the order]
+With the fixed order by decreasing degree and $S=V$, the last $\delta n$
+variables have $\sum_{w\in W}D_w\le\delta n\bar d$ without the square root, so
+$\delta$ can be taken of order $\varepsilon/R$ and the margin is linear in
+$\varepsilon$; only the tails keep the $\varepsilon^2$. With partial bias, put
+$S$ last. The theorem is stated for every rule because the adaptive direction
+of Section~\ref{sec:adaptive} needs that freedom.
+\end{remark}
+
+\begin{remark}[What is not covered]
+Domination and propagation are sound but change which values are coins; the
+count is for the plain search. Complementary pairs ($B=2$) give steps $\pm2$
+and change constants once the race identity with multiplicities is written
+out~\cite[Section~4]{N9}. Weighted clauses are not covered.
+\end{remark}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llccccc}
+\toprule
+ & & $d=12$ & $32$ & $128$ & $150$\\
+\midrule
+random signs, $\varepsilon=\frac14$ & single clauses & 0.86 & 0.77 & 0.57 & 0.60\\
+ & with the sum check & 0.90 & 0.91 & 0.89 & 0.93\\
+random signs, $\varepsilon=\frac12$ & single clauses & 0.90 & 0.86 & 0.81 & 0.78\\
+ & with the sum check & 0.92 & 0.93 & 0.94 & 0.95\\
+aligned, $\varepsilon=\frac14$ & single clauses & 0.74 & 0.65 & 0.51 & 0.55\\
+ & with the sum check & 0.72 & 0.72 & 0.51 & 0.47\\
+aligned, $\varepsilon=\frac12$ & single clauses & 0.84 & 0.73 & 0.68 & 0.70\\
+ & with the sum check & 0.85 & 0.76 & 0.76 & 0.69\\
+\bottomrule
+\end{tabular}
+\caption{Saving $n-\log_2(\text{tree size})$ as a fraction of $n$ on biased
+formulas with $n=300$ (fixed order, population splitting with $M=40$). Each
+pair carries a clause with probability $d/(n-1)$; every variable has
+$|h_v|\ge\varepsilon D_v$. ``Aligned'' means that every clause is $(u\lor v)$
+or $(\neg u\lor\neg v)$ after renaming each variable to its majority literal,
+the type of $C_{n,c}$.}\label{tab:biased}
+\end{table}
+
+Table~\ref{tab:biased} shows the two faces of the theorem. With random signs
+the sum check keeps the saving flat in $d$ while single clauses decay, exactly
+as in the balanced case~\cite[Table~2]{N7}, but at a much higher level. On
+aligned formulas the sum has no opposite literals to cancel and gives nothing;
+the saving is then the bias alone, and it is still flat in $d$.
+
+\section{Three regimes, one framework}\label{sec:regimes}
+
+The race separates the formulas by what wins it. Write $N^f_x$ for the free
+neighbours of $x$ at a node, and for a free variable $w$ let
+$b_w=m^1_w-m^0_w$ be the \emph{aggregate}: the excess of live clauses in
+which $w=1$ is bad over those in which $w=0$ is bad.
+
+\begin{enumerate}
+ \item \textbf{Biased.} Gaps of order $\varepsilon D$ give a shortfall of order
+ $\varepsilon\bar d$ per clause, which beats the trivial uncertainty $D_w$ of
+ each free variable once few variables are free. Theorem~\ref{thm:biased}:
+ every rule, every density, no cancellation.
+ \item \textbf{Balanced, unaligned.} Gaps are of order $\sqrt D$ (the term
+ $\sum_tz_t$ of Lemma~\ref{lem:potential}: a gap at $0$ moves away), so the
+ shortfall is of order $\sqrt d$ per clause and the race is won only if
+ $|b_w|$ is of order $\sqrt{m_w}$ rather than $m_w$: the bad values of the
+ clauses containing $w$ must cancel. Random signs give this~\cite{N8}; for a
+ fixed formula the aggregate pair-count condition (C1) of~\cite{CC} certifies
+ it, and Lemma~\ref{lem:potential} replaces the gap-profile condition (C3)
+ without Talagrand's inequality and without (C1), under the degree-spread
+ condition (B2) alone (Section~\ref{sec:balanced}).
+ \item \textbf{Aligned.} Many clauses agree about the bad values of many
+ variables, so $b_w$ is of order $m_w$ and the sum is useless; by the barrier
+ of~\cite[Section~9]{N4} no rule implied by single flips helps. The exits are
+ structural: near-twin compression~\cite{NT} and exact interaction
+ classes~\cite{N5}.
+\end{enumerate}
+
+The research direction is then a single question.
+
+\begin{problem}[Dichotomy at a node]\label{prob:dichotomy}
+Find a polynomial-time test at a node, in terms of gaps, aggregates $b_w$ and
+agreement counts between signed neighbourhoods, with the following property.
+Either the test names a free variable whose pruning clause raises $Z$ by a
+constant fraction of its support size, so that the race is won along the walk;
+or it names a set of variables whose signed neighbourhoods agree on all but a
+constant fraction of their supports, so that near-twin compression or class
+counting solves the residual formula within the budget. Then prove that one of
+the two happens at every node of every formula of density $\omega(1)$.
+\end{problem}
+
+The near-twin note proves the second exit for pairs and leaves open whether a
+failure of cancellation forces linearly many near-twin pairs~\cite[Section~5]{NT}.
+The zero-gap Hadamard example of~\cite[Section~6]{CC} shows that pairwise
+cancellation and alignment are not the only obstacles: there the bad values
+cancel exactly, but no clause has a shortfall. Lemma~\ref{lem:potential}
+explains it: with $h=0$ and no earlier neighbours, $\sum_tz_t$ is the only
+source of gaps, and the left side, branched first, never has an assigned
+neighbour.
+
+\subsection{The balanced regime without Talagrand}\label{sec:balanced}
+
+The deterministic criterion of~\cite{CC} needs (C1) for two things: the
+martingale $Q$, the uncertainty $U$, and, through the addendum~\cite{CA}, the
+concentration of the total gap. The potential gives the last one directly.
+
+\begin{proposition}\label{prop:gaps-balanced}
+For a fixed order, $\E\,G^{\rm all}_T\ge\sum_{t\le T}\max\{|h_t|,\sqrt{D^-_t/3}\}$,
+where $D^-_t$ counts the neighbours of $x_t$ before it, and for every $x>0$
+\[
+ \Pr\bigl[G^{\rm all}_T<\E\,G^{\rm all}_T-x\bigr]\le\exp\Bigl(-\frac{x^2}{8\sum_vD_v^2}\Bigr).
+\]
+\end{proposition}
+
+\begin{proof}
+The mean is the computation of~\cite[Proposition~1]{CA}: $\Delta_t$ is $h_t$
+minus a symmetric sum of $D^-_t$ fair signs, so $\E|\Delta_t|\ge|h_t|$ by
+Jensen and $\E|\Delta_t|\ge\E|X_t|\ge\sqrt{D^-_t/3}$ by H\"older. For a fixed
+order $G^{\rm all}_T$ is a function of the independent values $a_1,\dots,a_T$,
+and changing $a_u$ changes the gap of each later neighbour of $x_u$ by $2$, so
+$G^{\rm all}_T$ changes by at most $2D_{x_u}$. McDiarmid's inequality with
+these differences gives the tail. For an adaptive rule the same bound follows
+from Lemma~\ref{lem:potential}, whose martingale has the same increments.
+\end{proof}
+
+So under (B2) the condition (C3) of~\cite{CC} follows from (C3$'$) with
+$\eta=g^2/(8R)$, in place of $g^2/(128\tau K)$ in~\cite{CA}, and without the
+norm bound. What (C1) is still needed for is $Q$, whose steps are
+$\frac12b_{x_t}$, and $U_T$: both are sums of bad values, which for a fixed
+formula are not coins. In clause terms, (C1) says that for every weighting of
+the branched variables the weighted agreement counts between their signed
+neighbourhoods stay bounded by $Kd$ times the weight. This is the one place
+where a quadratic form has not been replaced by a count of clauses; the
+row-sum version fails on random formulas~\cite[Remark~5]{CA}. We regard it as
+the definition of ``unaligned'' until Problem~\ref{prob:dichotomy} replaces it
+by an adaptive test.
+
+\section{The adaptive rule that the race suggests}\label{sec:adaptive}
+
+Everything the race needs is visible at a node and countable in clause terms.
+
+\subsection{The node}
+
+Let $W$ be the free variables, $\mathcal C$ the live clauses with allowances
+$k_c$, and for $w\in W$ let $m^0_w,m^1_w$ count the clauses of $\mathcal C$ in
+which $0$, respectively $1$, is the bad value of $w$. The \emph{aggregate} is
+$b_w=m^1_w-m^0_w$ and the \emph{slack} is
+\[
+ B=\sum_{c\in\mathcal C}k_c-\sum_{w\in W}\min\{m^0_w,m^1_w\}=U-S-Q\ \ge0 ,
+\]
+the node being cut exactly when $B<0$. For a free variable $x$ with gap
+$\Delta_x$, preferred value $s=\sgn\Delta_x$ and free neighbours $N^f_x$, the
+pruning clause created in the child $a_x=-s$ has bad values
+$\beta_x(w)=-sJ_{xw}\in\{\pm1\}$ for $w\in N^f_x$~\cite[Lemma~4(b)]{N9}. Its
+\emph{agreement} with the aggregate is
+\begin{align*}
+ A_x&=\sum_{w\in N^f_x}\bigl(|b_w+\beta_x(w)|-|b_w|\bigr)\\
+ &=\#\{w:\beta_x(w)=\sgn b_w\text{ or }b_w=0\}-\#\{w:\beta_x(w)=-\sgn b_w\ne0\},
+\end{align*}
+and its \emph{value} is $\nu_x=|\Delta_x|/2+1-A_x/2$.
+
+\begin{proposition}[Child slacks]\label{prop:children}
+Branching on $x$ gives the children
+\[
+ B_{\rm pref}=B-\tfrac12\bigl(|b_x|+s\,b_x\bigr),\qquad
+ B_{\rm pruned}=B-\tfrac12\bigl(|b_x|-s\,b_x\bigr)-\nu_x .
+\]
+\end{proposition}
+
+\begin{proof}
+In the child $a_x=a$, $U$ loses $\frac12|b_x|$ and $Q$ gains $\frac12ab_x$
+(Lemma~\ref{lem:coins}(c)), so $B$ loses $\frac12(|b_x|+ab_x)$. The pruned
+child also adds $|\Delta_x|/2+1$ to $S$ and $\frac12A_x$ to $U$.
+\end{proof}
+
+So exactly one child, the one in which $x$ takes its majority bad value, pays
+$|b_x|$; this is a Pascal step, tight for every weight. The pruned child pays
+in addition the value of the new clause, which is positive when the gap is
+large and the clause disagrees with the aggregate on its free support, and
+negative when the clause agrees with it.
+
+\subsection{The three steps of~\cite{N4} in these terms}
+
+\begin{itemize}
+ \item \emph{Case~2, inside the clauses.} The variable with the largest
+ $|b_x|$: the most contested free variable, where the live clauses disagree
+ most about the bad value. This generalizes ``branch on the clause most likely
+ to be violated''~\cite[Section~4]{N4} from one clause to all of them.
+ \item \emph{Case~1, a new clause.} The variable with the largest $\nu_x$: a
+ large gap, and bad values that disagree with the current aggregate.
+ ``Counting only sufficiently new clauses''~\cite[Section~6]{N4} becomes a
+ number: a clause is new to the extent that $A_x$ is below its support size,
+ and it is worth $\nu_x$ units of slack.
+ \item \emph{A plain step.} $b_x=0$ and $\nu_x\le0$ for every free $x$: no
+ contested variable and no clause that beats the aggregate.
+\end{itemize}
+
+One-step greed, maximizing $|b_x|+\nu_x$, is the wrong currency early in the
+tree: a fresh clause has a large free support and $b\approx0$ there, so
+$A_x\approx|N^f_x|$ and $\nu_x<0$ for every balanced $x$, although the race is
+won in the end. The reason is timing~\cite[Remark~29]{N3}: the support of a
+clause is paid into $U$ at creation and repaid through $Q$, as fair coins,
+when the support is assigned. The right currency is what is left at the end.
+
+\subsection{A reserve}
+
+Fix in advance a set $W_0$ of $\delta n$ variables, the \emph{reserve}, to be
+assigned last. This is the set $L$ of~\cite[Section~7]{N2}, with a weaker
+demand: not that every reserved variable be dominated, but that the summed
+inequality over $W_0$ have few completions~\cite{EE}. Branch on $V\setminus W_0$
+by any rule; at depth $n-\delta n$ enumerate the completions of the summed
+inequality over $W_0$, or continue the search inside $W_0$.
+
+\begin{proposition}[What the reserve costs]\label{prop:reserve}
+Let the rule on $V\setminus W_0$ be arbitrary. For the uniform walk let
+$s=S+Q$ at depth $n-\delta n$, where $Q$ is over the assigned support
+variables, and let $E_W=\sum_{w\in W_0}b_w^2$ be the energy of the aggregate
+on the reserve. Then the number of completions of the summed inequality over
+$W_0$ at that node is at most $2^{\delta n}\rho$, where $\rho=\exp(-2s^2/E_W)$ if
+$s>0$ and $\rho=1$ otherwise, and the total work of the search is
+$\Ostar\bigl(2^{(1-\delta)n}+2^n\,\E\rho\bigr)$.
+\end{proposition}
+
+\begin{proof}
+A completion $a\in\{\pm1\}^{W_0}$ satisfies the summed inequality iff
+$s+\frac12\sum_{w\in W_0}a_wb_w\le0$; for uniform $a$ this is a Hoeffding
+tail~\cite[Lemma~1]{CC}. Knuth's identity gives the total.
+\end{proof}
+
+So the rule on $V\setminus W_0$ should make $s^2/E_W$ large: large shortfalls,
+and an aggregate on the reserve that stays balanced. Creating the clause of
+$x$ changes $s$ by $|\Delta_x|/2+1$ and $E_W$ by
+$|N^f_x\cap W_0|+2\sum_{w\in N^f_x\cap W_0}b_w\beta_x(w)$, where the last sum
+is the correlation of the new clause with the aggregate on the reserve, the sum
+of the pair counts $C_{xc}$ of~\cite[(1)]{CC} over the live clauses $c$.
+
+\paragraph{Rule R (designed cancellation).} Write
+$\rho_x=\sum_{w\in N^f_x\cap W_0}b_w\beta_x(w)$ for the correlation of the new
+clause with the aggregate on the reserve. To first order, creating the clause
+of $x$ changes $s^2/E_W$ by $(s/E_W)\bigl(|\Delta_x|+2-(s/E_W)(|N^f_x\cap W_0|+2\rho_x)\bigr)$.
+Among the free variables outside the reserve, branch on the $x$ that
+maximizes
+\[
+ |\Delta_x|+2-\frac{s}{E_W}\bigl(|N^f_x\cap W_0|+2\rho_x\bigr):
+\]
+a large gap, and bad values that disagree with the aggregate on the reserve.
+When every free $x$ has a large positive $\rho_x$, prefer the largest $|b_x|$
+instead. On biased formulas any rule wins (Theorem~\ref{thm:biased}); on
+balanced formulas the correlation term is the only control over $E_W$ we
+have, and it is a count of agreeing minus disagreeing bad values, exactly the
+quantity whose aggregate bound is (C1).
+
+\paragraph{The exit.} If at some node every free $x$ outside the reserve has
+correlation at least $(1-\kappa)|N^f_x\cap W_0|$ with the aggregate, then every
+remaining row $J_{x,W_0}$ agrees with $-s_x\sgn(b)$ on all but a
+$\kappa$-fraction of its support: the clauses between the remaining variables
+and the reserve are, after renaming the reserve by $\sgn b$, all of the same
+type up to exceptions. This is the near-twin structure of~\cite{NT} with
+respect to $W_0$; what it does not control are the clauses inside the
+remaining set and inside the reserve. Making this exit an algorithm with a
+certified cost is Problem~\ref{prob:dichotomy} in its concrete form.
+
+\section{Measures}\label{sec:measures}
+
+The analyses above use five quantities as measures. None of them is additive
+over variables, and that is the point: additive measures certify a saving
+branch by branch, which fails for linear gaps~\cite[Section~7.2]{N3}.
+
+\begin{enumerate}
+ \item \textbf{Knuth's measure} $\max_t\,(t+\log_2\pi_t)$. It is exact for
+ every search in which every live node has two children, it absorbs plain
+ steps, and it reduces the analysis to one survival probability.
+ Theorem~\ref{thm:biased} is an analysis of this measure; so is the Key
+ Lemma~\cite{N8}.
+ \item \textbf{The volume of the summed inequality.} At a node orient every
+ free $w$ so that its cheaper value is $0$, let $c_w=|b_w|$ and
+ $V(c,B)=\#\{z\in\{0,1\}^W:\sum_wc_wz_w\le B\}$, computable by the knapsack
+ dynamic program in polynomial time~\cite[Section~3]{N5}. Put
+ \[
+  \mu_\lambda=\#\{w\in W:b_w=0\}+\log_\lambda V(c,B),
+ \]
+ so that $\mu_\lambda=n$ at the root. For $c_w=1$ on $r$ variables and $B=k$
+ this is $r-e_\lambda(r,k)$ with the weights $e_\lambda(r,k)=r-\log_\lambda V(r,k)$
+ of~\cite[Theorem~10]{N4}; the measure extends them to overlapping clauses by
+ summing them first. A step on a contested variable $w$ satisfies
+ $V(c,B)=V(c\setminus w,B)+V(c\setminus w,B-c_w)$, so it is tight for every
+ $\lambda$ (Pascal's rule); a step on an uncontested variable has drops $1$
+ and $1$; a creation is admissible at base $\lambda$ iff it raises
+ $e_\lambda=|W|-\log_\lambda V$ by at least $\log_\lambda\frac1{\lambda-1}$,
+ which is the condition of~\cite[Lemma~7]{N4} with the sum in place of one
+ clause. So ``a clause counts if it is sufficiently new'' has an exact
+ meaning: it counts if it lowers the volume of the summed inequality by a
+ factor $\lambda^{-c(\lambda)}$. With $\lambda=2$ this is the certificate
+ $N_{\mathbf 1}$ of~\cite{N5} and the quantity that the reserve enumeration
+ pays~\cite{EE}; with $\lambda<2$ it is the measure of~\cite{N4}, and the
+ plain steps are again the obstacle.
+ \item \textbf{The gap potential} $\Phi=\sum_{v\text{ free}}|\Delta_v|$, a
+ submartingale along the walk of every rule (Lemma~\ref{lem:potential}). It
+ certifies future shortfall: the bias in the formula is conserved in
+ expectation and is spent, $|\Delta_t|$ at a time, when variables are
+ branched.
+ \item \textbf{Shortfall and energy on the reserve}, the pair $(s,E_W)$ of
+ Proposition~\ref{prop:reserve} with the bound $2^{|W_0|}e^{-2s^2/E_W}$ and the
+ exact transitions $s\mapsto s\pm\frac12b_w$, $E_W\mapsto E_W-b_w^2$ of
+ \cite[Section~7]{CC}. This is the measure for designed cancellation.
+ \item \textbf{Alignment.} The number of distinct signed neighbourhood types
+ on the reserve, or the number of near-twin pairs; the measure of the
+ structural exit, with cost $(n+1)^t$ for $t$ exact classes~\cite{N5} and
+ $(3/4)^{m/(r+1)}$ for $m$ near-twin pairs~\cite{NT}.
+\end{enumerate}
+
+The first and the third are what Theorem~\ref{thm:biased} needs. The second
+and the fourth are the two faces of the sum check, exact and Gaussian. The
+fifth is what is left when the sum fails.
+
+\section{Cleaning up: what to keep, and in which order}\label{sec:cleanup}
+
+\paragraph{Core, to be read in this order.}
+\begin{enumerate}
+ \item \cite{N3}: the rules (domination, pruning clauses), the level budget,
+ the tight bound for absolute linear gaps and the lower bound $C_{n,c}$.
+ \item \cite{N4}: pair decisions, the sum rule and its characterization as
+ the linear-relaxation cut, the clause weights, averaging over paths, the
+ barrier for single-flip rules.
+ \item \cite{N7,N8}: the race identity, Knuth's identity and the Key Lemma
+ for random signs.
+ \item \cite{EE,CC,CA}: early enumeration, the deterministic counting
+ criterion and its checkable form.
+ \item \cite{NT} and \cite[Section~5]{N5}: the structural exits.
+ \item This note: the race for every rule, Theorem~\ref{thm:biased}, the
+ three regimes, the reserve rule and the measures.
+\end{enumerate}
+
+\paragraph{Parked.} \cite{N6} entirely, except its $K_m$ example, which is in
+\cite{N4}, and its joint refutation test, which is \cite[Proposition~7]{N4}.
+\cite{N5} except Sections~3 and~5. \cite{N9}: its theorem is a special case of
+the counting criterion of~\cite{CC,CA} with (C1) in spectral form, and the
+biased part of its class is covered by Theorem~\ref{thm:biased} without any
+norm.
+
+\paragraph{One framework.} All kept results are statements about one search,
+pruning clauses with the sum check (domination, propagation and pair decisions
+as sound additions), counted by Knuth's identity and analysed by the race
+$Z=S+Q-U$ along the uniform walk. The three regimes of Section~\ref{sec:regimes}
+say which term wins. The open problem is Problem~\ref{prob:dichotomy}.
+
+\paragraph{Next steps, in order.}
+\begin{enumerate}
+ \item Write Theorem~\ref{thm:biased} for $B=2$ and unit clauses in the
+ input, which needs the race identity with multiplicities in written form
+ (\cite[Section~4]{N9}, item~1), and optimize the constant with a single
+ exponential moment of $Z_T$.
+ \item Test Rule~R against the fixed order on balanced random formulas and on
+ formulas with planted aligned groups, measuring $s^2/E_W$ at the reserve;
+ the prediction is a constant-factor gain in the exponent on random formulas
+ and a visible exit condition on planted ones.
+ \item Prove Problem~\ref{prob:dichotomy} for the reserve: either Rule~R keeps
+ $E_W\le C\,s\,\sqrt{|W_0|}$, or the rows $J_{x,W_0}$ of the remaining
+ variables fall into few signed types. The first alternative is a vector
+ balancing statement with chosen order and forced signs; the second is the
+ inverse question of~\cite{NT}.
+ \item Partial bias with the adaptive measure: recover the exponent
+ $\max\{1-\eta,H((1-\varepsilon)/2)\}$ of~\cite[Theorem~11]{N3} in the relative
+ setting, using Theorem~\ref{thm:biased} for the biased variables and the
+ clause weights for the rest.
+\end{enumerate}
+
+
+\section{A plan for all formulas of growing density}\label{sec:plan}
+
+The target is every formula with $m\le\rho n$, $\rho=\omega(1)$. Two facts fix
+the shape of any such result. Formulas with $2^{\,n-O(n\log d/d)}$ strict local
+maxima exist at every degree $d$ (disjoint copies of Max-Cut on $K_{d+1}$, and
+Hastings' connected versions), and every rule implied by single flips keeps all
+of them~\cite[Section~9]{N4}. So the algorithm needs two engines and the proof
+needs a dichotomy: a \emph{race engine} (pruning clauses and the sum check,
+which wins whenever the bad values cancel) and an \emph{aggregation engine}
+(counting over groups of variables that act alike), and a lemma that every
+node of every formula is handled by one of them. Theorem~\ref{thm:biased} and
+the Key Lemma are the race engine on the two kinds of formulas where
+cancellation is free or random. What follows is the plan for the rest.
+
+\subsection{Cancellation in clause terms: the gap signs}
+
+Along the uniform walk, with $g_s=\sgn\Delta_s$ the sign of the gap of $x_s$ at
+its branching time and $\xi_s$ the fair coin of Lemma~\ref{lem:coins}(a),
+\[
+ b_w=\sum_{s\sim w,\,s\le T}\xi_s\,J_{sw}\,(-g_s)
+ =-\tfrac12\sum_{s\sim w,\,s\le T}J_{sw}g_s\ +\ M_w ,
+\]
+where $M_w$ is a martingale with at most $m_w$ steps of size $\frac12$. So
+$|b_w|$ is of order $\sqrt{m_w}$ exactly when the gap signs of the neighbours
+of $w$, weighted by $J_{sw}$, cancel. The gap sign $g_s$ is the sign of
+$h_s-\sum_{u<s}J_{su}a_u$, a function of the values of the earlier neighbours
+of $x_s$; two gap signs $g_s,g_{s'}$ are correlated through the earlier
+neighbours they share, and by a Littlewood--Offord argument
+(condition on the shared coins; $|\E\sgn(Z+c)|\le\Pr[|Z|\le|c|]$ for the
+private sum $Z$)
+\[
+ \bigl|\E[g_sg_{s'}]\bigr|\le C\,\frac{|\langle J_{s,\cdot},J_{s',\cdot}\rangle_{<}|+1}
+ {\sqrt{D^-_sD^-_{s'}}},
+\]
+where $\langle J_{s,\cdot},J_{s',\cdot}\rangle_<$ is the \emph{signed codegree}
+of $s$ and $s'$ over the earlier variables: common neighbours with agreeing
+parities minus those with opposite parities. Summing over the pairs of
+neighbours of $w$,
+\[
+ \E\Bigl(\sum_{s\sim w}J_{sw}g_s\Bigr)^2\ \lesssim\ m_w+\frac{C}{d}
+ \sum_{s\ne s'\in N(w)}\bigl|\langle J_{s,\cdot},J_{s',\cdot}\rangle\bigr| ,
+\]
+and to leading order, with signs, the second term is the signed count of
+$4$-cycles through $w$: pairs of clauses at $w$ and pairs of clauses at a
+common neighbour $u$, counted with the parity of the cycle, which is the
+diagonal entry $(J^4)_{ww}$. This is the combinatorial content of the spectral
+condition: $\sum_w(J^4)_{ww}=\operatorname{tr}J^4\le\|J\|^2\,nd$, so
+$\|J\|\le K\sqrt d$ bounds the average signed $4$-cycle count through a
+variable by $K^2d^2$, against $d^3$ for $K_{d+1}$ and for $C_{n,c}$.
+
+\begin{definition}[Alignment of a variable]
+$\mathrm{al}(w)=\sum_{s\ne s'\in N(w)}J_{sw}J_{s'w}\langle J_{s,\cdot},J_{s',\cdot}\rangle$,
+the number of even $4$-cycles through $w$ minus the number of odd ones; and
+$\mathrm{al}^+(w)$ the same sum with absolute values.
+\end{definition}
+
+\paragraph{Target T1 (the race engine for fixed formulas).} Every formula with
+$\mathrm{al}^+(w)\le\kappa d_wd$ for every $w$, or with
+$\mathrm{al}(w)\le\kappa d_wd$ under a control of the lower-order terms, is
+solved by the search of Section~\ref{sec:race} in time $2^{(1-\gamma(\kappa))n}$,
+at every density. The proof is that of the Key Lemma~\cite{N8} with the
+sign-correlation bound in place of the late signs, together with the
+shortfall of Proposition~\ref{prop:gaps-balanced}. The class contains random
+formulas, Max-Cut with arbitrary signs on every graph of codegree $O(1)$ (for
+example girth at least $5$), and every formula with $\|J\|\le K\sqrt d$ on
+average; its definition is a local count. The absolute version is enough for
+$d\le\sqrt n$; for denser formulas the signed version is needed, and its
+error terms are the first thing to work out.
+
+\subsection{Aggregation when the gap signs are correlated}
+
+If $\mathrm{al}^+(w)$ is large, then many pairs $s,s'$ of neighbours of $w$
+have signed codegree of order $d$: similar signed neighbourhoods, hence
+correlated gap signs, which is what defeats the sum. The two exits we have
+need almost identical neighbourhoods: near-twin compression needs discrepancy
+$r=O(1)$~\cite{NT}, exact classes need discrepancy $0$~\cite{N5}. The missing
+tool is an aggregation for groups of variables with pairwise signed codegree
+$(1-\kappa)d$: write $J=A+N$ with $A$ constant on the blocks of the groups and
+$N$ the discrepancies, enumerate the group counts ($2^{O(n\log L/L)}$ choices
+for groups of size $L$), which fixes the contribution of $A$, and search the
+residual formula $N$, which is unaligned. The obstacle is soundness: pruning
+clauses come from single flips, and a flip changes a group count. Inside a
+count-constrained subproblem the pruning rule must therefore come from
+\emph{swaps}, a variable and a group-mate flipped in opposite directions; this
+is the class-flip rule of~\cite[Proposition~2]{N4}, whose window
+(\cite[Proposition~1]{N4}) is the pruning clause of a swap, with the shared
+neighbourhood cancelled and a cardinality condition on the discrepancies.
+
+\paragraph{Target T2.} Unions of aligned blocks (cliques with constant $J$,
+or copies of one signed neighbourhood) joined by a residual of degree $r$:
+time $2^{o(n)}$ times the cost of the residual search. For $r=O(1)$ this is
+\cite{NT}; for $r=\omega(1)$ it needs swap pruning on the residual with the
+sum check, analysed by the race with the count constraints as live clauses
+(they add to $m^0_w$ and $m^1_w$ equally, so they do not disturb $b_w$).
+
+\subsection{The dichotomy and its first test}
+
+\paragraph{Target T3.} If the average of $\mathrm{al}^+(w)$ over the free
+variables exceeds $\kappa d_wd$ at a node, then a linear number of free
+variables lie in groups of pairwise signed codegree at least $(1-\kappa')d$.
+This is a statement about the graph of pairs with large signed codegree, of
+K\H{o}v\'ari--S\'os--Tur\'an or dependent-random-choice type, and it is the
+risky step: a blow-up in which each variable has $L$ copies with their
+neighbourhoods re-signed at random on a $(1-\kappa)$-fraction of the positions
+has pairwise codegree $\kappa d$ for $\kappa$ well below $1$, defeats the sum
+for $L\to\infty$ (the aggregate on a free variable grows like $\sqrt{L m_w}$),
+and is not compressible by near twins. The first experiment is therefore the
+blow-up family with $L\in\{2,4,8,16\}$ and $\kappa\in\{0.5,0.8,0.95\}$:
+measure $E_W=\sum_wb_w^2$ and the margin of the race, then the same with
+count enumeration and swap pruning. Its outcome decides the form of T3.
+
+\paragraph{Milestones.} (M1) T1 in the absolute form, $d\le\sqrt n$: the first
+worst-case class of growing density defined by a local count and strictly
+beyond random signs. (M2) T2 with swap pruning, first for bounded $r$ where it
+must reproduce~\cite{NT}, then for $r=o(\sqrt d)$. (M3) The blow-up
+experiment and T3 in the form it supports. (M4) The algorithm: at every node
+compute $\mathrm{al}^+(w)$ for the free variables, run the race engine when it
+is small and otherwise extract correlated groups and aggregate; the proof is
+T1+T2+T3. If T3 fails, the fallback is a theorem for the union of the T1 class
+and the near-twin class, both of unbounded density and both defined by
+counts of clauses. The measures of Section~\ref{sec:measures} are the
+quantities this plan monitors: $\mathrm{al}^+(w)$ decides the engine, $E_W$
+tracks the race, and the group size $L$ prices the aggregation.
+
+\section{Checks}\label{sec:checks}
+
+\texttt{explore\_biased\_class.py} reuses the search and the population
+splitting estimator of \texttt{explore\_key\_lemma.py}.
+\begin{itemize}
+ \item Without arguments (minutes): Table~\ref{tab:biased}, with the
+ verification that every generated formula satisfies (B1) for the stated
+ $\varepsilon$ (the minimum ratio $|h_v|/D_v$ is printed).
+ \item \texttt{terms} (a minute): the race terms at depth $0.8n$ and $0.9n$
+ on biased formulas with $n=1000$, $d\in\{6,30,200,500\}$ and
+ $\varepsilon\in\{\frac14,\frac12\}$, in units of $n\bar d$: $S_T$ between
+ $0.08$ and $0.30$, $U_T$ between $0.004$ and $0.04$, $Q_T$ within $\pm0.002$.
+ The race is won by a factor $5$ to $20$ at every density, which is the
+ mechanism of the proof; the proof's margin $\frac2{32}\varepsilon\eta$ is far
+ below it.
+\end{itemize}
+
+\begin{thebibliography}{99}
+\raggedright
+\bibitem{N2} Exact Max 2-SAT with an absolute linear polarity gap. Working
+ note, 23 September 2026 (\texttt{max2sat\_absolute\_linear\_gap\_proof.tex}).
+\bibitem{N3} Max 2-SAT and the domination rule: results and ideas so far.
+ Working note, 5 October 2026 (\texttt{max2sat\_results\_and\_ideas.tex}).
+\bibitem{N4} Max 2-SAT with pruning clauses: pair decisions, sums, and a
+ measure. Working note, 6--7 October 2026
+ (\texttt{max2sat\_pairs\_sums\_measure.tex}).
+\bibitem{N5} Exploring the branching frontier for Max 2-SAT. Draft,
+ 7 October 2026 (\texttt{max2sat\_branching\_frontier.tex}).
+\bibitem{N6} A learning and coverage dichotomy for Max 2-SAT. Draft,
+ 7 October 2026 (\texttt{max2sat\_learning\_dichotomy.tex}).
+\bibitem{N7} A simplified plan for Max 2-SAT: one search, one count, one Key
+ Lemma. Working note, 8 October 2026 (\texttt{max2sat\_plan\_key\_lemma.tex}).
+\bibitem{N8} The Key Lemma for random signs. Working note, 8 October 2026
+ (\texttt{max2sat\_key\_lemma\_proof.tex}).
+\bibitem{N9} Max 2-SAT below $2^n$ on unaligned formulas. Working note,
+ 8 October 2026 (\texttt{max2sat\_explicit\_class.tex}).
+\bibitem{EE} Max 2-SAT by early constraint-guided enumeration. Working note,
+ 8 October 2026 (\texttt{max2sat\_early\_enumeration.tex}).
+\bibitem{CC} Replacing random signs by neighborhood counts. Working note,
+ 8 October 2026 (\texttt{max2sat\_counting\_conditions.tex}).
+\bibitem{CA} A checkable replacement for the gap-profile condition. Addendum,
+ 8 October 2026 (\texttt{max2sat\_counting\_addendum.tex}).
+\bibitem{NT} Near-twin neighborhoods as a structural exit. Working note,
+ 8 October 2026 (\texttt{max2sat\_near\_twin\_pairs.tex}).
+\bibitem{Azu67} K.~Azuma. Weighted sums of certain dependent random variables.
+ \emph{T\^ohoku Mathematical Journal} 19(3):357--367, 1967.
+\bibitem{Hoe63} W.~Hoeffding. Probability inequalities for sums of bounded
+ random variables. \emph{Journal of the American Statistical Association}
+ 58(301):13--30, 1963.
+\bibitem{Mau03} A.~Maurer. A bound on the deviation probability for sums of
+ non-negative random variables. \emph{Journal of Inequalities in Pure and
+ Applied Mathematics} 4(1), Article~15, 2003.
+\end{thebibliography}
+
+\end{document}

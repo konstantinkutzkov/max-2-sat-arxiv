@@ -1,0 +1,972 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=28mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{problem}[theorem]{Problem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\W}{\mathcal{W}}
+\newcommand{\nfree}{n_{\mathrm{free}}}
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=2em
+\hypersetup{pdftitle={Max 2-SAT with Pruning Clauses: Pair Decisions, Sums, and a Measure}}
+
+\title{Max 2-SAT with Pruning Clauses:\\ Pair Decisions, Sums, and a Measure}
+\author{}
+\date{6 October 2026, revised 7 October 2026\\[3pt]\small Working notes}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This note continues~\cite{N3}. It records the approach we now pursue, the
+partial results, and the questions they raise; the revision of 7 October
+incorporates results of the draft~\cite{N5}.
+(i)~Pair decisions $u=v$ versus $u\ne v$ can be chained if every condition in
+a $\ne$ child flips the whole class of variables tied together by earlier
+decisions; flipping single variables loses optima, already for two clauses.
+(ii)~Branching on variables of the active pruning clauses makes clauses cut
+earlier but does not change how the saving decays with the degree.
+(iii)~Adding up the active pruning clauses gives a sound cut rule in which
+opposite literals of a shared variable cancel. On random formulas it saves
+about $0.54n$ at every density we tried, up to $n=800$, while single-clause
+checks fall to $0.19n$. Weighted sums cut exactly when the linear relaxation of
+the active clauses is infeasible.
+(iv)~For a measure-and-conquer analysis with weights on pruning clauses we
+compute the optimal weights. Capped at one, the branching number depends on
+the absolute allowance of the clause and tends to~$2$. Without the cap the
+weights have a closed form, the clause length minus the logarithm of the number
+of permitted completions, and the branching number depends only on the relative
+allowance $\beta$ and tends to $2^{H(\beta)}$, which is tight.
+(v)~The bound needs plain steps to be rare along one random walk, not on every
+path.
+(vi)~For formulas in which every variable has a linear gap relative to its
+degree, we prove the parts that concern branching on near-dominated variables
+and, for the rule without release, the resolution of one clause. What remains
+is the accumulation over many clauses; in experiments plain steps cost at most a
+constant factor, even on the circulant family.
+(vii)~All these rules except pair decisions keep every strict local maximum, so
+the number of strict local maxima bounds the size of their search trees from
+below. Reaching $(2-\delta)^n$ at growing density therefore needs a rule that
+moves several variables at once, such as class decisions.
+\end{abstract}
+
+\section{The approach}\label{sec:approach}
+
+\paragraph{Goal.} As in~\cite{N3}: a deterministic algorithm for Max 2-SAT
+with running time $\Ostar(c^n)$, $c<2$, in polynomial space, for formulas of
+every clause density. The tools are DPLL with the domination
+rule~\cite{N1,N2} and pruning clauses~\cite{N3}.
+
+\paragraph{Plan.} We analyse the search with a measure in the spirit of
+measure and conquer: the number of free variables minus a weight for each
+counted pruning clause. A clause is counted only if it brings enough variables
+that no other counted clause contains. The branching steps fall into three
+kinds.
+\begin{itemize}
+ \item \emph{Case~1}: branch on a variable outside the counted clauses whose
+ pruning clause will be counted. Variables close to domination give strong
+ clauses.
+ \item \emph{Case~2}: branch on a variable of a counted clause. In one child the
+ clause gets shorter; in the other it gets tighter, and when its allowance is
+ used up it propagates, fixing its remaining variables.
+ \item \emph{Plain steps}: neither is possible.
+\end{itemize}
+The analysis is amortized over general scenarios rather than an exact case
+analysis. It has a cold start: in a balanced formula the first pruning clauses
+are weak, and strong ones appear only after many branchings. The plan is
+therefore to analyse nodes with suitable structural properties and to show
+that many nodes have them.
+
+\paragraph{Three kinds of nodes.} The results below suggest a split.
+\begin{enumerate}
+ \item Many free variables are close to domination: the measure, with
+ cases~1 and~2 (Sections~\ref{sec:measure}--\ref{sec:availability}).
+ \item The formula is balanced, and the active clauses carry different
+ literals on shared variables: sums of pruning clauses
+ (Section~\ref{sec:sums}).
+ \item Aligned structure, as in near-twins and the circulant family
+ $C_{n,c}$ of~\cite{N3}: pair decisions (Section~\ref{sec:pairs}).
+\end{enumerate}
+Section~\ref{sec:barrier} sharpens this split: every rule except pair
+decisions keeps all strict local maxima, so on formulas with many of them only
+rules that move several variables at once can help.
+
+\section{Setting}\label{sec:setting}
+
+We use the notation of~\cite[Section~2]{N3} with $B=1$: a canonical formula
+has at most one binary clause per pair. For a literal $\ell$ the deficit is
+$p_\ell=d_2(\neg\ell)-d_1(\ell)+d_1(\neg\ell)$, the free degree of a variable
+$v$ is $D_v=p_v+p_{\neg v}$, and $v$ is dominated when $\min\{p_v,p_{\neg v}\}\le
+0$. We call $\min\{p_v,p_{\neg v}\}/D_v$ the \emph{ratio} of $v$; it is at most
+$\frac12$.
+
+When the search branches on $x$, let $\ell$ be the literal with the smaller
+deficit $p=p_\ell\ge1$. The child with $\ell$ true is the \emph{preferred}
+child. The other child, the \emph{pruned} child, receives the pruning clause
+$P_x=\langle L_x\le p-1\rangle$, where $L_x$ consists of the literals $\neg m$
+for the clauses $(\ell\lor m)$ and $m$ for the clauses $(\neg\ell\lor m)$.
+By the flip identity~\cite[Lemma~18]{N3} an assignment that violates $P_x$ is
+not worse after flipping $x$, and the search with domination, cuts and
+propagation is exact for every branching rule~\cite[Proposition~20]{N3}.
+
+\paragraph{Clause states.} At a node, a pruning clause is in \emph{state}
+$(r,k)$ if $r$ of its literals are unassigned and at most $k$ of them may
+still become true. Branching on $x$ creates the state $(D_x,p-1)$. When one of
+its literals is assigned, the state moves to $(r-1,k)$ if the literal is false
+and to $(r-1,k-1)$ if it is true. The clause is \emph{vacuous} when $k\ge r$,
+it \emph{propagates} when $k=0$, setting all its remaining literals false, and
+it is violated when $k<0$, in which case the node is cut.
+
+\section{Pair decisions}\label{sec:pairs}
+
+\subsection{One decision}
+
+For a complete assignment $\alpha$ and a set $C$ of variables, let $\alpha^C$
+be $\alpha$ with all variables of $C$ flipped and
+$G_C(\alpha)=\mathrm{score}(\alpha^C)-\mathrm{score}(\alpha)$; write $G_u$ for
+$G_{\{u\}}$. A \emph{pair decision} on unassigned variables $u,v$ has the
+children $u=v$ and $u\ne v$. The first is explored in full. In the second we
+keep only the assignments with $G_u(\alpha)<0$ and $G_v(\alpha)<0$; this is
+sound, because if $G_u(\alpha)\ge0$, then $\alpha^{\{u\}}$ has $u=v$ and is at
+least as good.
+
+Let $\alpha$ have $u=1$ and $v=0$; the other case is symmetric. By the flip
+identity, $G_u(\alpha)<0$ is the pruning clause of $u$ with respect to $\neg u$,
+and $G_v(\alpha)<0$ is the pruning clause of $v$ with respect to $v$. Call a
+common neighbour $w$ of $u$ and $v$ \emph{shared} if its clause with $u$ and
+its clause with $v$ have the same signs, and let $\rho_u$, $\rho_v$ be the
+numbers of the remaining clauses of $u$ and of $v$; a clause on $\{u,v\}$
+counts for both. On a shared $w$ the two pruning clauses contain opposite
+literals of $w$.
+
+\begin{proposition}[Window]\label{prop:window}
+Write $G_u(\alpha)=\sigma+a$ and $G_v(\alpha)=-\sigma+b$, where $\sigma$ is
+the contribution of the clauses with shared neighbours and $a,b$ are the
+contributions of the remaining clauses, so that $|a|\le\rho_u$ and
+$|b|\le\rho_v$. The child $u\ne v$ keeps $\alpha$ only if
+$b+1\le\sigma\le-a-1$. In particular:
+\begin{enumerate}
+ \item $a+b\le-2$, a condition on the non-shared clauses alone; it is the sum
+ of the two pruning clauses, in which the shared part cancels;
+ \item $\sigma$ takes at most $\rho_u+\rho_v-1$ values;
+ \item if $\rho_u+\rho_v\le1$, the child is empty and $u,v$ can be merged.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+For a shared $w$, the clause of $w$ with $v$ at $v=0$ is the same function of
+$w$ as the clause of $w$ with $u$ at $u=0$, and likewise at the value~$1$.
+So flipping $v$ from $0$ to $1$ changes it by minus the amount by which
+flipping $u$ from $1$ to $0$ changes the clause of $w$ with $u$. This gives the
+form of $G_u$ and $G_v$; the rest is arithmetic.
+\end{proof}
+
+\subsection{Chaining decisions}
+
+Along a path, decided pairs tie variables into classes. Write $[u]$ for the
+class of $u$; the decisions fix every relation inside it, and flipping a whole
+class preserves these relations.
+
+\begin{proposition}[Chained pair decisions]\label{prop:chain}
+Run the search of~\cite{N3} on classes: after a pair decision on $u,v$ the two
+classes are merged in both children, with $u=v$ or $u=\neg v$; value
+branchings, domination and pruning clauses apply to whole classes; and in the
+child $u\ne v$ only the assignments with $G_{[u]}(\alpha)<0$ and
+$G_{[v]}(\alpha)<0$ are kept, for the classes at the time of the decision.
+Then the search is exact.
+\end{proposition}
+
+\begin{proof}
+As in~\cite[Proposition~20]{N3}, order the complete assignments by the first
+decision at which their paths part, preferring the child $u=v$ of a pair
+decision and the preferred child of a value branching, and let $\alpha^*$ be
+the largest optimal assignment. Suppose $\alpha^*$ is cut in the child $u\ne
+v$ because $G_{[u]}(\alpha^*)\ge0$. Flipping all of $[u]$ changes no relation
+inside $[u]$, and no earlier decision relates $[u]$ to another class, since
+such a decision would have merged them; also no variable of $[u]$ is assigned
+above the decision. So $\alpha^{*[u]}$ follows the path of $\alpha^*$ to the
+decision, takes the child $u=v$ there, and is optimal, a contradiction. The
+case $[v]$ and the other kinds of cuts are handled as in~\cite{N3}.
+\end{proof}
+
+Equivalently, a pair decision removes one free variable in each child, as a
+value branching does, and the formula over merged variables turns a clause
+inside a class into a unit clause or a constant.
+
+\paragraph{Single flips are not enough.} Take $(x_0\lor x_1)$,
+$(\neg x_1\lor\neg x_2)$ and decide $x_0?x_1$, then $x_1?x_2$. The optimum~$2$
+is reached by $010$, $100$, $101$ and $110$ (values of $x_0x_1x_2$). The
+assignment $110$ lies in the child $x_1\ne x_2$ below $x_0=x_1$. Flipping $x_1$
+alone gives $100$, also optimal, so $110$ would be cut on the grounds that
+$100$ lies in the child $x_1=x_2$. But $100$ has $x_0\ne x_1$ and lies below the
+other child of the first decision, where flipping $x_1$ gives back $110$ and
+cuts $100$. The two cuts point at each other. Also $010$ and $101$ are cut in
+this way, and only $000$ and $111$, of score $1$, survive. Flipping the class
+$\{x_0,x_1\}$ instead turns $110$ into $000$, a strict loss, and $110$ survives.
+
+On chains $x_0?x_1$, $x_1?x_2,\dots$ in the circulant formulas $C_{9,2}$,
+$C_{11,3}$, $C_{13,3}$, the single-flip version loses the optimum (it finds
+$18$, $33$, $39$ instead of $28$, $43$, $60$), while the class version keeps
+it, and only $10$, $10$ and $14$ complete assignments pass all its conditions.
+
+\begin{remark}\label{rem:pairs-cnc}
+In $C_{n,c}$ consecutive variables are near-twins: their environments differ
+in two neighbours. That so few complete assignments pass suggests that pair
+decisions attack the family that defeats every single-variable
+rule~\cite[Theorem~13]{N3}. These are complete assignments, not tree nodes,
+however: the class conditions involve the whole boundary of a class, and when
+they can be checked during the search is open.
+\end{remark}
+
+\section{Branching strategies and timing}\label{sec:strategies}
+
+\paragraph{Measuring trees.} For $n\ge50$ we estimate tree sizes by
+population splitting~\cite{AV94}, a variant of Knuth's estimator~\cite{Knu75}:
+keep $M$ random live nodes of each branching depth, expand all their children,
+estimate the number of live nodes of the next depth, and resample. The
+estimate is unbiased. On formulas with $n=30$ and $36$ it agrees with the exact
+count within $0.3$ bits, already for $M=8$. We report the \emph{saving}
+$n-\log_2(\text{tree size})$ as a fraction of $n$, averaged over two random
+formulas, for random balanced formulas: each pair carries a clause with
+probability $d/(n-1)$, with uniformly random signs.
+
+\paragraph{Branching inside clauses.} The rule \emph{inside clauses} branches
+on an unassigned variable of the active pruning clause that is most likely to
+be violated, i.e.\ whose state $(r,k)$ maximizes $\Pr[\mathrm{Bin}(r,\frac12)
+\ge k+1]$. Table~\ref{tab:strategies} compares it with a random static order.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lccccc}
+\toprule
+average degree $d$ & 16 & 32 & 64 & 128 & 200\\
+\midrule
+random order & 0.64 & 0.51 & 0.37 & 0.31 & 0.26\\
+inside clauses & 0.80 & 0.64 & 0.48 & 0.39 & 0.30\\
+random order and the sum rule (Section~\ref{sec:sums}) & 0.69 & 0.64 & 0.62
+ & 0.54 & 0.54\\
+\bottomrule
+\end{tabular}
+\caption{Saving as a fraction of $n$, for $n=400$.}\label{tab:strategies}
+\end{table}
+
+The strategy helps at every density, by about a quarter, but the saving still
+decreases with $d$. For the random order it is close to
+$1.55\,n\sqrt{(\ln d)/d}$, the timing estimate of~\cite[Remark~29]{N3}.
+
+\begin{remark}[The timing in clause terms]\label{rem:timing}
+A balanced variable with $D$ free neighbours and imbalance $M$, typically about
+$\sqrt d$, gets a clause allowing about $(D-M)/2$ of its $D$ literals to be
+true. Under random values about half of the assigned literals are true, so the
+clause can cut only once about $D-M$ of its literals are assigned. Branching
+inside a clause brings it there faster, but each such branching opens a new
+clause whose support is almost entirely new: in a random formula two
+neighbourhoods share about $d^2/n$ variables. So few clauses are near the end
+of their supports at the same time. Random formulas have no near-twins, so
+assuming that every two variables have different neighbourhoods does not remove
+this effect.
+\end{remark}
+
+The \emph{coverage strategy}, which branches where the new clause brings the
+most new variables and otherwise on clause variables adjacent to uncovered
+ones, has not been tested yet.
+
+\section{Sums of pruning clauses}\label{sec:sums}
+
+Let $I$ be the set of active pruning clauses at a node that are not vacuous;
+vacuous clauses can never be violated and would only weaken a sum. For an
+unassigned variable $w$, let $m^1_w$ and $m^0_w$ be the numbers of clauses of
+$I$ in which $w=1$, respectively $w=0$, makes a literal true, and let $k_i$ be
+the allowance of clause $i$.
+
+\begin{proposition}[Sum rule]\label{prop:sum}
+If
+\[
+ \sum_{w\text{ unassigned}}\min\{m^0_w,m^1_w\}>\sum_{i\in I}k_i ,
+\]
+then no completion of the node satisfies all clauses of $I$, and the node can
+be cut.
+\end{proposition}
+
+\begin{proof}
+A completion that satisfies the clauses makes at most $\sum_ik_i$ further
+literals of them true. Whatever value $w$ gets, it makes at least
+$\min\{m^0_w,m^1_w\}$ of their literals true.
+\end{proof}
+
+The sum is implied by the clauses, so the search stays exact; we checked the
+optimum against brute force on $150$ formulas with $n\le12$, in $42$ of which
+the rule changed the tree. A variable shared with opposite literals contributes
+in advance, whatever its value; one shared with the same literal contributes
+nothing. This is the algorithmic side of~\cite[Lemma~27]{N3}: shared opposite
+literals give a smaller joint survival probability than independent clauses.
+Proposition~\ref{prop:window}(1) is the case of two clauses.
+
+\paragraph{Example.} $\langle\{w_1,\dots,w_7\}\le3\rangle$ and
+$\langle\{\neg w_1,\dots,\neg w_7\}\le3\rangle$ say that at most three of the
+$w_i$ are $1$ and at most three are $0$, which is impossible. Neither clause is
+violated or propagates at the start. A search with single-clause checks and
+propagation branches until three equal values appear and has $20$ leaves. In
+the sum every $w_i$ contributes $\min\{1,1\}=1$, so $7>3+3$ and the node is
+cut at once.
+
+\begin{remark}[Why the sum decides early]\label{rem:sum-heur}
+This is a heuristic count. Suppose a path carries $k$ active clauses, created at
+variables of imbalance about $\sqrt d$, so that every bound lies about
+$\sqrt d/2$ below the expected count of its clause. These shortfalls point the
+same way and add up to order $k\sqrt d$. In a random formula an unassigned $w$
+lies in about $m_w=kd/n$ of the clauses, with independent literal signs, so the
+uncertain part $\sum_w|m^1_w-m^0_w|$ over the $u$ unassigned variables is of
+order $u\sqrt{kd/n}$. The sum decides once this falls below the shortfall,
+i.e.\ once $u\lesssim\sqrt{kn}$. Since $k$ grows in proportion to the number
+of assigned variables, this happens while a constant fraction of the
+variables is unassigned, and $d$ cancels.
+\end{remark}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+$n$ & 50 & 100 & 200 & 400 & 600 & 800\\
+\midrule
+single-clause checks & 0.48 & 0.39 & 0.29 & 0.26 & 0.22 & 0.19\\
+with the sum rule & 0.53 & 0.44 & 0.51 & 0.54 & 0.54 & 0.58\\
+\bottomrule
+\end{tabular}
+\caption{Saving as a fraction of $n$ on dense random formulas ($d\approx
+n/2$), random order. For $n=600$ and $800$: one formula and $M=40$.}
+\label{tab:dense}
+\end{table}
+
+With single-clause checks the saving grows roughly like $2\sqrt{n\ln n}$; with the sum
+rule it stays near $n/2$ (Table~\ref{tab:dense}), and across the degrees of
+Table~\ref{tab:strategies} it flattens at about $0.54n$. On the aligned
+formulas $C_{n,c}$, $15\le n\le21$, which have no opposite literals, the sum
+removes at most $5\%$ of the nodes.
+
+Any nonnegative combination of the active clauses is also sound, and the
+family of all of them has an exact description~\cite{N5}.
+
+\begin{proposition}[Sums are linear-relaxation cuts]\label{prop:lp}
+Some nonnegative combination of the active clauses $L_i\le k_i$ cuts a node,
+in the sense of Proposition~\ref{prop:sum}, if and only if the linear
+relaxation $\{x\in[0,1]^r:L_i(x)\le k_i\text{ for all }i\}$ is empty.
+\end{proposition}
+
+\begin{proof}
+With weights $a_i\ge0$ the rule cuts iff the minimum of $\sum_ia_iL_i$ over
+$\{0,1\}^r$ exceeds $\sum_ia_ik_i$. The function is affine, so this is also its
+minimum over $[0,1]^r$, and a point of the relaxation rules the cut out.
+Conversely, if the relaxation is empty, the image of the box under
+$x\mapsto(L_i(x))_i$, a compact convex set, misses the closed convex set
+$\{y:y_i\le k_i\}$. A separating hyperplane must have nonnegative coefficients,
+since the second set is unbounded below in every coordinate, and these
+coefficients give a cut.
+\end{proof}
+
+So sums see exactly what the linear relaxation sees, although the separating
+weights may be large. Contradictions of parity type are invisible to them:
+$x+y=y+z=z+x=1$, written as six cardinality clauses, has the fractional solution
+$(\frac12,\frac12,\frac12)$ but no Boolean one~\cite{N5}. Counting the
+assignments that satisfy a weighted sum, instead of only testing it, gives a
+graded certificate that satisfies a branching inequality, together with a
+sufficient condition for a running-time bound in terms of the progress of this
+count along a random walk~\cite{N5}. In these terms Remark~\ref{rem:sum-heur}
+says, heuristically, that on random formulas the relaxation of the active
+clauses becomes infeasible while about half of the variables are free.
+
+\section{A measure for pruning clauses}\label{sec:measure}
+
+\subsection{Counting, measure and rule}
+
+A clause is counted only on its new variables: when it is created, delete the
+literals of variables that lie in the support of a counted clause. Deleting
+literals keeps a pruning clause valid, since it can only lower the count, so
+the counted clauses are valid and have pairwise disjoint supports. The search
+may keep the full clauses for cuts; the measure uses only the counted ones. Let
+\[
+ \mu=\nfree-\sum_{\text{counted }C}\varepsilon(r_C,k_C),
+\]
+where $(r_C,k_C)$ is the state of $C$ and $\varepsilon\ge0$ is a weight to be
+chosen. The rule:
+\begin{enumerate}
+ \item if a counted clause is active, branch on one of its variables
+ (case~2);
+ \item otherwise, if a free variable has a \emph{feasible} new clause (defined
+ below), branch on it (case~1);
+ \item otherwise branch on any variable (a plain step).
+\end{enumerate}
+A counted clause in a state of weight $0$ is \emph{released}: it no longer
+counts.
+
+\subsection{Steps and weights}
+
+A step is \emph{admissible} for $\lambda\in(1,2)$ if its children have measure
+drops $d_0,d_1$ with $\lambda^{-d_0}+\lambda^{-d_1}\le1$.
+\begin{itemize}
+ \item Case~1 on $x$ with new degree $D$ and deficit $p$: drops $1$ and
+ $1+\varepsilon(D,p-1)$, or $1$ and $1+D$ if $p=1$. This is admissible iff
+ $\varepsilon(D,p-1)\ge c(\lambda):=\log_\lambda\frac1{\lambda-1}$; we call
+ the new clause feasible in that case.
+ \item Case~2 in state $(r,k)$: the false child has drop
+ $1+V_f-\varepsilon(r,k)$ with $V_f=\varepsilon(r-1,k)$, or $V_f=0$ if
+ $(r-1,k)$ is vacuous or released; the true child has drop
+ $1+V_t-\varepsilon(r,k)$ with $V_t=\varepsilon(r-1,k-1)$, and $V_t=r-1$ if
+ $k=1$, when the other $r-1$ literals are set false.
+ \item A plain step has drops of at least $1$.
+\end{itemize}
+Further variables fixed in a child only add to its drop, as long as no forced
+transition lowers a weight by more than one.
+
+\begin{lemma}[Optimal weights]\label{lem:weights}
+For $\lambda\in(1,2)$ and a cap $\kappa\in(0,\infty]$ define, for $r=2,3,\dots$
+and $1\le k<r$,
+\[
+ \varepsilon(r,k)=\max\Bigl\{0,\ \min\bigl\{\kappa,\
+ 1-\log_\lambda\bigl(\lambda^{-V_f}+\lambda^{-V_t}\bigr)\bigr\}\Bigr\},
+\]
+with $V_f,V_t$ as above. These are the largest weights, bounded by $\kappa$,
+for which every case-2 step in a state of positive weight is admissible.
+Moreover $\varepsilon(r,k)\le1+\min\{V_f,V_t\}$, so no transition lowers a
+weight by more than one, forced assignments never increase $\mu$, and
+$\varepsilon(r,k)\le r-1$, so $\mu\ge0$.
+\end{lemma}
+
+\begin{proof}
+The step in state $(r,k)$ is admissible iff
+$\lambda^{\varepsilon(r,k)}(\lambda^{-1-V_f}+\lambda^{-1-V_t})\le1$, which is the
+bound on $\varepsilon(r,k)$; it depends only on shorter states, and larger
+children allow a larger parent. Since $\lambda^{-V_f}+\lambda^{-V_t}\ge
+\lambda^{-\min\{V_f,V_t\}}$, we get $\varepsilon(r,k)\le1+\min\{V_f,V_t\}$; a
+forced literal then changes $\mu$ by $-1$ plus a weight decrease of at most
+one. Induction on $r$ with $V_f\le r-2$ gives $\varepsilon(r,k)\le r-1$.
+\end{proof}
+
+\subsection{With and without the cap}
+
+\begin{proposition}[Cap one]\label{prop:cap}
+With $\kappa=1$, for large $r$ the weights approach $1,1-c,1-2c,\dots$ for
+$k=1,2,3,\dots$, where $c=c(\lambda)$. So case~1 with allowance $k_0=p-1$ is
+admissible for large $D$ iff $\lambda^{1/k_0}(\lambda-1)\ge1$.
+\end{proposition}
+
+\begin{proof}
+For large $r$, $V_t=r-1\to\infty$ in state $(r,1)$, so its weight is the cap
+$1$. For $k\ge2$ a stationary weight $\varepsilon_k$ must satisfy
+$\lambda^{1-\varepsilon_k}\ge\lambda^{-\varepsilon_k}+\lambda^{-\varepsilon_{k-1}}$,
+i.e.\ $\varepsilon_k\le\varepsilon_{k-1}-c$. Case~1 needs
+$1-(k_0-1)c\ge c$, i.e.\ $k_0c\le1$.
+\end{proof}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+allowance $k_0=p-1$ & 1 & 2 & 3 & 4 & 8 & 16\\
+\midrule
+$\lambda$ with cap one & 1.618 & 1.756 & 1.820 & 1.857 & 1.922 & 1.959\\
+\bottomrule
+\end{tabular}
+\caption{The cap $\varepsilon<1$: the branching number depends only on $k_0$.}
+\label{tab:cap}
+\end{table}
+
+So with the cap $\lambda$ tends to $2$, roughly as $2-(\ln2)/k_0$: the $k_0$
+units of allowance share one unit of weight. Only variables a bounded number of units away from
+domination help, and closeness to domination in the relative sense,
+$p\le\beta D$, gives nothing for large degrees.
+
+Without the cap the weights have a closed form~\cite{N5}. Let
+$V(r,k)=\sum_{j=0}^{\min\{r,k\}}\binom rj$ be the number of completions that a
+clause in state $(r,k)$ permits.
+
+\begin{theorem}[No cap]\label{thm:nocap}
+The weights $e_\lambda(r,k)=r-\log_\lambda V(r,k)$ satisfy the recursion of
+Lemma~\ref{lem:weights} with equality and without the clipping at zero, if a
+vacuous state keeps its value $e_\lambda(r,k)=r(1-\log_\lambda2)<0$ instead of
+$0$. With these weights every case-2 step is tight, no transition lowers a
+weight by more than one, and creating a clause in state $(D,k_0)$ is admissible
+if and only if
+\[
+ V(D,k_0)\le(\lambda-1)\lambda^D .
+\]
+Hence, for $k_0\le\beta D$ with $\beta<\frac12$ and any $\lambda>2^{H(\beta)}$,
+every creation with $D\ge\ln\frac1{\lambda-1}\big/\bigl(\ln\lambda-H(\beta)\ln2
+\bigr)$ is admissible, and the smallest admissible $\lambda$ for
+$k_0=\lfloor\beta D\rfloor$ tends to $2^{H(\beta)}$ as $D\to\infty$.
+\end{theorem}
+
+\begin{proof}
+By Pascal's rule $V(r,k)=V(r-1,k)+V(r-1,k-1)$, so
+$\lambda^{-e_\lambda(r-1,k)}+\lambda^{-e_\lambda(r-1,k-1)}=\lambda^{1-e_\lambda(r,k)}$,
+which is the recursion with equality; for $k=1$ the true child has
+$V(r-1,0)=1$, i.e.\ weight $r-1$, as for propagation. A transition changes the
+weight by $-1+\log_\lambda\frac{V(r,k)}{V(r-1,k')}\ge-1$, since a restriction
+cannot increase $V$. Case~1 is admissible iff
+$\lambda^{-1}+\lambda^{-1-D}V(D,k_0)\le1$, which is the stated condition. The
+threshold follows from $V(D,k_0)\le2^{H(\beta)D}$, and the limit from
+$V(D,k_0)\ge\binom D{k_0}\ge2^{H(k_0/D)D}/(D+1)$.
+\end{proof}
+
+The weights of Lemma~\ref{lem:weights} with $\kappa=\infty$ are these weights
+with \emph{release}: where $e_\lambda$ would be negative the clause is released
+and its weight is $0$. Clipping only raises weights, so it can only lower the
+branching numbers, slightly at finite $D$ (Table~\ref{tab:nocap}). With release,
+every creation with $k_0\le\beta D$ and $D\le400$ is already admissible at
+$\lambda=2^{H(\beta)}$, for $\beta\in\{\frac18,\frac14,0.3,\frac38,0.45\}$.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llcccccc}
+\toprule
+$\beta$ & & $D=32$ & $64$ & $128$ & $256$ & $512$ & $2^{H(\beta)}$\\
+\midrule
+$1/8$ & with release & 1.411 & 1.419 & 1.429 & 1.439 & 1.446 & 1.458\\
+ & without & 1.431 & 1.437 & 1.443 & 1.448 & 1.452 & \\
+$1/4$ & with release & 1.668 & 1.693 & 1.713 & 1.728 & 1.739 & 1.755\\
+ & without & 1.695 & 1.715 & 1.730 & 1.740 & 1.746 & \\
+$3/8$ & with release & 1.849 & 1.877 & 1.898 & 1.913 & 1.923 & 1.938\\
+ & without & 1.873 & 1.897 & 1.912 & 1.923 & 1.929 & \\
+\bottomrule
+\end{tabular}
+\caption{Without the cap: the branching number for creating a clause with
+$k_0=\beta D$, with release (Lemma~\ref{lem:weights}) and without
+(Theorem~\ref{thm:nocap}).}\label{tab:nocap}
+\end{table}
+
+For example, with release at $\lambda=1.643$ the weights of the states $(16,k)$ are
+$10.34$, $6.22$, $3.10$, $0.89$ for $k=1,\dots,4$, those of $(12,k)$ are
+$6.89$, $3.38$, $1.00$, and those of $(8,k)$ are $3.66$, $1.03$. At fixed
+allowance a longer clause weighs more; at fixed margin $r-2k$ a shorter one
+does.
+
+\begin{remark}[Tightness]\label{rem:tight}
+If every variable has ratio $\beta$, the bound $2^{H(\beta)n}$ is that
+of~\cite[Theorem~11]{N3} with $\beta=(1-\varepsilon)/2$, and it is attained on
+$C_{n,c}$ by every branching rule with domination and pruning
+clauses~\cite[Theorem~13, Observation~22]{N3}. So the step analysis is optimal
+for this class.
+\end{remark}
+
+\begin{remark}[Why one might cap, and why not to]\label{rem:onebit}
+In base $2$ a disjoint block saves exactly $\log_2\frac2{1+\theta}<1$
+bit~\cite[Proposition~25]{N3}, since the preferred child carries no clause: a
+clause is worth less than one bit to the whole tree. This suggests $\varepsilon<1$,
+so that the variable assigned when a clause disappears pays for it. In an
+analysis by branching numbers, however, the weight must also pay for the steps
+inside the clause before it propagates, about one per unit of allowance. Without
+the cap the weight of a tight clause is close to the number of variables it will
+force: $(16,1)$ weighs $10.34$ and forces $15$ when it propagates. What the
+payoff argument needs is Lemma~\ref{lem:weights}: no transition lowers a weight
+by more than one.
+\end{remark}
+
+\begin{remark}[What nearly disjoint clauses can certify]\label{rem:disjointcap}
+Heuristically, for a random formula of degree $d$: a clause created when its
+variable has $D$ free neighbours is worth $O(1+d/D)$, since the imbalance is
+$O(\sqrt d)$; at most $\nfree/D$ disjoint counted clauses coexist; and
+$D\approx d\,\nfree/n$. While $\nfree$ falls from $2N$ to $N$, the counted
+clauses therefore certify $O\bigl((n/d)(n/N)\bigr)$, which pays for all $N$
+variables only once $N\lesssim n/\sqrt d$. Summing over the stages gives
+$O(n/\sqrt d)$ in total, the timing barrier again. Counting only nearly disjoint
+clauses cannot give $c^n$ for balanced formulas of growing degree.
+\end{remark}
+
+\section{Averaging over paths}\label{sec:averaging}
+
+\begin{lemma}[Averaging]\label{lem:avg}
+Let $\lambda\in(1,2]$, let the measure be $n$ at the root and nonnegative
+everywhere, and let every internal node be either admissible or plain, as in
+Section~\ref{sec:measure}. Let $\W$ be the random walk from the root that at an
+admissible node moves to child $i$ with probability $q_i\ge\lambda^{-d_i}$,
+where $q_0+q_1\le1$ and the walk stops with the remaining probability, and at a
+plain node moves to each child with probability $\frac12$. Let $S$ be the
+number of plain nodes on $\W$. Then
+\[
+ \#\text{leaves}\le\lambda^n\,\E\bigl[(2/\lambda)^S\bigr].
+\]
+\end{lemma}
+
+\begin{proof}
+For a leaf $\ell$ let $s(\ell)$ be the number of plain nodes on its path and
+$\Pi(\ell)$ the probability that $\W$ ends at $\ell$. The drops along the path
+add up to at most $n$, those at plain nodes to at least $s(\ell)$, so the drops
+at admissible nodes add up to at most $n-s(\ell)$ and
+$\Pi(\ell)\ge\lambda^{-(n-s(\ell))}2^{-s(\ell)}$. Hence
+$\#\text{leaves}=\sum_\ell\Pi(\ell)/\Pi(\ell)\le\lambda^n\sum_\ell\Pi(\ell)
+(2/\lambda)^{s(\ell)}\le\lambda^n\E[(2/\lambda)^S]$.
+\end{proof}
+
+\begin{corollary}\label{cor:avg}
+\begin{enumerate}
+ \item If every path has at most $s$ plain nodes, there are at most
+ $\lambda^{n-s}2^s$ leaves. With the weights of Lemma~\ref{lem:weights} and
+ $\lambda=2^{H(\beta)}$, this is the bound for the rule of
+ Section~\ref{sec:measure} when every node offers case~1 with $k_0\le\beta D$
+ or case~2, for $D\le400$; for larger $D$ take $\lambda$ slightly above
+ $2^{H(\beta)}$ (Theorem~\ref{thm:nocap}).
+ \item If $\Pr[S>s]\le\rho$, there are at most $\lambda^{n-s}2^s+\rho\,2^n$
+ leaves, since a walk has at most $n$ plain nodes.
+ \item If $S-\bar s$ is sub-Gaussian with variance proxy $\sigma^2$, there are
+ at most $\lambda^n(2/\lambda)^{\bar s}e^{\theta^2\sigma^2/2}$ leaves, where
+ $\theta=\ln(2/\lambda)$.
+\end{enumerate}
+\end{corollary}
+
+Item~2 has the shape of the bound of~\cite{N2}: most branches are good, and the
+bad ones are exponentially rare. Two points matter.
+\begin{itemize}
+ \item The probability is over the tilted walk $\W$, not over uniform
+ assignments. At a case-1 step $\W$ takes the preferred child with probability
+ $1/\lambda$, and it may give the pruned child $1-1/\lambda$, which is at least
+ $\lambda^{-1-\varepsilon}$ exactly when the step is admissible.
+ \item The failure probability must be exponentially small, because bad paths
+ together can cost $2^n$. In item~3 the price of fluctuations is second order:
+ for $\lambda=1.755$ and $\sigma^2=n/4$ the factor is about $2^{0.003n}$.
+\end{itemize}
+Variables fixed during plain steps can be credited at rate $\lambda$: if
+$\pi(\ell)\ge s(\ell)$ is the total drop at the plain nodes of the path, the
+proof gives $\#\text{leaves}\le\E[\lambda^{n-\pi}2^S]$. This is how
+domination after plain steps, the mechanism of~\cite[Theorem~11]{N3}, enters.
+
+\section{Availability in formulas with linear gaps}\label{sec:availability}
+
+Assume every variable starts with ratio at most $\beta_0<\frac12$, fix a
+threshold $\beta'\in(\beta_0,\frac12)$, let $\lambda=2^{H(\beta')}$, and let case~1
+take the free variable of smallest ratio among those with $p-1\le\beta'D$ and
+a feasible clause. Since active clauses are finished first, a plain step
+happens only when no free variable passes the threshold. We want
+$\E[(2/\lambda)^S]=2^{o(n)}$.
+
+Each assignment of a neighbour $y$ of $v$ lowers exactly one of the two
+deficits of $v$~\cite[Lemma~2]{N3}. Call it \emph{helpful} for $v$ if it
+lowers the smaller one.
+
+\begin{lemma}[Window]\label{lem:window}
+Let $v$ start with degree $D_0$ and smaller deficit $p_0\le\beta_0D_0$. If at
+least a $\beta_0$-fraction of its assigned neighbours were helpful, then the
+ratio of $v$ is at most $\beta_0$.
+\end{lemma}
+
+\begin{proof}
+With $j$ assigned neighbours, $h\ge\beta_0j$ of them helpful, the smaller
+deficit is at most $p_0-h\le\beta_0(D_0-j)$ and the degree is $D_0-j$.
+\end{proof}
+
+Conversely, assignments that are not helpful lower the other deficit, and once
+enough of them have occurred, the other literal of $v$ passes the threshold.
+For $p_0=\beta_0D_0$ and no helpful assignments this happens after a fraction
+$(1-\beta_0-\beta')/(1-\beta')$ of the neighbours, $64\%$ for $\beta_0=\frac14$
+and $\beta'=0.3$. So $v$ fails the threshold only inside a bounded window, and
+a plain step needs every free variable inside its window at the same time.
+
+\begin{lemma}[Case-1 steps]\label{lem:coins}
+Let $\W$ take the preferred child of a case-1 step with probability $1/\lambda$
+and the pruned child with probability $1-1/\lambda$. Then every neighbour of
+the branched variable is helped with probability at least $1-1/\lambda$, and
+$1-2^{-H(\beta)}\ge\beta$ for $0<\beta\le\frac12$, with equality only at
+$\beta=\frac12$.
+\end{lemma}
+
+\begin{proof}
+Exactly one value of the branched variable helps a given neighbour, and both
+values have probability at least $1-1/\lambda$. The inequality is
+$H(\beta)\ge\log_2\frac1{1-\beta}$, which after expanding $H$ reads
+$\beta\log_2\frac{1-\beta}\beta\ge0$.
+\end{proof}
+
+With $\lambda=2^{H(\beta')}$ each case-1 step helps every neighbour with
+probability at least $\beta'>\beta_0$. If all assignments were case-1 steps,
+the Azuma--Hoeffding inequality would bound the probability that a variable
+with $m$ assigned neighbours has a helpful fraction below $\beta_0$ by
+$e^{-2(\beta'-\beta_0)^2m}$, and Lemma~\ref{lem:window} would keep it at the
+threshold.
+
+\paragraph{The obstacle.} In a pruned child, $\W$ then resolves the clause of
+the branched variable $x$, which allows at most a $\beta'$-fraction of the
+neighbours of $x$ to take their bad values. These assignments follow the
+clause, not a coin. In aligned formulas, where after renaming every clause is
+$(x\lor y)$ or $(\neg x\lor\neg y)$, the bad value of $y$ for the clause of
+$x$ is its minority value, which is the helpful value for every other neighbour
+of $y$. So the other variables see a helpful fraction of about the ratio of
+$x$, which is below their own if $x$ has the smallest ratio. The per-variable
+argument does not cover this, and on $C_{n,c}$ plain steps do occur.
+
+\paragraph{Measurements.} On random formulas with linear gaps, with biased
+signs or aligned, $n\in\{200,400\}$, $d$ from $20$ to $200$, $\beta_0=\frac14$
+and $\beta'=0.26$, no walk had a plain step. Even with $\beta'=\beta_0$ on dense
+aligned formulas, a walk had at most $16$ plain steps and
+$\log_2\E[(2/\lambda)^S]=0.10$. Table~\ref{tab:cnc} shows the extreme case.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{$\beta'-\beta_0=0.02$} &
+ \multicolumn{2}{c}{$\beta'-\beta_0=0.05$}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+$n$ & walks with a plain step & $\log_2\E[(2/\lambda)^S]$ &
+walks with a plain step & $\log_2\E[(2/\lambda)^S]$\\
+\midrule
+101 & 20\% & 0.49 & 9\% & 0.29\\
+201 & 19\% & 1.32 & 12\% & 0.17\\
+401 & 23\% & 2.01 & 17\% & 0.55\\
+801 & 26\% & 2.73 & 11\% & 0.63\\
+\bottomrule
+\end{tabular}
+\caption{Plain steps along $\W$ on $C_{n,c}$ with $\varepsilon=0.5$
+($\beta_0\approx\frac14$), $150$ walks ($80$ for $n=801$).}
+\label{tab:cnc}
+\end{table}
+
+So the bound is $\lambda^n$ up to a factor below $8$, that is
+$2^{H(\beta')n}$. For gaps that are linear in $n$ this exponent is already
+known for every order~\cite[Theorems~11 and~24]{N3}; what is new here is that
+the gaps are relative to each variable's own degree, so the formulas may have
+any density, and that the rule is adaptive.
+
+\paragraph{Why, heuristically.} In random formulas the variables reach their
+windows at different times, and the rule takes the best free variable, so one
+outside its window is always available. In $C_{n,c}$ all variables move
+together, but $\W$ follows typical surviving assignments. For a uniformly
+random assignment satisfying a clause, the remaining allowance divided by the
+remaining length is a martingale, so the bad fraction stays near the ratio of
+the clause, the minority fraction stays near $\beta_0$, and only fluctuations
+reach the window.
+
+\begin{problem}[The missing lemma]\label{prob:phase}
+Show that while $\W$ resolves a counted clause created in state $(D,k_0)$, the
+fraction of its literals that become true is at least $k_0/D-\eta$, except with
+probability $e^{-\Omega(\eta^2D)}$.
+\end{problem}
+
+For the rule with release this is open. Without release it holds, in a
+stronger form.
+
+\begin{proposition}[One clause without release]\label{prop:phase}
+Use the weights $e_\lambda$ of Theorem~\ref{thm:nocap}, keep every counted
+clause until its support is assigned, and postpone domination and new clauses
+while it is active. Then inside the clause $\W$ makes all $V(D,k_0)$ permitted
+completions equally likely, and for $0\le k_0<D/2$, $1\le t\le k_0$ and
+$q=k_0/(D-k_0+1)$ the number $J$ of its literals that become true satisfies
+\[
+ \Pr[J\le k_0-t]\le q^t .
+\]
+\end{proposition}
+
+\begin{proof}
+With tight weights, $\W$ moves to a child with probability
+$\lambda^{-\text{drop}}=V(\text{child})/V(\text{parent})$, and these factors
+telescope to $1/V(D,k_0)$ along every permitted completion. For $j\le k_0$,
+$\binom D{j-1}=\frac j{D-j+1}\binom Dj\le q\binom Dj$, hence
+$\binom Di\le q^t\binom D{i+t}$ for $i\le k_0-t$; summing over $i$ and dividing
+by $V(D,k_0)$ gives the bound~\cite{N5}.
+\end{proof}
+
+So Problem~\ref{prob:phase} holds for this rule, with $e^{-\Omega(\eta D)}$ in
+place of $e^{-\Omega(\eta^2D)}$: $J$ ends within $O(1)$ of the allowance. Given
+$J$, the true literals form a uniformly random subset of the support. Hence a
+variable with $s$ neighbours in the support, for each of which one value is
+designated as helpful when the clause is created, sees a helpful fraction of at
+least $k_0/D-\eta$ among them, whatever the designations, except with
+probability $q^{\lceil\eta D/2\rceil}+2e^{-\eta^2s/8}$~\cite{N5}. The price of
+giving up release is a slightly larger branching number (Table~\ref{tab:nocap}).
+
+This suggests how to finish the argument. By Lemma~\ref{lem:window} a variable
+stays at the threshold while at least a $\beta_0$-fraction of its assigned
+neighbours helped it; case-1 steps help with probability at least $\beta'$
+(Lemma~\ref{lem:coins}), and a clause passes on a helpful fraction of at least
+its ratio minus $\eta$. So in case~1 we should take the largest ratio below
+$\beta'$, not the smallest: when this ratio is close to $\beta'$, every helpful
+fraction exceeds $\beta_0$, and the creation is still feasible. What remains
+open is the accumulation of these bounds over many adaptively chosen clauses,
+in particular for small overlaps $s$, and the assignments that domination forces
+between clauses. We have not tested the largest-ratio choice; on random
+formulas there are no plain steps to remove, and in $C_{n,c}$ all variables have
+the same ratio.
+
+\section{A barrier for single-flip rules}\label{sec:barrier}
+
+Call a complete assignment a \emph{strict local maximum} if flipping any single
+variable strictly lowers the score.
+
+\begin{proposition}[Strict local maxima are never cut]\label{prop:barrier}
+Consider a search whose fixings and cuts are domination, pruning clauses with
+propagation, and sums or weighted sums of active pruning clauses; the full
+phases and counting certificates of~\cite{N5} are included. For every branching
+rule, every strict local maximum is a leaf of its search tree. Hence the tree
+has at least as many leaves as the formula has strict local maxima.
+\end{proposition}
+
+\begin{proof}
+Let $\alpha$ be a strict local maximum and follow its path. If domination fixes
+a literal $\ell$, flipping $\alpha$ towards $\ell$ does not lower the score by
+the flip identity, so $\alpha$ already has $\ell$ true. If $\alpha$ enters a
+pruned child, flipping the branched variable strictly lowers the score, so by
+the flip identity $\alpha$ satisfies the new pruning clause. Hence $\alpha$
+satisfies every clause on its path, agrees with every propagation they cause,
+and satisfies every sum of them and every count that includes their common
+solutions.
+\end{proof}
+
+\paragraph{Many strict local maxima.} Max-Cut on $K_m$, written with the clauses
+$(x_i\lor x_j)$ and $(\neg x_i\lor\neg x_j)$ for every pair, has
+$\binom m{m/2}$ strict local maxima for even $m$, the balanced cuts. Disjoint
+copies with $d=m-1$ have $2^{\,n-O(n(\log d)/d)}$ of them, which is the order of
+the saving of~\cite{GK14}. Disjoint copies are separated by splitting into
+components, but Hastings shows that his upper bounds on the number of local
+maxima are tight, up to polylogarithmic factors for dense formulas and up to a
+factor of order $d$ for sparse ones~\cite{Has16}. So single-flip reasoning,
+however refined, cannot by itself give $(2-\delta)^n$ at growing density. In
+particular the progress condition of~\cite{N5} fails on such formulas, since the
+count at every depth is at least the number of strict local maxima.
+
+\paragraph{What can cut them.} Pair decisions can: in a $\ne$ child they compare
+an assignment with the flip of a whole class, a move of several variables. On
+$K_8$, $K_{10}$ and $K_{12}$ the chained class conditions of
+Section~\ref{sec:pairs} leave $36$, $94$ and $276$ complete assignments,
+against $70$, $252$ and $924$ strict local maxima. For exact twins this is
+visible directly: merged with $u=\neg v$, the two clauses of a twin pair with a
+common neighbour $w$ add up to one plus the indicator of the literal of $w$,
+independent of $u$. So the merged variable keeps only the clauses between $u$
+and $v$, domination fixes it, and the two orientations of the pair are never
+both explored. Hastings also constructs sparse formulas with many maxima under
+moves of up to $k$ variables~\cite{Has16}, so moves of bounded size may meet a
+similar barrier; class flips are not of bounded size.
+
+\paragraph{A second obstacle.} The circulant formulas $C_{9,2}$, $C_{11,3}$ and
+$C_{13,3}$ have no strict local maxima at all, yet on $C_{n,c}$ every rule
+of~\cite{N3} costs $\binom{n-1}a$ leaves~\cite[Theorem~13, Observation~22]{N3}.
+Their leaves are only one-sided local maxima: the preferred child is never
+pruned. The class conditions reduce these three formulas to $10$, $10$ and $14$
+complete assignments.
+
+\paragraph{Consequence for the plan.} On formulas with few strict local maxima,
+single-flip rules and their sums can in principle suffice, and the question is
+when they cut (Sections~\ref{sec:strategies} and~\ref{sec:sums}). On formulas
+with many, or where one-sided pruning is the bottleneck, a rule that moves
+several variables at once is necessary, and among our tools only class
+decisions qualify.
+
+\section{Numerical checks}\label{sec:numerics}
+
+The scripts are in this folder.
+\begin{itemize}
+ \item \texttt{explore\_pair\_chain.py} (seconds): the two-clause example, the
+ chains in $C_{n,c}$ and in Max-Cut on $K_m$, and the numbers of strict local
+ maxima (Sections~\ref{sec:pairs} and~\ref{sec:barrier}).
+ \item \texttt{explore\_sum\_rule.py}: \texttt{check} (seconds) compares the
+ optimum with brute force on $150$ formulas, with and without the sum rule and
+ for both strategies, and the estimator with exact counts for $n=30,36$;
+ \texttt{density} and \texttt{dense} (tens of minutes) give
+ Tables~\ref{tab:strategies} and~\ref{tab:dense} up to $n=400$.
+ \item \texttt{explore\_clause\_weights.py} (two seconds):
+ Proposition~\ref{prop:cap}, the rows with release of Table~\ref{tab:nocap},
+ the weight table, and the check that no transition lowers a weight by more
+ than one. The rows without release solve $V(D,k_0)=(\lambda-1)\lambda^D$
+ (Theorem~\ref{thm:nocap}).
+ \item \texttt{explore\_availability.py} (ten seconds): the measurements of
+ Section~\ref{sec:availability} for $n\le401$.
+\end{itemize}
+The entries for $n=600,800$ in Table~\ref{tab:dense} and for $n=801$ in
+Table~\ref{tab:cnc} are single runs of the same code with larger $n$.
+
+\section{Open questions and new directions}\label{sec:open}
+
+\begin{enumerate}
+ \item \textbf{Accumulation over clauses.} Combine
+ Proposition~\ref{prop:phase} with Lemmas~\ref{lem:window} and~\ref{lem:coins}
+ over many adaptively chosen clauses, including the assignments forced by
+ domination between them, or settle Problem~\ref{prob:phase} for the rule with
+ release. This would give $2^{H(\beta')n}$, for every $\beta'>\beta_0$ and every
+ density, for formulas in which every variable has a gap linear in its degree,
+ with an adaptive rule.
+ \item \textbf{Partial gaps.} If only $\eta n$ variables have gaps, plain steps
+ on the others are unavoidable. Does the refined form of Lemma~\ref{lem:avg},
+ which credits domination during plain steps, recover the exponent
+ $\max\{1-\eta,H((1-\varepsilon)/2)\}$ of~\cite[Theorem~11]{N3}?
+ \item \textbf{Ending the cold start.} Find structural properties that produce
+ near-dominated variables in balanced formulas. A candidate is coverage: a set
+ $S$ whose variables have most of their neighbours outside $S$. After a random
+ assignment of the rest, a variable of $S$ is dominated once its imbalance, a
+ $\pm1$ walk over its outside neighbours, exceeds its degree inside $S$; by the
+ Erd\H{o}s--Littlewood--Offord bound~\cite{Erd45} this fails with probability
+ $O(b/\sqrt D)$ for inside degree $b$ and outside degree $D$. So inside degree
+ up to $\varepsilon\sqrt D$ suffices, not only the bounded degree needed for
+ independence~\cite{N5}, provided the fields of $S$ are jointly spread out;
+ near-twins have identical fields, which is where that assumption is needed.
+ This is the idea behind Hastings' bound~\cite{Has16}, and in pseudo-random
+ formulas such sets have size $O(n/\sqrt d)$, so coverage alone gives
+ degree-dependent savings.
+ \item \textbf{Counting overlapping clauses.} By Remark~\ref{rem:disjointcap}
+ the measure must count groups of overlapping clauses. The weighted-sum counts
+ of~\cite{N5} provide such a joint weight, with a branching inequality and a
+ running-time bound under a condition on their progress. The open part is to
+ show linear progress before the last levels for an interesting class, starting
+ with pseudo-random formulas.
+ \item \textbf{The sum rule.} Prove the behaviour of Table~\ref{tab:dense} on
+ random formulas (Remark~\ref{rem:sum-heur}); try the best weighted sums, which
+ by Proposition~\ref{prop:lp} are the linear-relaxation cuts, and integer
+ reasoning beyond them for contradictions of parity type; choose orders that
+ maximize cancellation; test formulas with planted aligned groups, where
+ cancellation is partial.
+ \item \textbf{A dichotomy at each node.} Make the three kinds of nodes of
+ Section~\ref{sec:approach} precise, so that every node offers either a strong
+ clause, a decisive sum, or an aligned structure for pair decisions. By
+ Section~\ref{sec:barrier}, a natural dividing line is whether the residual
+ formula has few or many strict local maxima, with one-sided pruning as a
+ second obstacle.
+ \item \textbf{Pair decisions.} By Proposition~\ref{prop:barrier} they are the
+ only rule here that can cut strict local maxima. Find orders in which the
+ class conditions of Proposition~\ref{prop:chain} are checked early; decide
+ whether class decisions can reach the bound $\Ostar((n+1)^t)$ of exact
+ interaction classes~\cite{N5} and degrade gracefully when the classes are only
+ approximate; and check whether Hastings' sparse formulas with many maxima under
+ moves of several variables~\cite{Has16} also defeat class flips.
+ \item \textbf{Strategies.} Test the coverage strategy of
+ Section~\ref{sec:strategies}, and the largest-ratio choice of
+ Section~\ref{sec:availability} on formulas with partial gaps.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\raggedright
+\bibitem{N1} A literal-deficit measure for Max 2-SAT. Working note,
+ 22 September 2026 (\texttt{max2sat\_literal\_deficit\_proof.tex}).
+\bibitem{N2} Exact Max 2-SAT with an absolute linear polarity gap. Working
+ note, 23 September 2026 (\texttt{max2sat\_absolute\_linear\_gap\_proof.tex}).
+\bibitem{N3} Max 2-SAT and the domination rule: results and ideas so far.
+ Working note, 5 October 2026 (\texttt{max2sat\_results\_and\_ideas.tex}).
+\bibitem{N5} Exploring the branching frontier for Max 2-SAT: full clause
+ phases, joint completion bounds, and coverage. Draft, 7 October 2026
+ (\texttt{max2sat\_branching\_frontier.tex}).
+\bibitem{Erd45} P.~Erd\H{o}s. On a lemma of Littlewood and Offord.
+ \emph{Bulletin of the American Mathematical Society} 51(12):898--902, 1945.
+\bibitem{GK14} A.~Golovnev and K.~Kutzkov. New exact algorithms for the
+ 2-constraint satisfaction problem. \emph{Theoretical Computer Science}
+ 526:18--27, 2014.
+\bibitem{Has16} M.~B.~Hastings. Local maxima and improved exact algorithm for
+ MAX-2-SAT. arXiv:1610.07100, 2016.
+\bibitem{AV94} D.~Aldous and U.~Vazirani. ``Go with the winners''
+ algorithms. In \emph{Proc.\ 35th FOCS}, pp.~492--501, 1994.
+\bibitem{Knu75} D.~E.~Knuth. Estimating the efficiency of backtrack
+ programs. \emph{Mathematics of Computation} 29(129):121--136, 1975.
+\end{thebibliography}
+
+\end{document}

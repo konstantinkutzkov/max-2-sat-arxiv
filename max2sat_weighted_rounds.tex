@@ -1,0 +1,674 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\newcommand{\one}{\mathbf 1}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\hypersetup{pdftitle={Weighted and Round-Based Early Enumeration}}
+\title{Weighted and Round-Based Early Enumeration\\
+\large Random signs on every graph, Max-Cut on spectral expanders,\\
+and count guessing without a given decomposition}
+\author{}
+\date{12 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Two modifications of early enumeration remove the main restrictions of the
+earlier class theorems. Weighting each learned constraint by the inverse square
+root of the degree gives a fixed exponential saving for Max 2-SAT with random
+literal signs on \emph{every} interaction graph, with arbitrary unit clauses and
+several clauses per edge allowed; the earlier bound required a bounded ratio of
+maximum to minimum degree. Fixing the preferred values of the branching
+variables only between a constant number of rounds makes the analysis depend on
+the ordinary spectral norm of the remainder instead of the norm of its
+triangular part. As a consequence, Max-Cut with arbitrary unit clauses is solved
+in time $\Ostar(c^n)$, $c<2$, and polynomial space on every $d$-regular graph
+whose nontrivial eigenvalues are $O(\sqrt d)$, for all $d_0\le d\le(1-\varepsilon)n$.
+This includes Paley graphs, random regular graphs and Ramanujan graphs.
+Finally, the counts of count guessing can be replaced by projections onto
+eigenvectors, guessed on a polynomial grid; no decomposition has to be given.
+All algorithms are deterministic, exact on every input, and use polynomial space.
+\end{abstract}
+
+\section{Results}\label{sec:results}
+
+Write the score of a formula as
+$F(x)=c+\sum_uh_ux_u+\sum_{u<v}J_{uv}x_ux_v$ on $x\in\{0,1\}^n$, and
+$\mathrm{gain}_t(x)=F(x^{t\to1})-F(x^{t\to0})=h_t+\sum_{w\ne t}J_{tw}x_w$.
+An equal-polarity clause, $(u\lor v)$ or $(\neg u\lor\neg v)$, contributes $-1$
+to $J_{uv}$, a mixed one $+1$.
+
+\begin{itemize}
+\item \textbf{Random signs on every graph (Theorem~\ref{thm:weighted}).} Fix
+any graph $G$ and any multiset of unit clauses. Put on each edge a random
+multiset of at most $m_0$ clauses whose law is invariant under complementing
+either endpoint, for example one clause with uniform literal signs, or each of
+the four clauses independently with probability $q$. Weighted early enumeration
+enumerates at most $3\cdot2^ne^{-c_0n}$ assignments in expectation, with $c_0>0$
+depending only on $m_0$ and a non-degeneracy constant $\kappa$, not on $G$.
+\item \textbf{Round-based enumeration (Theorem~\ref{thm:rounds}).} The class of
+the count-guessing note, with its triangular-norm condition replaced by
+$\|N\|^2\le K\,D_N$ for the ordinary operator norm of the remainder, and with
+the aligned part an arbitrary low-rank matrix $\sum_k\lambda_kv_kv_k^{\mathsf T}$.
+\item \textbf{Max-Cut on spectral expanders (Corollary~\ref{cor:maxcut}).}
+Every $d$-regular graph with all nontrivial eigenvalues at most $\lambda_0\sqrt d$
+in absolute value, $d_0(\lambda_0)\le d\le(1-\varepsilon)n$, with both clauses
+$(u\lor v),(\neg u\lor\neg v)$ on each edge and arbitrary unit clauses: time
+$\Ostar(c^n)$ with $c=c(\lambda_0,\varepsilon)<2$.
+\item \textbf{Spectral count guessing (Corollary~\ref{cor:spectral},
+Proposition~\ref{prop:planted}).} Guessing the projections of $x$ onto the top
+eigenvectors of $J$ on a grid of polynomial size handles planted low-rank parity
+structure without knowing it.
+\end{itemize}
+
+\section{Preliminaries}\label{sec:prelim}
+
+\paragraph{Enumeration.} All algorithms branch on a prefix of $T$ variables,
+learn affine constraints on the way, and at each prefix enumerate the
+completions of one summed affine inequality. Such solutions can be listed with
+polynomial delay, and the cost is $\Ostar(2^T+W)$, where $W$ is the number of
+complete assignments satisfying the summed inequality of their own
+prefix~\cite{EE,Paper}. For uniform $x$, $W=2^n\Prb[x\text{ passes}]$.
+
+\paragraph{Probabilistic tools.}
+\begin{itemize}
+\item[(T1)] \emph{Azuma--Hoeffding.} If $X_1,X_2,\dots$ are martingale
+differences and $X_i$ lies, given the past, in an interval of length $\ell_i$,
+then $\Prb[\sum_iX_i\le-a]\le e^{-2a^2/\sum_i\ell_i^2}$.
+\item[(T2)] \emph{Exponential supermartingale.} If, given the past, $X_i$ is a
+Rademacher sum with variance proxy $V_i$ (so $\E e^{\lambda X_i}\le
+e^{\lambda^2V_i/2}$) and $\sum_iV_i\le V$ always, then
+$\Prb[\sum_iX_i\le-a]\le e^{-a^2/(2V)}$.
+\item[(T3)] \emph{Talagrand.} If $f$ is convex and $\ell$-Lipschitz on
+$[-1,1]^T$ and $u$ is uniform on $\{\pm1\}^T$, then
+$\Prb[f\le\E f-r-8\sqrt\pi\,\ell]\le4e^{-r^2/(16\ell^2)}$~\cite{Tal95}.
+\item[(T4)] \emph{Hanson--Wright.} There is an absolute constant $c_{\rm HW}>0$
+such that for a symmetric matrix $M$ with zero diagonal and a uniform
+$\beta\in\{\pm1\}^m$,
+$\Prb[\beta^{\mathsf T}M\beta\ge s]\le\exp(-c_{\rm HW}\min\{s^2/\|M\|_F^2,\,
+s/\|M\|\})$~\cite{RV13}.
+\item[(T5)] \emph{Fourth moment.} A Rademacher sum $Z$ satisfies
+$\E|Z|\ge\sqrt{\operatorname{Var}Z/3}$.
+\end{itemize}
+
+\begin{lemma}[Symmetric shift]\label{lem:shift}
+If $Z$ is symmetric, $a\in\mathbb R$ and $K>0$, then
+$\E\min\{|a+Z|,K\}\ge\frac12\E\min\{|Z|,K\}$.
+\end{lemma}
+\begin{proof}
+The function $\phi(z)=\min\{z,K\}$ is concave and nondecreasing on $[0,\infty)$
+with $\phi(0)=0$, hence subadditive. So $\phi(|a+Z|)+\phi(|a-Z|)\ge
+\phi(|a+Z|+|a-Z|)\ge\phi(2|Z|)\ge\phi(|Z|)$. Take expectations and use that
+$a+Z$ and $a-Z$ have the same law.
+\end{proof}
+
+\section{Random signs on every graph}\label{sec:weighted}
+
+\begin{definition}[Complementation-invariant random signs]\label{def:invariant}
+Let $G=(V,E)$ be a graph without isolated vertices, $n=|V|$, with any fixed order
+$1,\dots,n$ of $V$, and let $T=\lceil n/2\rceil$. For each edge $e=\{u,v\}$ let
+$M_e$ be a random multiset of binary clauses on $u,v$, independently over the
+edges, such that
+\begin{enumerate}
+\item[(i)] $|M_e|\le m_0$;
+\item[(ii)] the law of $M_e$ is invariant under replacing the literal of $u$ by
+its complement in every clause of $M_e$, and likewise for $v$;
+\item[(iii)] $\E\bigl[(\sum_{c\in M_e}s_u(c))^2\bigr]\ge\kappa>0$ for every edge
+$e$ and endpoint $u$, where $s_u(c)\in\{\pm1\}$ is the sign of the literal of
+$u$ in $c$.
+\end{enumerate}
+The unit clauses form an arbitrary multiset, fixed independently of the $M_e$.
+\end{definition}
+
+One clause per edge with independent uniform literal signs has $m_0=\kappa=1$.
+Including each of the four clauses on every edge independently with probability
+$q$ has $m_0=4$ and $\kappa=4q(1-q)$; with $q=\frac14$, this is the model in
+which the four clauses of each pair of a fixed set are sampled with probability
+$\frac14$.
+
+\paragraph{Algorithm A (weighted early enumeration).}
+For a clause $c\in M_{tv}$, the \emph{partner literal} is its literal on $v$.
+Let $b_t$ be the number of unit clauses $(t)$ minus the number of unit clauses
+$(\neg t)$, and $G_{tv}(x_v)=\sum\{s_t(c):c\in M_{tv},\ \text{the partner
+literal of $c$ is false under }x_v\}$. Then
+$\mathrm{gain}_t(x)=b_t+\sum_{v\sim t}G_{tv}(x_v)$. Branch on $x_1,\dots,x_T$.
+At step $t$ let
+\[
+ \Delta_t=b_t+\sum_{v<t,\,v\sim t}G_{tv}(x_v)
+  +\frac12\sum_{v>t,\,v\sim t}\ \sum_{c\in M_{tv}}s_t(c),
+\]
+the expected gain of $x_t$ when the later variables are uniform, and
+$p_t=[\Delta_t\ge0]$. If $x_t\ne p_t$, then $t$ is a \emph{creator}. At each
+prefix of length $T$ enumerate the completions satisfying
+\begin{equation}\label{eq:weighted}
+ \sum_{t\ \text{creator}}\omega_t\bigl((2p_t-1)\,\mathrm{gain}_t(x)+1\bigr)\le0,
+ \qquad \omega_t=\deg_G(t)^{-1/2},
+\end{equation}
+and evaluate $F$ on each.
+
+\begin{lemma}[Exactness]\label{lem:exactA}
+Among the optima, let $x^\circ$ maximize, lexicographically, the vector of
+indicators $[x_t=p_t]$, $t\le T$, along its own path. Then
+$(2p_t-1)\mathrm{gain}_t(x^\circ)\le-1$ for every creator $t$ on its path, so
+$x^\circ$ satisfies~\eqref{eq:weighted} and is enumerated.
+\end{lemma}
+\begin{proof}
+Scores are integers. If $(2p_t-1)\mathrm{gain}_t(x^\circ)\ge0$ for a creator $t$,
+flipping $x^\circ_t$ to $p_t$ gives an optimum with the same path before $t$ and
+indicator one at $t$, which is lexicographically larger.
+\end{proof}
+
+\begin{theorem}[Random signs on every graph]\label{thm:weighted}
+In the model of Definition~\ref{def:invariant}, Algorithm~A is exact on every
+input, and for every graph, every order and every multiset of unit clauses the
+expected number of enumerated assignments is at most $3\cdot2^ne^{-c_0n}$, where
+\[
+ c_0=\frac{c_1^2}{2704\,m_0^2},\qquad
+ c_1=\frac{\sqrt\kappa}{2\sqrt{1+4m_0^4/\kappa^2}}.
+\]
+Hence the expected running time is $\Ostar(2^{n/2}+2^ne^{-c_0n})$, and the
+running time exceeds $\Ostar(2^ne^{-c_0n/2})$ with probability at most
+$3e^{-c_0n/2}$.
+\end{theorem}
+
+For one uniformly signed clause per edge, $c_0=1/54080$. The earlier bound for
+this model, Theorem~4.1 of~\cite{Paper}, has base $2e^{-d/(1250D)}$ with $d,D$
+the minimum and maximum degree, requires $d\ge6$, and excludes unit clauses.
+
+\begin{proof}
+\emph{Step 0: race identity.} Let $x$ be uniform and independent of the formula.
+Write $\mathrm{gain}_t(x)=\Delta_t+\sum_{v>t,v\sim t}\xi_{tv}$ with
+$\xi_{tv}=G_{tv}(x_v)-\frac12\sum_{c\in M_{tv}}s_t(c)$. For a creator,
+$(2p_t-1)\Delta_t=|\Delta_t|$. Hence $x$ passes~\eqref{eq:weighted} if and only if
+$S+Q\le0$, where, with $I$ the set of creators,
+\[
+ S=\sum_{t\in I}\omega_t(|\Delta_t|+1),\qquad
+ Q=\sum_{t\in I}\omega_t(2p_t-1)\sum_{v>t,\,v\sim t}\xi_{tv}.
+\]
+
+\emph{Step 1: late signs.} By (ii), $M_e$ has the law of a multiset obtained from
+an independent copy $\sigma_e$ of $M_e$, the \emph{skeleton}, by multiplying the
+signs of $u$ in all its clauses by an independent fair sign $\rho_{u,e}$, and
+those of $v$ by $\rho_{v,e}$. Put $\theta_{u,e}=\rho_{u,e}(2x_u-1)$. The literal of
+$u$ in $c$ is false under $x_u$ exactly when $\sigma_u(c)\theta_{u,e}=-1$. All
+$\theta_{u,e}$ are independent fair signs, independent of the skeletons and of
+$x$, because the $\rho$'s are. Reveal the skeletons first; then, for
+$v=1,\dots,n$, reveal the signs $\rho_{v,e}$ ($e\ni v$) and $x_v$. Let
+$\mathcal F_v$ be the information after step $v$.
+
+For $e=\{t,v\}$ we have $G_{tv}(x_v)=\rho_{t,e}\,a_e$ with
+$a_e=\sum\{\sigma_t(c):\sigma_v(c)\theta_{v,e}=-1\}$. Hence
+$\Delta_t=b_t+Z_t$, where
+\[
+ Z_t=\sum_{v<t}\rho_{t,e}\,a_e+\sum_{v>t}\rho_{t,e}\,a'_e,\qquad
+ a'_e=\tfrac12\textstyle\sum_{c\in M_e}\sigma_t(c),
+\]
+and the coefficients $a_e,a'_e$ are $\mathcal F_{t-1}$-measurable. Given
+$\mathcal F_{t-1}$, $Z_t$ is a Rademacher sum with variance
+$Y_t=\sum_{v<t}a_e^2+\sum_{v>t}a_e'^2\le m_0^2\deg(t)$, and $x_t$ is uniform and
+independent of $\Delta_t$, so $t$ is a creator with probability $\frac12$. For
+$v>t$, $\xi_{tv}=\rho_{t,e}\,\theta_{v,e}\,\eta_e$ with
+$\eta_e=\sum\{\sigma_t(c):\sigma_v(c)=-1\}-a'_e$ and $|\eta_e|\le m_0/2$.
+
+\emph{Step 2: the shortfall.} Let
+$\tilde Y_t=[t\in I]\,\omega_t\min\{|\Delta_t|,m_0\sqrt{\deg t}\}\in[0,m_0]$; then
+$S\ge\sum_{t\le T}\tilde Y_t$. By Lemma~\ref{lem:shift}, (T5) and
+$(z-K)_+\le z^2/(4K)$,
+\[
+ \E[\tilde Y_t\mid\mathcal F_{t-1}]
+ \ge\tfrac12\omega_t\cdot\tfrac12\Bigl(\sqrt{Y_t/3}-\frac{Y_t}{4m_0\sqrt{\deg t}}\Bigr)
+ \ge\tfrac14\omega_t\sqrt{Y_t}\Bigl(\tfrac1{\sqrt3}-\tfrac14\Bigr)
+ \ge\mu_t:=\frac{\omega_t\sqrt{Y_t}}{13},
+\]
+using $Y_t\le m_0^2\deg t$. By (T1),
+$\Prb[\sum_{t\le T}\tilde Y_t<\sum_{t\le T}\mu_t-a]\le e^{-2a^2/(Tm_0^2)}$.
+
+\emph{Step 3: the mean shortfall.} For $v<t$, $a_e$ takes the values
+$\alpha_\pm=\sum\{\sigma_t(c):\sigma_v(c)=\mp1\}$ with probability $\frac12$
+each, so $\E a_e^2\ge\frac14\E(\alpha_++\alpha_-)^2
+=\frac14\E(\sum_c\sigma_t(c))^2\ge\kappa/4$; also $\E a_e'^2\ge\kappa/4$. The
+summands of $Y_t$ are independent over the edges and lie in $[0,m_0^2]$, so
+$\E Y_t\ge\kappa\deg(t)/4$ and $\operatorname{Var}Y_t\le m_0^4\deg(t)/4$. Hence
+\[
+ \E\sqrt{Y_t}\ge\frac{(\E Y_t)^{3/2}}{(\E Y_t^2)^{1/2}}
+ =\frac{\sqrt{\E Y_t}}{\sqrt{1+\operatorname{Var}Y_t/(\E Y_t)^2}}
+ \ge c_1\sqrt{\deg t},
+\]
+and $\E\sum_{t\le T}\mu_t\ge c_1T/13$. The sum $\sum_{t\le T}\mu_t$ is a function
+of the independent skeletons and signs $\theta$; those of one edge change at most
+two terms, each by at most $\omega m_0/13$. Since $\sum_e(\omega_u+\omega_v)^2\le
+2\sum_v\omega_v^2\deg v=2n$, McDiarmid's inequality gives
+$\Prb[\sum_{t\le T}\mu_t<c_1T/13-b]\le e^{-169b^2/(m_0^2n)}$.
+
+\emph{Step 4: the interaction term.} Order the summands of $Q$ by their later
+endpoint $v$. The summand for the edge $\{t,v\}$ is
+$[t\in I]\,\omega_t(2p_t-1)\rho_{t,e}\eta_e\cdot\theta_{v,e}$; its coefficient is
+known before step $v$ and $\theta_{v,e}$ is a fresh fair sign, independent of the
+other signs revealed at step $v$. By (T1), with interval lengths
+$\omega_tm_0$ and $\sum_{t\le T}\omega_t^2\deg(t)\le T$,
+$\Prb[Q\le-c]\le e^{-2c^2/(m_0^2T)}$.
+
+\emph{Step 5.} Take $a=b=c=c_1T/52$. Outside the three exceptional events,
+$S+Q\ge c_1T/13-3c_1T/52=c_1T/52>0$. With $T\ge n/2$ the three exponents are at
+least $c_1^2T/(1352m_0^2)\ge c_0n$, so the three probabilities are at most
+$e^{-c_0n}$ each, and
+$\E W\le3\cdot2^ne^{-c_0n}$. Markov's inequality gives the tail statement.
+\end{proof}
+
+\begin{corollary}[Arbitrary supports]\label{cor:support}
+Fix any set of variable pairs and include each of the four clauses on each of
+these pairs independently with probability $q\in(0,1)$; add arbitrary unit
+clauses (variables in no pair are set by their unit clauses). Then Max 2-SAT is solved in expected time $\Ostar(2^n e^{-c_0(q)n})$ with
+$c_0(q)>0$ depending only on $q$. No condition on the density, the degree
+sequence or the order is needed.
+\end{corollary}
+
+\begin{remark}[Complementary pairs]
+Condition (iii) fails when every edge carries a complementary pair, as in Max-Cut
+with random renamings (a $\pm J$ spin glass). Then the later-neighbour part of
+$Y_t$ vanishes and the shortfall comes from earlier neighbours only. With a
+uniformly random order, $\E\sqrt{Y_t}$ is of order $\sqrt{(t/n)\deg t}$ and the
+same proof should go through; we do not write it out.
+\end{remark}
+
+\section{Round-based enumeration with guessed projections}\label{sec:rounds}
+
+\paragraph{Setting.} Let $P=\sum_{k=1}^r\lambda_kv_kv_k^{\mathsf T}$ with
+$\lambda_k\in\mathbb R$ and $v_k\in\mathbb R^n$, and let $N$ be the off-diagonal
+part of $J-P$, so $N_{uu}=0$ and $J_{uv}=P_{uv}+N_{uv}$ for $u\ne v$. Put
+$y_k(x)=\langle v_k,x\rangle$. For each $k$ fix a finite grid
+$\mathcal Y_k\subset\mathbb R$ such that every $y_k(x)$, $x\in\{0,1\}^n$, is within
+$\delta_k\ge0$ of a grid point, and let
+\[
+ s_t=\sum_k|\lambda_k|\,|v_k(t)|\,\bigl(\delta_k+|v_k(t)|\bigr).
+\]
+Let $T=\lfloor\tau n\rfloor$, and split the prefix into $\ell\ge2$ consecutive
+\emph{rounds} $B_1,\dots,B_\ell$ of the branching order; the remaining
+variables form round $\ell+1$. Write $\rho(t)$ for the round of $t$.
+
+\paragraph{Algorithm C.} For each $\hat y\in\mathcal Y=\prod_k\mathcal Y_k$ run
+the following. Put $h^{\hat y}=h+\sum_k\lambda_k\hat y_kv_k$ and
+$F'_{\hat y}(x)=c+\langle h^{\hat y},x\rangle+\sum_{u<v}N_{uv}x_ux_v$. Branch on
+the prefix. For $t\in B_j$ let
+\[
+ \Delta_t=h^{\hat y}_t+\sum_{s:\rho(s)<j}N_{ts}x_s
+          +\frac12\sum_{w\ne t:\rho(w)\ge j}N_{tw}
+\]
+and $p_t=[\Delta_t\ge0]$; the preferred value of $t$ depends only on the earlier
+rounds. If $x_t\ne p_t$, then $t$ is a creator and
+$\gamma_t(x)=(2p_t-1)\bigl(F'_{\hat y}(x^{t\to1})-F'_{\hat y}(x^{t\to0})\bigr)$.
+At each prefix enumerate the completions of
+\begin{equation}\label{eq:roundsum}
+ \sum_{t\ \text{creator}}\bigl(\gamma_t(x)-s_t\bigr)\le0,
+\end{equation}
+evaluate $F$ on them, and return the best assignment over all runs.
+
+\begin{lemma}[Flip identity]\label{lem:flip}
+If $|y_k(x)-\hat y_k|\le\delta_k$ for all $k$, then for every $t$ the gains of
+$x_t$ under $F$ and under $F'_{\hat y}$ differ by at most $s_t$.
+\end{lemma}
+\begin{proof}
+$\mathrm{gain}_t(x)=h_t+\sum_wN_{tw}x_w+\sum_{w\ne t}P_{tw}x_w$ and
+$\sum_{w\ne t}P_{tw}x_w=\sum_k\lambda_kv_k(t)\,y_k(x^{t\to0})$. The gain under
+$F'_{\hat y}$ replaces the last sum by $\sum_k\lambda_kv_k(t)\hat y_k$. Finally
+$|y_k(x^{t\to0})-\hat y_k|\le|y_k(x)-\hat y_k|+|v_k(t)|$.
+\end{proof}
+
+\begin{lemma}[Exactness]\label{lem:exactC}
+Every optimum $x^*$ is enumerated in a run whose grid point is within $\delta_k$
+of $y_k(x^*)$ for all $k$.
+\end{lemma}
+\begin{proof}
+Every flip at $x^*$ changes $F$ by at most zero, so by Lemma~\ref{lem:flip}
+$\gamma_t(x^*)\le s_t$ for every creator on its path. No tie convention is
+needed.
+\end{proof}
+
+\begin{theorem}[Round-based enumeration]\label{thm:rounds}
+Let $D_N=\frac1n\sum_{u\ne v}N_{uv}^2>0$ and
+$W_t=\sum_{s:\rho(s)<\rho(t)}N_{ts}^2$, and suppose
+\begin{align}
+ \|N\|^2&\le K\,D_N,\tag{C1}\label{C1}\\
+ \sum_{t:\,2\le\rho(t)\le\ell}\sqrt{W_t}&\ge4\sqrt3\,g\,n\sqrt{D_N},\tag{C2}\label{C2}\\
+ \sum_{t\le T}s_t&\le\tfrac18g\,n\sqrt{D_N},\tag{C3}\label{C3}
+\end{align}
+with $\|N\|$ the operator norm, and $n\ge256\pi\tau(\ell-1)K/g^2$. Put
+$K'=(\ell-1)K$ and $\alpha=\max\{2,9\tau\sqrt{K'}/(4g)\}$. Then every run of
+Algorithm~C enumerates at most $(6+2\ell)\,2^ne^{-c_*n}$ assignments, where
+\[
+ c_*=\min\Bigl\{\frac{g^2}{32\tau\alpha^2K'},\ \frac{g^2}{512\ell^2\tau K},\
+ c_{\rm HW}\frac{g^2}{256\ell^2\tau K},\ c_{\rm HW}\frac{g}{16\ell\sqrt K}\Bigr\}.
+\]
+Algorithm~C is exact and runs in polynomial space and time
+$\Ostar\bigl(|\mathcal Y|\,(2^{\tau n}+2^ne^{-c_*n})\bigr)$.
+\end{theorem}
+
+Condition~\eqref{C1} involves only the ordinary operator norm of the remainder,
+not the norm of its triangular part as in the count-guessing note~\cite{CG}. The
+price is that preferred values adapt to earlier rounds only.
+
+\begin{lemma}[Race identity with rounds]\label{lem:race}
+Let $x$ be uniform and $u=2x-1$. For a creator $t\in B_j$,
+$\gamma_t(x)=|\Delta_t|-\frac12u_t\sum_{w\ne t:\rho(w)\ge j}N_{tw}u_w$. Hence $x$
+passes~\eqref{eq:roundsum} if and only if $S'+Q_{\rm same}+Q_{\rm later}\le0$,
+where
+\begin{gather*}
+ S'=\sum_{t\in I}(|\Delta_t|-s_t),\qquad
+ Q_{\rm same}=-\frac12\sum_{j\le\ell}\ \sum_{t\in I\cap B_j}\
+            \sum_{w\in B_j\setminus\{t\}}u_tN_{tw}u_w,\\
+ Q_{\rm later}=-\frac12\sum_{w:\rho(w)\ge2}u_w\kappa_w,\qquad
+ \kappa_w=\sum_{t\in I:\,\rho(t)<\rho(w)}u_tN_{tw}.
+\end{gather*}
+\end{lemma}
+\begin{proof}
+For $\rho(w)\ge j$ write $x_w=\frac12+\frac12u_w$; then the gain of $x_t$ under
+$F'_{\hat y}$ is $\Delta_t+\frac12\sum_{w\ne t:\rho(w)\ge j}N_{tw}u_w$. For a
+creator, $2p_t-1=-u_t$ and $(2p_t-1)\Delta_t=|\Delta_t|$.
+\end{proof}
+
+\begin{lemma}[Gap profile with rounds]\label{lem:profile}
+Let $L$ be the $T\times T$ matrix with $L_{ts}=N_{ts}$ if $\rho(s)<\rho(t)$ and
+$0$ otherwise, and $H_t=h^{\hat y}_t+\frac12\sum_{w\ne t}N_{tw}$. Then
+$\Delta_t=H_t+\frac12(Lu)_t$, $\|L\|^2\le(\ell-1)\|N\|^2\le K'D_N$, and, with
+$M=\alpha\sqrt{K'D_N}$,
+\[
+ \Prb\Bigl[\sum_{t\le T}\min\{|\Delta_t|,M\}<\tfrac34g\,n\sqrt{D_N}\Bigr]
+ \le4e^{-g^2n/(16\tau K')}.
+\]
+\end{lemma}
+\begin{proof}
+The rows of $L$ in round $j$ form the block $N_{B_j\times B_{<j}}$ of norm at most
+$\|N\|$, so $\|Lu\|^2=\sum_j\|N_{B_j\times B_{<j}}u\|^2\le(\ell-1)\|N\|^2\|u\|^2$.
+The rest is the proof of the gap-profile lemma in~\cite{CG}, with $K'$ in place of
+$K$. Split $t\le T$ into $\mathrm{Small}=\{|H_t|\le M/2\}$ and $\mathrm{Large}$.
+For $t\in\mathrm{Small}$, $(a-b)_+\le a^2/(4b)$ gives
+$\min\{|\Delta_t|,M\}\ge|\Delta_t|-(Lu)_t^2/(8M)$, a total loss of at most
+$K'D_NT/(8M)$. For $t\in\mathrm{Large}$ with $|(Lu)_t|\le M/2$ the clipped gap is
+at least $M/4$, and at most $4T/\alpha^2$ indices have $|(Lu)_t|>M/2$. Each
+$(Lu)_t$ is a symmetric Rademacher sum with variance $W_t$, so by (T5)
+$\E|\Delta_t|\ge\frac12\sqrt{W_t/3}$; also $M/4\ge\frac12\sqrt{W_t/3}$. By
+\eqref{C2}, $\E G+\frac M4|\mathrm{Large}|\ge2gn\sqrt{D_N}$ for
+$G=\sum_{\mathrm{Small}}|\Delta_t|$, while the two losses total at most
+$\frac98T\sqrt{K'D_N}/\alpha\le\frac12gn\sqrt{D_N}$. The function $G$ is convex
+with Lipschitz constant $\ell_G\le\frac12\sqrt{TK'D_N}$; (T3) with
+$r=\frac12gn\sqrt{D_N}$, and $8\sqrt\pi\,\ell_G\le\frac14gn\sqrt{D_N}$ by the
+bound on $n$, gives the claim.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:rounds}]
+Exactness is Lemma~\ref{lem:exactC}. Fix a run and a uniform $x$.
+
+\emph{Shortfall.} Let $Y_t=[t\in I]\min\{|\Delta_t|,M\}$. Given the variables of
+the rounds before $j$, the values $\Delta_t$, $t\in B_j$, are fixed and the $u_t$,
+$t\in B_j$, are independent and uniform, so the $Y_t$ are independent with values
+in $[0,M]$ and means $\frac12\min\{|\Delta_t|,M\}$. By (T1),
+$\sum_tY_t\ge\frac12\sum_t\min\{|\Delta_t|,M\}-a$ except with probability
+$e^{-2a^2/(TM^2)}$. Take $a=\frac18gn\sqrt{D_N}$. With Lemma~\ref{lem:profile}
+and~\eqref{C3}, $S'\ge\sum_tY_t-\sum_{t\le T}s_t\ge\frac18gn\sqrt{D_N}$ outside
+two events.
+
+\emph{Later interactions.} In round $j\ge2$, the increment of $Q_{\rm later}$ is
+$-\frac12\sum_{w\in B_j}u_w\kappa_w$, where the $\kappa_w$ depend only on earlier
+rounds and the $u_w$ are fresh. With $v_t=u_t[t\in I]$,
+$\sum_{w\in B_j}\kappa_w^2=\|N_{B_{<j}\times B_j}^{\mathsf T}v\|^2\le\|N\|^2T$, so
+$\sum_w\kappa_w^2\le\ell KD_NT$ on every path. By (T2) with $V=\frac14\ell KD_NT$,
+$\Prb[Q_{\rm later}\le-b]\le e^{-2b^2/(\ell KD_NT)}$. Take
+$b=\frac1{32}gn\sqrt{D_N}$.
+
+\emph{Same-round interactions.} Fix $j$ and condition on the earlier rounds. Put
+$c_t=2p_t-1$ and $\beta_t=-c_tu_t$ for $t\in B_j$; the $\beta_t$ are independent
+uniform signs, $t\in I$ if and only if $\beta_t=1$, and $u_t=-c_t\beta_t$. With
+the matrix $M^{(j)}_{tw}=c_tc_wN_{tw}$ on $B_j$, which has zero diagonal and
+$\|M^{(j)}\|\le\|N\|$,
+\[
+ Q_{{\rm same},j}=-\frac12\sum_{t\ne w}\frac{1+\beta_t}2\,\beta_t\beta_wM^{(j)}_{tw}
+ =-\frac14\beta^{\mathsf T}M^{(j)}\beta-\frac14\sum_w r_w\beta_w,\qquad
+ r=M^{(j)}\one.
+\]
+Here $\|r\|^2\le\|N\|^2|B_j|$ and $\|M^{(j)}\|_F^2\le|B_j|\|N\|^2$. Let
+$e=gn\sqrt{D_N}/(64\ell)$. By (T1) the linear part is below $-e$ with probability
+at most $e^{-8e^2/(|B_j|KD_N)}$, and by (T4) the quadratic part is below $-e$ with
+probability at most $\exp(-c_{\rm HW}\min\{16e^2/(|B_j|KD_N),\,4e/\sqrt{KD_N}\})$.
+Summing over the rounds, $Q_{\rm same}\ge-\frac1{32}gn\sqrt{D_N}$ outside $2\ell$
+events.
+
+\emph{Conclusion.} Outside all exceptional events,
+$S'+Q_{\rm same}+Q_{\rm later}\ge(\frac18-\frac1{32}-\frac1{32})gn\sqrt{D_N}>0$.
+Using $|B_j|\le T\le\tau n$, the exponents of the exceptional probabilities are
+$g^2n/(16\tau K')$, $g^2n/(32\tau\alpha^2K')$, $g^2n/(512\ell\tau K)$,
+$g^2n/(512\ell^2\tau K)$, $c_{\rm HW}g^2n/(256\ell^2\tau K)$ and
+$c_{\rm HW}gn/(16\ell\sqrt K)$, each at least $c_*n$ (the first because
+$\alpha\ge2$). With the factor $4$ of Lemma~\ref{lem:profile}, their total
+probability is at most $(6+2\ell)e^{-c_*n}$.
+\end{proof}
+
+\section{Max-Cut with arbitrary unit clauses on spectral expanders}
+\label{sec:maxcut}
+
+For a $d$-regular graph $G$ let $\lambda(G)=\max_{i\ge2}|\lambda_i(A_G)|$.
+
+\begin{corollary}[Max-Cut on spectral expanders]\label{cor:maxcut}
+Fix $\lambda_0\ge1$ and $0<\varepsilon\le\frac12$. There are $n_0$ and
+$c=c(\lambda_0,\varepsilon)<2$ such that the following holds for every
+$d$-regular graph $G$ on $n\ge n_0$ vertices with
+\[
+ 64\lambda_0^2\le d\le(1-\varepsilon)n,\qquad \lambda(G)\le\lambda_0\sqrt d,
+\]
+and every multiset of unit clauses. The formula consisting of $(u\lor v)$ and
+$(\neg u\lor\neg v)$ for every edge $uv$ of $G$, together with the unit clauses,
+is solved by a deterministic algorithm in polynomial space and time
+$\Ostar(c^n)$.
+\end{corollary}
+
+Without unit clauses this is Max-Cut on $G$, since the edge contributes
+$1+[x_u\ne x_v]$. With unit clauses it is Max-Cut with arbitrary external fields.
+
+\begin{proof}
+Apply Theorem~\ref{thm:rounds} with $r=1$, $v_1=\one$, $\lambda_1=\beta:=-2d/(n-1)$,
+exact counts $\mathcal Y_1=\{0,\dots,n\}$ and $\delta_1=0$, so $s_t=|\beta|$; with
+$\tau=\frac12$, $\ell=2$, and $B_1,B_2$ the first and second $n/4$ variables of
+any order. Here $J=-2A_G$ and $N=-2A_G-\beta(\one\one^{\mathsf T}-I)$.
+
+\eqref{C1}: on $\one$, $N$ acts as $-2d-\beta(n-1)=0$; on $\one^\perp$ its
+eigenvalues are $-2\lambda_i+\beta$. So $\|N\|\le2\lambda_0\sqrt d+2\le
+3\lambda_0\sqrt d$. An edge has $N_{uv}=-2(1-d/(n-1))$ and a non-edge
+$N_{uv}=-\beta$, so $D_N=4d(1-d/(n-1))\ge2\varepsilon d$ for $n\ge2/\varepsilon$.
+Thus \eqref{C1} holds with $K=9\lambda_0^2/(2\varepsilon)$.
+
+\eqref{C2}: since $1-d/(n-1)\ge\varepsilon/2$, an edge from $t\in B_2$ to $B_1$
+contributes at least $\varepsilon^2$ to $W_t$. With $\deg_{B_1}(t)\le d$,
+\[
+ \sum_{t\in B_2}\sqrt{W_t}\ge\varepsilon\sum_{t\in B_2}\sqrt{\deg_{B_1}(t)}
+ \ge\frac{\varepsilon\,e(B_1,B_2)}{\sqrt d}
+ \ge\frac\varepsilon{\sqrt d}\Bigl(\frac{dn}{16}-\frac{\lambda(G)\,n}4\Bigr)
+ \ge\frac{\varepsilon n\sqrt d}{32},
+\]
+by the expander mixing lemma
+$|e(S,S')-d|S||S'|/n|\le\lambda(G)\sqrt{|S||S'|}$ for disjoint $S,S'$, and
+$\sqrt d\ge8\lambda_0$. Since $\sqrt{D_N}\le2\sqrt d$, \eqref{C2} holds with
+$g=\varepsilon/(256\sqrt3)$.
+
+\eqref{C3}: $\sum_{t\le T}s_t=T|\beta|\le2d\le\frac18gn\sqrt{2\varepsilon d}$
+once $\sqrt n\ge16\sqrt2/(g\sqrt\varepsilon)$, because $d\le n$.
+
+All parameters depend only on $\lambda_0$ and $\varepsilon$, and $|\mathcal Y|=n+1$.
+\end{proof}
+
+\paragraph{Examples.}
+\begin{itemize}
+\item \emph{Paley graphs} $P_q$, $q\equiv1\pmod4$ prime: $d=(q-1)/2$ and the
+nontrivial eigenvalues are $(-1\pm\sqrt q)/2$, so $\lambda_0=1$ and
+$\varepsilon=\frac12$ work for $q\ge13$.
+\item \emph{Random $d$-regular graphs}: $\lambda(G)=O(\sqrt d)$ with high
+probability, for fixed $d$ by Friedman's theorem and for every
+$d\le n/2$ by the result of Tikhomirov and Youssef~\cite{TY19}.
+\item \emph{Ramanujan graphs} that are not bipartite, such as the
+Lubotzky--Phillips--Sarnak graphs, with $\lambda(G)\le2\sqrt{d-1}$.
+\end{itemize}
+The numerical check in \texttt{explore\_paley\_maxcut.py} found the constant of
+the triangular condition of~\cite{CG} to be about $1.3$ on Paley graphs in a
+random order; Theorem~\ref{thm:rounds} makes that condition unnecessary.
+
+\paragraph{Why no simpler algorithm is known for these classes.}
+\begin{itemize}
+\item Fixing all variables outside an independent set $S$ costs
+$\Ostar(2^{n-|S|})$. By the Hoffman bound,
+$\alpha(G)\le n\lambda(G)/(d+\lambda(G))\le\lambda_0n/\sqrt d$, so the saving
+vanishes as $d$ grows.
+\item Degree-based polynomial-space algorithms give
+$\Ostar(2^{(1-2/\Delta)n})$ for Max-Cut~\cite{DKP07} and
+$\Ostar(2^{n(1-\alpha\ln d/d)})$ for Max 2-CSP~\cite{GK}; both savings vanish as
+$d$ grows.
+\item Expanders have treewidth linear in $n$, so dynamic programming over
+decompositions gives no saving, and also needs exponential space.
+\item The automorphism groups of Paley and Cayley graphs have polynomial size and
+give only polynomial savings.
+\item Williams' algorithm~\cite{Williams} beats $2^n$ on every instance, but uses
+exponential space. Whether general Max-Cut admits a polynomial-space algorithm
+faster than $2^n$ is open~\cite{Lalovic24}.
+\end{itemize}
+We found no polynomial-space algorithm with a fixed saving for Max-Cut on these
+families when $d$ grows; this search was not exhaustive. For $d<64\lambda_0^2$
+the interaction graph has bounded degree, and polynomial-space algorithms for
+Max 2-CSP of bounded degree~\cite{GK} give a fixed saving there, so the saving
+can be made uniform over all $d\le(1-\varepsilon)n$.
+
+\section{Count guessing without a given decomposition}\label{sec:spectral}
+
+\begin{corollary}[Spectral count guessing]\label{cor:spectral}
+Let $v_1,\dots,v_r$ be orthonormal and $\lambda_1,\dots,\lambda_r$ real, for
+example approximate eigenpairs of $J$ of largest absolute value, and use the grids
+$\mathcal Y_k=\delta\mathbb Z\cap[-\|v_k\|_1-\delta,\|v_k\|_1+\delta]$. Then
+$|\mathcal Y|\le(2\sqrt n/\delta+3)^r$ and
+$\sum_{t\le T}s_t\le\sum_k|\lambda_k|(\delta\sqrt n+1)$. Hence, if \eqref{C1}
+and \eqref{C2} hold for $N$ and
+$\sum_k|\lambda_k|(\delta\sqrt n+1)\le\frac18gn\sqrt{D_N}$, Max 2-SAT is solved in
+polynomial space and time $\Ostar((2\sqrt n/\delta+3)^r(2^{\tau n}+2^ne^{-c_*n}))$.
+\end{corollary}
+\begin{proof}
+$\sum_ts_t=\sum_k|\lambda_k|(\delta\|v_k\|_1+\|v_k\|_2^2)$ and
+$\|v_k\|_1\le\sqrt n$. Exactness holds for any vectors (Lemma~\ref{lem:exactC}).
+\end{proof}
+
+The algorithm needs no planted structure as input: it computes approximate
+eigenpairs of $J$ and checks the conditions. The next proposition shows that
+random formulas whose parity means have low rank satisfy them.
+
+\begin{proposition}[Planted low-rank parity structure]\label{prop:planted}
+Let the coefficients $J_{uv}$, $u<v$, be independent with
+$|J_{uv}-\E J_{uv}|\le B$ and $\nu\le\operatorname{Var}J_{uv}\le\chi\nu$, and
+suppose $\E J_{uv}=\bar A_{uv}$ for $u\ne v$, where $\bar A$ is a symmetric matrix
+of rank at most $r$ with $|\bar A_{uu}|\le B_0$ and $\|\bar A\|\le\mu n$. Let $P$
+collect the eigenpairs of $J$ with $|\lambda|>\theta:=4\sqrt{\chi\nu n}$, and
+split the prefix into two rounds of size $T/2$. There is $C=C(\chi,r,\tau,B_0)$
+such that, if $n\nu\ge C(B^2\log n+\mu^2)$, then with probability $1-o(1)$
+the conditions of Corollary~\ref{cor:spectral} hold with $K=O(\chi)$,
+$g=\Omega(\tau^{3/2}/\sqrt\chi)$ and the grid spacing
+$\delta=gn\sqrt{D_N}/(16\sqrt n\,\Lambda)$, $\Lambda=\sum_k|\lambda_k|$, which the
+algorithm computes from the data. The running time is
+$\Ostar(n^{O(r)}\,2^{(1-\gamma)n})$ with $\gamma>0$ depending only on $\chi$ and
+$\tau$.
+\end{proposition}
+\begin{proof}
+Let $X$ be the off-diagonal matrix of the $J_{uv}-\E J_{uv}$. By the norm bound of
+Bandeira and van Handel~\cite{BvH16}, applied as in Proposition~12 of~\cite{CG},
+$\|X\|\le3\sqrt{\chi\nu n}$ with probability $1-o(1)$. Then
+$J=\bar A-\operatorname{diag}(\bar A)+X$ has at most $r$ eigenvalues of absolute
+value above $\theta$ (Weyl), so $P$ has rank $r'\le r$, and $J-P$ has all
+eigenvalues in $[-\theta,\theta]$. Hence $\bar A-P=(J-P)-X+\operatorname{diag}(\bar A)$
+has rank at most $2r$ and norm at most $\theta+\|X\|+B_0$, and
+\[
+ N=X+\operatorname{offdiag}(\bar A-P),\qquad
+ \|N\|\le\|X\|+2(\theta+\|X\|+B_0)=O(\sqrt{\chi\nu n}).
+\]
+The low-rank part has Frobenius norm at most
+$\sqrt{2r}(\theta+\|X\|+B_0)=O(\sqrt{r\chi\nu n})$, against
+$\|X\|_F\ge\sqrt{(1-\eta)n(n-1)\nu}$ by Bernstein's inequality, so
+$D_N=(1-o(1))\frac1n\|X\|_F^2\ge(1-2\eta)(n-1)\nu$ and \eqref{C1} holds with
+$K=O(\chi)$. For~\eqref{C2}, Bernstein's inequality gives
+$\sum_{s\in B_1}X_{ts}^2\ge(1-\eta)|B_1|\nu$ for all $t\in B_2$, and the low-rank
+part changes $\sum_{t\in B_2}\sqrt{W_t}$ by at most
+$\sqrt{T}\cdot O(\sqrt{r\chi\nu n})=O(n\sqrt{r\chi\nu})$, which is negligible
+against $|B_2|\sqrt{(1-\eta)|B_1|\nu}=\Theta(\tau^{3/2}n^{3/2}\sqrt\nu)$.
+For~\eqref{C3}, the choice of $\delta$ gives $\Lambda\delta\sqrt n=
+\frac1{16}gn\sqrt{D_N}$, so it remains to check $\Lambda\le\frac1{16}gn\sqrt{D_N}$.
+Each of the at most $r$ selected eigenvalues has
+$|\lambda_k|\le\|J\|\le\mu n+B_0+\|X\|$, and $\sqrt{D_N}\ge(1-o(1))\sqrt{n\nu}$;
+so this holds once $n\nu\ge(32r/g)^2\mu^2$ and $n$ is large. The number of runs
+is $(2\sqrt n/\delta+3)^r=(32\Lambda/(g\sqrt{D_N})+3)^r=n^{O(r)}$, since
+$\Lambda/\sqrt{D_N}=O(r\mu\sqrt{n/\nu}+r\sqrt\chi)$ and $\nu\ge B^2\log n/n$.
+\end{proof}
+
+This removes the assumption ``given the decomposition'' from the count-guessing
+theorem for planted bisections, planted group structure, and any other parity
+pattern whose mean has bounded rank. Approximate eigenpairs suffice because
+Lemma~\ref{lem:exactC} holds for any vectors and the conditions are checked for
+the vectors actually used.
+
+\section{What remains}\label{sec:remains}
+
+\begin{itemize}
+\item \emph{Complementary pairs} ($\pm J$ spin glasses on a fixed graph) need the
+random-order version of Theorem~\ref{thm:weighted}.
+\item \emph{Irregular expanders.} Theorem~\ref{thm:rounds} measures $\|N\|$ against
+the average $D_N$; for very irregular degree sequences a weighted version, as in
+Theorem~\ref{thm:weighted}, is the natural next step.
+\item \emph{Biased random formulas at density} $\omega(1)\le d<C\log n$, by
+branching first on the few vertices of large degree.
+\item \emph{Aligned structure of high rank}, such as noisy blow-ups, where the
+counts of many small groups would have to be guessed.
+\item The literature search behind Section~\ref{sec:maxcut} should be extended
+before any claim of novelty.
+\end{itemize}
+The script \texttt{explore\_weighted\_rounds.py} checks exactness of Algorithms
+A and~C, including the spectral grid, against exhaustive search: no optimum was
+lost on 200 formulas for Algorithm~A (which enumerated $8.6\%$ of all assignments
+on average), nor on 120 formulas each for exact counts and spectral grids in
+Algorithm~C ($24\%$ and $21\%$ enumerated per run). These small instances test
+correctness only, not the asymptotic bounds.
+
+\begin{thebibliography}{99}
+\small\raggedright
+\bibitem{BvH16} A.~S.~Bandeira and R.~van Handel. Sharp nonasymptotic bounds on
+ the norm of random matrices with independent entries. \emph{Ann. Probab.}
+ 44(4):2479--2506, 2016.
+\bibitem{CG} \emph{Count guessing makes constraints useful}, working note,
+ 11 October 2026 (\texttt{max2sat\_count\_guessing.tex}).
+\bibitem{DKP07} F.~Della~Croce, M.~J.~Kaminski and V.~Th.~Paschos. An exact
+ algorithm for MAX-CUT in sparse graphs. \emph{Oper. Res. Lett.} 35(3):403--408,
+ 2007.
+\bibitem{EE} \emph{Max 2-SAT by early constraint-guided enumeration}, working
+ note, 8 October 2026 (\texttt{max2sat\_early\_enumeration.tex}).
+\bibitem{GK} A.~Golovnev and K.~Kutzkov. New exact algorithms for the
+ 2-constraint satisfaction problem. \emph{Theoret. Comput. Sci.} 526:18--27, 2014.
+\bibitem{Lalovic24} K.~Lalovic. Exact algorithms for MaxCut on split graphs.
+ arXiv:2405.20599, 2024.
+\bibitem{Paper} \emph{Dense Max 2-SAT in polynomial space}, research draft,
+ 12 October 2026 (\texttt{dense\_max2sat\_paper.tex}).
+\bibitem{RV13} M.~Rudelson and R.~Vershynin. Hanson--Wright inequality and
+ sub-gaussian concentration. \emph{Electron. Commun. Probab.} 18(82):1--9, 2013.
+\bibitem{Tal95} M.~Talagrand. Concentration of measure and isoperimetric
+ inequalities in product spaces. \emph{Publ. Math. IH\'ES} 81:73--205, 1995.
+\bibitem{TY19} K.~Tikhomirov and P.~Youssef. The spectral gap of dense random
+ regular graphs. \emph{Ann. Probab.} 47(1):362--419, 2019.
+\bibitem{Williams} R.~Williams. A new algorithm for optimal 2-constraint
+ satisfaction and its implications. \emph{Theoret. Comput. Sci.}
+ 348(2--3):357--365, 2005.
+\end{thebibliography}
+\end{document}

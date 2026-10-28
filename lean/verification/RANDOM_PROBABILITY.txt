@@ -1,0 +1,137 @@
+Random-input verification: sampling and observed-support conditioning
+===================================================================
+
+This development completes Lemma lem:observed_pairs and verifies the sampling
+assumptions used to instantiate thm:random_main. The subsequent exposure
+milestone completes lem:random_exposure; see RANDOM_EXPOSURE.txt for its
+sequential and algorithm correspondence. No random-input exponential time
+guarantee is claimed.
+
+FINITE LAWS AND INDEPENDENT DRAWS
+
+FiniteLaw.Law has a nonnegative real mass at each outcome of a finite type,
+with total mass one. Expectations and event probabilities are finite sums.
+FiniteLaw.product is the product of the coordinate masses. Its normalization
+is proved by the finite product-of-sums identity. These are mathematical
+probability distributions, not implementations of a pseudorandom generator.
+
+FiniteLaw.condition is defined only with a proof that the conditioning event
+has positive probability. condition_product proves equality of the complete
+conditional joint law with the product of the individually conditioned laws
+for coordinatewise events. This is joint independence, not merely pairwise
+independence. Positivity of every coordinate event follows from positivity
+of the joint event; it is not an additional hypothesis.
+
+PAIR MULTISETS AND THE ACTUAL GENERATED INPUT
+
+RandomInput.Pattern m records four multiplicities, one for each literal
+pair, in Fin(m+1). This is a canonical representation of a multiset, without
+an artificial ordering of identical clauses. The ambient finite type also
+contains count vectors whose total exceeds m; PairLaw.bounded requires those
+vectors to have zero probability. Thus the law is supported on exactly the
+kind of bounded multisets allowed by Definition def:invariant.
+
+PairLaw additionally requires invariance under endpoint complementations
+and the stated lower bound on both signed-count second moments.
+invariant_iff_endpoints proves that using all four complementation masks is
+equivalent to the paper's two separate endpoint-complementation assumptions.
+No independence between the four counts within one pair is assumed in this
+general model. Different pairs are drawn independently by the product law.
+
+Edge n represents an unordered pair once, using increasing endpoint labels.
+generate takes a fixed set of these edges, a sampled pattern for each edge,
+and any fixed list of units. It creates the actual Formula type used by the
+verified algorithm, preserving multiplicity. generate_wellFormed proves
+that every produced binary clause has distinct endpoints.
+
+generated_support identifies all ordered pairs appearing in the generated
+formula. generated_edge_neighbors connects nonempty pair patterns directly
+to Random.neighbors, the support operation used by RandomFormula before
+preprocessing. This is a checked semantic connection, not just a similarity
+between two graph definitions. Fixed unit clauses never change this support.
+
+CONDITIONING ON THE OBSERVED GRAPH
+
+The event that a sampled graph has observed edge set H says that each pair
+in H is nonempty and every other potential pair is empty. The event has
+exactly this meaning for the neighbor relation extracted from generate.
+condition_observed_input proves that its conditional joint pair law factors
+into the coordinatewise conditional laws.
+
+For a retained pair with retention probability p>0, retained constructs a
+new PairLaw with law equal to the original law conditioned on nonemptiness.
+It proves the same clause bound and both endpoint symmetries. The squared
+signed count is zero for an empty pair. conditional_moment consequently gives
+
+    E[Z^2 | nonempty] = E[Z^2] / p.
+
+Since 0<p<=1 and the expectation is nonnegative, the second moment does not
+decrease. The lower bound kappa is retained without assuming a new moment
+inequality. These results together establish lem:observed_pairs, including
+arbitrary potential supports, observed empty graphs, and fixed unit clauses.
+
+THE TWO CONCRETE MODELS
+
+oneClause is the pushforward of the uniform law on the four literal pairs
+to their one-clause patterns. The four choices each have mass 1/4. Its
+endpoint second moments are exactly 1. Its size and symmetry conditions
+are proved. The ambient pattern type uses the common bound m0=4 employed
+in the main theorem; each sampled pattern in fact has size one.
+
+independentClauses is the pushforward of four independent Bernoulli(q)
+indicators to their included-clause pattern, for 0<=q<=1. Its size is at
+most four, its law is invariant under either endpoint complementation,
+and each endpoint second moment is exactly 4q(1-q). quarter_moment specializes
+this identity to 3/4. The calculation enumerates only the constant sixteen
+indicator combinations for one pair, not all generated input formulas.
+The separate closed-form binomial count probabilities are not needed here;
+the law is defined directly by the four independent Bernoulli trials.
+
+EXPOSURE FOUNDATIONS
+
+randomized_pairs_law proves that drawing independent base patterns and
+independent fair endpoint masks, then applying those masks, preserves the
+original product law. Patterns with nontrivial symmetry stabilizers are
+allowed: there is no assumption that each pattern has four distinct images.
+
+condition_fair_history proves the exact conditional law after revealing any
+set of independent fair-bit coordinates. Revealed coordinates become point
+masses; unrevealed coordinates retain their fair product law. Every such
+history has positive probability. condition_tensor_left separately proves
+that conditioning on arbitrary observations of one independent block does
+not affect the other block.
+
+joint_multiply proves that multiplying fair endpoint signs by assignment
+signs preserves their joint distribution, including independence from the
+assignment data. Several endpoint signs may use the same assignment bit.
+The proof is an equality of full joint laws; it does not infer joint
+independence merely from individual fairness.
+
+pairGain, signedCount, eta, and theta use the paper's single-edge definitions.
+endpoint_deviation proves its signed deviation identity. eta_bound gives
+|eta|<=|K|/2; pairGain_bound gives the corresponding |K| bound for an earlier
+neighbor's contribution. These are exact algebraic identities and bounds.
+
+The subsequent exposure development assembles these facts into the full
+experiment, proves its exact joint law, and connects the full gain and
+Delta_t to the algorithm's residual comparisons. The conditional variance
+and summed Y_t bound are now checked; see RANDOM_EXPOSURE.txt. Subsequent
+work checks the moment lemma and the finite-space conditional-range lemma;
+see RANDOM_MOMENTS.txt and RANDOM_CONCENTRATION.txt. RANDOM_ACCUMULATION.txt
+records the completed requirement/compensation lemmas, joint feasibility,
+and fixed-support candidate expectation/tail bounds. The executable-node
+and observed-support runtime assembly remain obligations.
+
+CORRESPONDENCE AND TRUST
+
+paper-correspondence.json marks lem:observed_pairs checked,
+lem:random_exposure checked, and thm:random_main partial. It records exactly
+which declarations support those statuses. Status counts do not certify
+semantic equivalence between manuscript prose and formal definitions.
+An independent review of that correspondence remains desirable.
+
+verify.py rebuilds the active project, checks probability regressions, and
+audits transitive axioms of the named results. Only the standard propext,
+Classical.choice, and Quot.sound axioms are allowed. No placeholder, custom
+probabilistic axiom, or native-evaluation proof is used. The solver procedures
+are unchanged. The original literal-gap/dense-gap verification remains valid.

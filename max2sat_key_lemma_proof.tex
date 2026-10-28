@@ -1,0 +1,466 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=28mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb{E}}
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=2em
+\hypersetup{pdftitle={The Key Lemma for Random Signs}}
+
+\title{The Key Lemma for Random Signs}
+\author{}
+\date{8 October 2026\\[3pt]\small Working notes}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We prove the Key Lemma of the plan note~\cite{N7}. Consider the search
+of~\cite{N7}: a fixed variable order, pruning clauses, and the sum check. Let
+$\pi_t$ be the probability that a uniformly random partial assignment survives
+depth~$t$. For any graph with independent uniform signs we bound
+$\E\,\pi_T$ by four explicit terms, each exponentially small in $n$ when a
+simple margin of the graph is of order $n\sqrt d$. Two consequences follow. On random
+formulas $R(n,d)$ of every density $d_0\le d\le n-1$, the search solves Max
+2-SAT in time $\Ostar(2^{(1-\gamma)n})$ for every $\gamma<0.0236$, with
+probability $1-o(1)$. On every $d$-regular graph with random signs, in any
+order, every $\gamma<0.0132$ works. The proof looks at the signs of a variable
+only when the search reaches it. Then the three terms of the race identity
+of~\cite{N7} are sums of fair coins that have not been looked at, and the
+inequalities of Szarek, Azuma and McDiarmid finish the proof. The constant is
+far below the measured saving of about $0.5n$. Random signs are used in exactly
+three places, and these three places sharpen the worst-case target.
+\end{abstract}
+
+\section{Statement}\label{sec:statement}
+
+We use the search of~\cite[Section~2]{N7}. The formula is canonical with
+$B=1$, and the order $x_1,\dots,x_n$ is fixed in advance. Branching on $x_t$
+gives the non-preferred child the pruning clause $\langle L_t\le p-1\rangle$
+over the free neighbours of $x_t$. A node is cut when a clause is violated
+(this includes $p=0$) or when the sum check fires. Let $\pi_t(F)$ be the
+probability that a uniform $\sigma\in\{0,1\}^n$ survives the checks at depths
+$1,\dots,t$; the plan note calls it $S_t$, but here $S$ denotes the shortfall.
+By Knuth's identity~\cite[Proposition~1]{N7}, the search has at most
+$1+2n\max_t2^t\pi_t$ nodes.
+
+\paragraph{Graph notation.} $G$ is the graph of $F$, with one edge per clause.
+For a variable $x_t$, $D^+_t$ counts its neighbours after it in the order (the
+support of its pruning clause) and $D^-_t$ its neighbours before it. For a
+depth $T$, $e_{\le T}=\sum_{t\le T}D^-_t$ is the number of edges among
+$x_1,\dots,x_T$ and $e_T$ the number of edges between them and the rest. For a
+free variable $x_w$, $w>T$, $\deg_T(w)$ is its number of neighbours among
+$x_1,\dots,x_T$. \emph{Random signs} on $G$ means that each clause
+$(\ell_u\vee\ell_v)$ gets independent uniform signs for $\ell_u$ and for
+$\ell_v$. $R(n,d)$ is the random graph $G(n,d/(n-1))$ with random signs.
+
+\begin{theorem}\label{thm:main}
+Let $G$ be a graph on $n$ vertices, $1\le T\le n$, and put
+\[
+ \mu_G=\frac1{4\sqrt2}\sum_{t\le T}\sqrt{D^+_t+2D^-_t},\qquad
+ U_G=\frac12\sum_{w>T}\sqrt{\deg_T(w)},\qquad
+ V_G=\sum_{t\le T}\Bigl(\frac{A_t}8+\frac{\sqrt{A_t}}2+\frac12\Bigr),
+\]
+where $A_t=D^+_t+4D^-_t$. If $\alpha,\xi,\kappa,\upsilon\ge0$ and
+$\alpha+\xi+\kappa+\upsilon<\mu_G-U_G$, then for random signs on $G$
+\[
+ \E\,\pi_T\le e^{-\alpha^2/(2V_G)}+e^{-16\xi^2/e_{\le T}}
+ +e^{-2\kappa^2/e_{\le T}}+e^{-2\upsilon^2/e_T}.
+\]
+\end{theorem}
+
+For $R(n,d)$ and for $d$-regular graphs, at a suitable depth $T$, the
+margin $\mu_G-U_G$ is of order $n\sqrt d$ while $V_G$, $e_{\le T}$ and $e_T$
+are $O(nd)$ (Section~\ref{sec:constants}). Each term is then
+$e^{-\Omega(n)}$, independently of $d$. The theorem bounds a
+single depth; that is enough.
+
+\begin{lemma}[One depth suffices]\label{lem:onedepth}
+For every $T$, $\max_t2^t\pi_t\le\max\{2^T,\,2^n\pi_T\}$.
+\end{lemma}
+
+\begin{proof}
+$2^t\pi_t\le2^t\le2^T$ for $t\le T$, and $\pi_t\le\pi_T$ for $t>T$.
+\end{proof}
+
+\begin{corollary}[Key Lemma]\label{cor:key}
+For every $\gamma<0.0236$ there is $d_0$ such that for all $n$ and all
+$d_0\le d\le n-1$, with probability $1-o(1)$ over $F\in R(n,d)$,
+\[
+ \max_{0\le t\le n}2^t\pi_t(F)\le2^{(1-\gamma)n}.
+\]
+Hence the search solves Max 2-SAT on $R(n,d)$ in time $\Ostar(2^{(1-\gamma)n})$
+and polynomial space, with probability $1-o(1)$, at every density.
+\end{corollary}
+
+\begin{corollary}[Regular graphs]\label{cor:regular}
+For every $\gamma<0.0132$ there is $d_0$ such that for every $d$-regular graph
+$G$ with $d\ge d_0$ and every order of its vertices, with probability
+$1-e^{-\Omega(n)}$ over random signs on $G$,
+$\max_t2^t\pi_t\le2^{(1-\gamma)n}$.
+\end{corollary}
+
+So the graph does not matter; only the signs do. This is the form we want for
+the worst case (Section~\ref{sec:uses}).
+
+\section{Looking at signs late}\label{sec:late}
+
+The proof rests on one observation in clause terms: when the search reaches
+$x_t$, it has never used the signs of $x_t$. We state it for the \emph{uncut
+process}, which runs $\sigma$ through all steps, creates every clause and keeps
+it. On the event that $\sigma$ survives depth $T$, the uncut process and the
+search agree up to depth $T$.
+
+For a pruning clause $c$ and a variable $x_w$ of its support, the \emph{bad
+value} of $x_w$ in $c$ is the value that makes the literal of $x_w$ in $c$
+true; $j_c$ in~\cite[Lemma~2]{N7} counts the support variables that took their
+bad value. Concretely, let $c$ belong to $x_s$ with preferred literal $\ell$,
+and let $(\ell_s\vee\ell_w)$ be the clause of $x_s$ and $x_w$. If
+$\ell_s=\ell$, the literal of $x_w$ in $c$ is $\neg\ell_w$: since $\ell$ is
+false in this child, the clause is falsified exactly when $\ell_w$ is false.
+If $\ell_s=\neg\ell$, the literal is $\ell_w$, since a flip of $x_s$ back to
+$\ell$ does not lose the clause if $\ell_w$ is true.
+
+\begin{lemma}[Late signs]\label{lem:late}
+Let $H_t$ consist of the graph, the signs of $x_1,\dots,x_t$ in all their
+clauses, and $\sigma_1,\dots,\sigma_t$.
+\begin{enumerate}
+ \item[(a)] $H_t$ determines, for every $s\le t$, the effective gap $\Delta_s$,
+ the preferred value of $x_s$, whether $x_s$ creates a clause, its allowance,
+ and the values $S_s$ and $Q_s$.
+ \item[(b)] Given $H_{t-1}$, the signs of $x_t$ and the value $\sigma_t$ are
+ independent and uniform.
+ \item[(c)] Let $c$ be the clause of $x_s$, and $x_w$ in its support. Given
+ $H_s$, the bad value of $x_w$ in $c$ is a function of the sign of $x_w$ in
+ its clause with $x_s$, and the two signs give the two bad values.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) The effective gap of $x_s$ sums over the clauses of $x_s$. A clause with a
+later variable is still a 2-clause and contributes $\pm1$, by the sign of
+$x_s$. A clause with an earlier $x_u$ contributes $\pm2$, by the sign of
+$x_s$, if the literal of $x_u$ is false (the clause is now a unit clause on
+$x_s$), and $0$ if it is true. Whether it is true depends on the sign of $x_u$
+and on $\sigma_u$. So $\Delta_s$ depends only on the signs of
+$x_1,\dots,x_s$ and on $\sigma_1,\dots,\sigma_{s-1}$. The preferred value
+follows. A clause is created if $\sigma_s$ is the other value, and its
+allowance is $p_s-1=(D^+_s-|\Delta_s|)/2-1$. $S_s$ adds $|\Delta_u|/2+1$ over
+the created clauses. $Q_s$ adds $[\sigma_u\text{ bad in }c]-\frac12$ over the
+assigned support variables $x_u$ of the created clauses $c$, and by~(c) these
+bad values depend on the signs of $x_u$, $u\le s$. (b) All signs and all
+values are independent, and $H_{t-1}$ contains no sign of $x_t$. (c) This is
+the case distinction above: $\ell$ and $\ell_s$ are determined by $H_s$, and
+the literal of $x_w$ in $c$ is $\neg\ell_w$ or $\ell_w$.
+\end{proof}
+
+\begin{example}\label{ex:tiny}
+Let $x_1$ have the clauses $(x_1\vee x_2)$, $(x_1\vee x_3)$,
+$(x_1\vee\neg x_4)$ and $(\neg x_1\vee x_5)$, and no others. Then
+$\Delta_1=1+1+1-1=2$, $D^+_1=4$, $p=(4-2)/2=1$, and the preferred literal is
+$x_1$. The child $x_1=0$ receives
+\[
+ P_1=\langle\neg x_2+\neg x_3+x_4+x_5\le0\rangle ,
+\]
+with bad values $x_2=0$, $x_3=0$, $x_4=1$, $x_5=1$. Each bad value is read
+off from the sign of $x_w$ in its clause with $x_1$. The uncut process needs
+it only when $x_w$ is assigned, or at depth $T$ through $U_T$. When the search
+reaches $x_2$, its clause with $x_1$ has become the unit clause $(x_2)$. It
+adds $+2$ to $\Delta_2$, and the same positive sign of $x_2$ makes $x_2=0$ its
+bad value in $P_1$. So the preferred value of $x_2$ tends to be good for
+$P_1$. Such correlations exist between the three terms below, and we never
+need independence between them: we add their failure probabilities. Had
+$\sigma_1=1$, the clause $(x_1\vee x_2)$ would be satisfied and would add $0$
+to $\Delta_2$.
+\end{example}
+
+In words, Lemma~\ref{lem:late} gives three sources of unseen fair coins.
+\begin{enumerate}
+ \item At step $t$, the gap $\Delta_t$ is $\pm1$ over the 2-clauses of $x_t$
+ plus $\pm2$ over its unit clauses, with unseen signs.
+ \item At step $t$, the bad values of $x_t$ in the pruning clauses that
+ contain it are unseen fair coins.
+ \item At depth $T$, the bad values of the free variables are unseen fair
+ coins.
+\end{enumerate}
+
+\section{The three estimates}\label{sec:estimates}
+
+By~\cite[Lemma~2, Remark~3]{N7}, applied to the set of all clauses created up
+to depth $T$, a partial assignment that survives depth $T$ has
+\[
+ Z_T=S_T+Q_T-U_T\le0,
+\]
+with $S_T=\sum_c(|\Delta_c|/2+1)$, $Q_T=\sum_c(j_c-a_c/2)$ and
+$U_T=\frac12\sum_{w>T}|b_w|$, all taken over the uncut process. The three
+lemmas below bound the three terms.
+
+\begin{lemma}[Shortfall]\label{lem:S}
+$\Pr[S_T<\mu_G-\alpha-\xi]\le e^{-\alpha^2/(2V_G)}+e^{-16\xi^2/e_{\le T}}$.
+\end{lemma}
+
+\begin{proof}
+Write $S_T=\sum_{t\le T}X_t$ with $X_t=[x_t\text{ creates a
+clause}]\,(|\Delta_t|/2+1)\ge0$. Let $r_t$ be the number of unit clauses on
+$x_t$, i.e.\ of earlier neighbours whose literal in the shared clause is
+false. Given $H_{t-1}$, $\Delta_t$ is a sum of $D^+_t$ unseen signs with weight
+$1$ and $r_t$ unseen signs with weight $2$. A clause is created exactly when
+$\sigma_t$ is the non-preferred value, which happens with probability
+$\frac12$ independently of $\Delta_t$. By Szarek's inequality~\cite{Sza76},
+$\E|\sum_ia_i\varepsilon_i|\ge(\sum_ia_i^2)^{1/2}/\sqrt2$ for independent
+uniform signs $\varepsilon_i$, and therefore
+\[
+ \E[X_t\mid H_{t-1}]=\tfrac12\bigl(\tfrac12\E[|\Delta_t|\mid H_{t-1}]+1\bigr)
+ \ge\frac{\sqrt{D^+_t+4r_t}}{4\sqrt2}+\frac12=:\mu_t .
+\]
+Also $\E[X_t^2\mid H_{t-1}]=\frac12\E[(|\Delta_t|/2+1)^2\mid H_{t-1}]
+\le\frac12(\sqrt{D^+_t+4r_t}/2+1)^2\le v_t$, where
+$v_t=A_t/8+\sqrt{A_t}/2+\frac12$ uses $r_t\le D^-_t$.
+
+\emph{Lower tail.} For $X\ge0$ and $\lambda\ge0$, $e^{-\lambda X}\le1-\lambda
+X+\lambda^2X^2/2$, so $\E[e^{-\lambda X_t}\mid H_{t-1}]\le\exp(-\lambda
+\mu_t+\lambda^2v_t/2)$. Hence $\exp(-\lambda\sum_{s\le t}(X_s-\mu_s)-\frac{\lambda^2}
+2\sum_{s\le t}v_s)$ is a supermartingale. With $\lambda=\alpha/V_G$,
+\[
+ \Pr\Bigl[S_T\le\sum_{t\le T}\mu_t-\alpha\Bigr]\le e^{-\alpha^2/(2V_G)}.
+\]
+This is the standard one-sided bound for nonnegative increments~\cite{Mau03};
+it needs no upper bound on $X_t$.
+
+\emph{The sum of the $\mu_t$.} Given the graph, the events ``the literal of
+$x_u$ in its clause with $x_t$ is false'', $u<t\le T$, are $e_{\le T}$
+independent fair coins: the literal of $x_u$ is false when its sign disagrees
+with $\sigma_u$, and the signs of $x_u$ are independent and uniform, also given
+$\sigma_u$. $r_t$ counts the coins of the clauses
+between $x_t$ and earlier variables, and changing one coin changes
+$\sum_t\sqrt{D^+_t+4r_t}$ by at most $2$. By McDiarmid's
+inequality~\cite{McD89}, this sum falls more than $x$ below its mean with
+probability at most $e^{-x^2/(2e_{\le T})}$. Its mean is at least
+$\sum_t(\sqrt{D^+_t+2D^-_t}-1)$: the elementary inequality
+$\sqrt y\ge\sqrt\mu+\frac{y-\mu}{2\sqrt\mu}-\frac{(y-\mu)^2}{2\mu^{3/2}}$ for
+$y\ge0$ gives $\E\sqrt Y\ge\sqrt{\E Y}-\mathrm{Var}(Y)/(2(\E Y)^{3/2})$, and
+here $\mathrm{Var}(D^+_t+4r_t)=4D^-_t\le2\,\E Y$. The terms $\frac12$ in $\mu_t$
+pay for the $-1$, because $\frac1{4\sqrt2}<\frac12$. So
+$\sum_t\mu_t\ge\mu_G-x/(4\sqrt2)$ except with probability
+$e^{-x^2/(2e_{\le T})}$. Taking $x=4\sqrt2\,\xi$ proves the lemma.
+\end{proof}
+
+\begin{lemma}[Martingale]\label{lem:Q}
+$\Pr[Q_T<-\kappa]\le e^{-2\kappa^2/e_{\le T}}$.
+\end{lemma}
+
+\begin{proof}
+At step $t$, $Q$ changes by $\sum_c([\sigma_t\text{ bad in }c]-\frac12)$ over
+the $m_t\le D^-_t$ created clauses that contain $x_t$; $m_t$ is determined by
+$H_{t-1}$. Given $H_{t-1}$, the bad values of $x_t$ in these clauses are
+independent fair coins (Lemma~\ref{lem:late}(b),(c)), and $\sigma_t$ is
+independent of them. So the indicators $[\sigma_t\text{ bad in }c]$ are
+independent fair coins, and the step of $Q$ is $\frac12$ times a sum of $m_t$
+independent signs. So $Q$ is a walk with fair steps $\pm\frac12$, at most
+$e_{\le T}$ of them, and
+$\E[e^{-\lambda(Q_t-Q_{t-1})}\mid H_{t-1}]=\cosh(\lambda/2)^{m_t}\le
+e^{\lambda^2D^-_t/8}$. Azuma's argument~\cite{Azu67,Hoe63} with
+$\lambda=4\kappa/e_{\le T}$ gives the claim.
+\end{proof}
+
+\begin{lemma}[Uncertainty]\label{lem:U}
+$\Pr[U_T>U_G+\upsilon]\le e^{-2\upsilon^2/e_T}$.
+\end{lemma}
+
+\begin{proof}
+Condition on $H_T$. A free variable $x_w$ lies in $m_w\le\deg_T(w)$ created
+clauses, one for each neighbour among $x_1,\dots,x_T$ that created a clause,
+and $b_w$ is the sum of $\pm1$ over them according to its bad values. By
+Lemma~\ref{lem:late}(c) these are unseen fair coins, independent over all
+pairs $(c,w)$. So $\E[|b_w|\mid H_T]\le\sqrt{m_w}\le\sqrt{\deg_T(w)}$ by
+Jensen's inequality, and $\E[U_T\mid H_T]\le U_G$. $U_T$ depends on at most
+$e_T$ unseen signs, and changing one of them changes $U_T$ by at most $1$.
+McDiarmid's inequality~\cite{McD89} finishes the proof.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+If $\sigma$ survives depth $T$, the search and the uncut process agree up to
+depth $T$, so $Z_T\le0$. Outside the three events of
+Lemmas~\ref{lem:S}--\ref{lem:U},
+\[
+ Z_T\ge(\mu_G-\alpha-\xi)-\kappa-(U_G+\upsilon)>0 .
+\]
+So survival lies in the union of the three events, and averaging over the
+signs gives $\E\,\pi_T\le$ the sum of the four failure probabilities.
+\end{proof}
+
+\section{The constants}\label{sec:constants}
+
+\begin{proof}[Proof of Corollary~\ref{cor:key}]
+Let $p=d/(n-1)$, $T=\tau n$, and $\eta>0$. In $G(n,p)$ the following hold with
+probability $1-o(1)$ for $d\ge d_0(\eta)$.
+\begin{itemize}
+ \item $e_{\le T}\le(1+\eta)\tau^2nd/2$ and $e_T\le(1+\eta)\tau(1-\tau)nd$, by
+ Chernoff bounds.
+ \item $U_G\le\frac12\sqrt{(n-T)e_T}\le(1+\eta)\frac12(1-\tau)\sqrt\tau\,n\sqrt
+ d$, by Cauchy--Schwarz.
+ \item $V_G\le(1+\eta)(\tau+\frac32\tau^2)nd/8$, since
+ $\sum_{t\le T}A_t=e_T+5e_{\le T}$ and $\sum_t\sqrt{A_t}\le\sqrt{T\sum_tA_t}$.
+ \item $\mu_G\ge(1-\eta)\frac1{6\sqrt2}((1+\tau)^{3/2}-1)\,n\sqrt d$. The
+ expected value of $D^+_t+2D^-_t$ is $(n+t-2)p$, so the mean of
+ $\sum_t\sqrt{D^+_t+2D^-_t}$ is at least
+ $\sum_t\sqrt{(n+t-2)p}-T$ by the inequality used in Lemma~\ref{lem:S}. One edge
+ changes the sum by at most $1+\sqrt2$, so the Efron--Stein
+ inequality~\cite{ES81} bounds its variance by $3.2\,nd$, and Chebyshev's
+ inequality finishes.
+\end{itemize}
+Put $M(\tau)=\frac1{6\sqrt2}((1+\tau)^{3/2}-1)-\frac12(1-\tau)\sqrt\tau$,
+measure $\alpha,\xi,\kappa,\upsilon$ in units of $n\sqrt d$, and let
+$\eta\to0$. The four exponents of Theorem~\ref{thm:main} become $k_in$ times
+the square of the corresponding parameter, with
+\[
+ k_1=\frac4{\tau+\frac32\tau^2},\quad k_2=\frac{32}{\tau^2},\quad
+ k_3=\frac4{\tau^2},\quad k_4=\frac2{\tau(1-\tau)} .
+\]
+The best split of $M(\tau)$ makes all four exponents equal to
+$c(\tau)=M(\tau)^2/(\sum_ik_i^{-1/2})^2$. At $\tau=0.976$ we get
+$M=0.1976$ and $c=0.01638$, so
+$\E\,\pi_T\le4e^{-(c-\varepsilon)n}$ for typical graphs. By Markov's inequality,
+$\pi_T\le e^{-(c-2\varepsilon)n}$ except with probability $4e^{-\varepsilon n}$
+over the signs. Lemma~\ref{lem:onedepth} gives
+$\max_t2^t\pi_t\le2^{(1-\gamma)n}$ for every
+$\gamma<\min\{1-\tau,\,c/\ln2\}=\min\{0.024,\,0.02364\}$.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{cor:regular}]
+In a $d$-regular graph $D^+_t+2D^-_t=d+D^-_t\ge d$ in every order, so
+$\mu_G\ge T\sqrt d/(4\sqrt2)$. Moreover $U_G\le\frac12(n-T)\sqrt d$,
+$V_G\le T(d/2+\sqrt d+\frac12)$, $e_{\le T}\le Td/2$ and $e_T\le(n-T)d$. The same
+optimization, with $M(\tau)=\tau/(4\sqrt2)-\frac12(1-\tau)$ and
+$k=(1/\tau,\,32/\tau,\,4/\tau,\,2/(1-\tau))$, gives $c=0.00915$ at
+$\tau=0.986$ and $c/\ln2=0.0132$.
+\end{proof}
+
+\section{How far from the truth}\label{sec:truth}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lccccccc}
+\toprule
+ & $S_T$ & $\sum_t\mu_t$ & $\mu_G$ & $U_T$ & $U_G$ & $Q_T$ & $\E|\Delta_t|$ ratio\\
+\midrule
+$n=1000$, $d=100$ & 0.253 & 0.235 & 0.190 & 0.026 & 0.047 & $-0.001$ & 1.14\\
+$n=2000$, $d=200$ & 0.249 & 0.222 & 0.191 & 0.027 & 0.048 & $-0.002$ & 1.14\\
+$n=2000$, $d=1000$ & 0.238 & 0.205 & 0.191 & 0.027 & 0.048 & $+0.001$ & 1.13\\
+$n=1500$, complete & 0.224 & 0.202 & 0.191 & 0.028 & 0.047 & $-0.002$ & 1.14\\
+\bottomrule
+\end{tabular}
+\caption{The terms at depth $T=0.9n$ in units of $n\sqrt d$, averaged over
+four assignments; the bounds of the proof are $\mu_G$ and $U_G$. The last
+column is the average of $|\Delta_t|/\sqrt{(D^+_t+4r_t)/2}$, against $1$ in
+Szarek's inequality.}\label{tab:terms}
+\end{table}
+
+Table~\ref{tab:terms} compares the proof with the process. Every bound holds
+with room, and the race is won by a wide margin: $Z_T$ is between
+$0.19\,n\sqrt d$ and $0.23\,n\sqrt d$, where the proof uses
+$\mu_G-U_G=0.143\,n\sqrt d$. The constant
+$\gamma\approx0.02$ is small for three reasons.
+\begin{enumerate}
+ \item Four separate tails, each with a second-moment rate, are added.
+ \item Szarek's constant $1/\sqrt2$ is used where the measured ratio is
+ $\sqrt{4/\pi}\approx1.13$ times larger.
+ \item Only one depth is used. The proof places the cut before depth
+ $0.976n$, while the measured median cut is at $0.43n$ and the measured saving
+ is $0.50n$ to $0.62n$~\cite[Tables~1 and~2]{N7}.
+\end{enumerate}
+A single exponential moment of $Z_t$ at a depth near $0.5n$ would remove the
+first and the third loss; the Gaussian heuristic of~\cite[Section~6]{N7}
+suggests a saving of about $0.2n$. We leave this; the point here is that the
+saving is independent of the density.
+
+\section{What the proof uses}\label{sec:uses}
+
+Random signs enter only through Lemma~\ref{lem:late}, in three places.
+\begin{enumerate}
+ \item[(S)] The signs of $x_t$ in its 2-clauses and unit clauses make
+ $|\Delta_t|$ large and the shortfall concentrated.
+ \item[(Q)] The bad values of $x_t$ in the clauses that contain it make $Q$ a
+ walk with fair steps $\pm\frac12$.
+ \item[(U)] The bad values of the free variables make $|b_w|$ of order
+ $\sqrt{m_w}$ instead of $m_w$.
+\end{enumerate}
+For a fixed formula, randomness comes only from $\sigma$. Two things remain. $Q$
+is still a martingale, but its step at $x_t$ is $\pm|b_{x_t}|/2$. The shortfall
+still has mean at least $\sum_{t\le T}(\sqrt{D^-_t/2}/4+\frac12)$, because each
+earlier neighbour of $x_t$ satisfies or falsifies its literal by an independent
+fair coin, so $\Delta_t$ is a fixed number plus $\pm1$ over the $D^-_t$ earlier
+neighbours. What is lost is the size of the bad-value sums. The proof of
+Theorem~\ref{thm:main} goes through verbatim for a fixed formula along every
+path on which
+\begin{enumerate}
+ \item[(W1)] $U_T$ is a small constant times $n\sqrt d$,
+ \item[(W2)] $\sum_{t\le T}b_{x_t}^2=O(nd)$, and
+ \item[(W3)] $\sum_{t\le T}|\Delta_t|$ is at least a constant times $n\sqrt d$
+ and $\sum_{t\le T}\Delta_t^2=O(nd)$,
+\end{enumerate}
+provided these hold except with probability $e^{-\Omega(n)}$ over $\sigma$.
+(W1) and (W2) are cancellation of bad values, at the free and at the assigned
+variables. (W3) says that effective gaps keep their typical size $\sqrt d$; it
+makes the shortfall concentrate by the argument of Lemma~\ref{lem:S}. This
+replaces the single cancellation condition of~\cite[Section~7]{N7}, which named
+only (W1); the claim there that the shortfall part holds for every formula is
+true only for its mean. Where (W1) or (W2) fails, many clauses agree about the
+values of many variables. That is the aligned structure of~\cite[Section~9]{N4},
+which is the case for aggregation.
+
+\section{Checks}\label{sec:checks}
+
+\texttt{explore\_key\_lemma\_proof.py} (a few seconds each):
+\begin{itemize}
+ \item \texttt{inclusion}: on random formulas with $n\le400$, all $51{,}041$
+ pairs $(\sigma,t)$ in which $\sigma$ survives depth $t$ have $Z_t\le0$ for the
+ uncut process, and the identity of~\cite[Lemma~2]{N7} holds exactly at every
+ step.
+ \item \texttt{terms}: Table~\ref{tab:terms}.
+ \item \texttt{constant}: the optimizations in the proofs of
+ Corollaries~\ref{cor:key} and~\ref{cor:regular}.
+\end{itemize}
+
+\begin{thebibliography}{99}
+\raggedright
+\bibitem{N4} Max 2-SAT with pruning clauses: pair decisions, sums, and a
+ measure. Working note, 6--7 October 2026
+ (\texttt{max2sat\_pairs\_sums\_measure.tex}).
+\bibitem{N7} A simplified plan for Max 2-SAT: one search, one count, one Key
+ Lemma. Working note, 8 October 2026 (\texttt{max2sat\_plan\_key\_lemma.tex}).
+\bibitem{Azu67} K.~Azuma. Weighted sums of certain dependent random variables.
+ \emph{T\^ohoku Mathematical Journal} 19(3):357--367, 1967.
+\bibitem{ES81} B.~Efron and C.~Stein. The jackknife estimate of variance.
+ \emph{The Annals of Statistics} 9(3):586--596, 1981.
+\bibitem{Hoe63} W.~Hoeffding. Probability inequalities for sums of bounded
+ random variables. \emph{Journal of the American Statistical Association}
+ 58(301):13--30, 1963.
+\bibitem{Mau03} A.~Maurer. A bound on the deviation probability for sums of
+ non-negative random variables. \emph{Journal of Inequalities in Pure and
+ Applied Mathematics} 4(1), Article~15, 2003.
+\bibitem{McD89} C.~McDiarmid. On the method of bounded differences. In
+ \emph{Surveys in Combinatorics 1989}, London Mathematical Society Lecture Note
+ Series 141, pages 148--188. Cambridge University Press, 1989.
+\bibitem{Sza76} S.~J.~Szarek. On the best constants in the Khinchin inequality.
+ \emph{Studia Mathematica} 58(2):197--208, 1976.
+\end{thebibliography}
+
+\end{document}

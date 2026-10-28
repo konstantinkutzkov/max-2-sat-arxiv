@@ -1,0 +1,49 @@
+Verification result: PASS
+Checked: 2026-10-23T16:25:01.368148+00:00
+Toolchain: Lean (version 4.34.0, arm64-apple-darwin24.6.0, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release)
+Public mathematical declarations audited: 1110
+Allowed standard axioms: Classical.choice, Quot.sound, propext
+Explicit published-result hypotheses: 2
+Example modules: 15
+
+Paper correspondence:
+  checked mathematical content: 23
+  checked core, with conventional arithmetic-cost analysis: 11
+  partial: 0
+  unverified: 1 (the explicitly unproved research target)
+
+The remaining probability-space translations are complete. Both membership
+alternatives and the hidden-mean discovery theorem use the original
+independent integer coefficients, their expectations and ordinary variances,
+and almost-sure bounds on an arbitrary probability space. The finite
+encoding preserves laws, independence, all event probabilities and moments.
+Discovery constructs a measurable event of probability at least 1-1/n on
+which the actual formula-only search has at most K*p_r(n)*c^n nodes, c<2.
+The constants precede all input sizes and distributions. The event depends
+only on binary coefficients, so units may be chosen subsequently, including
+using additional randomness. Unconditional exactness remains checked.
+
+Explicit scope correction: the independent-pair auxiliary proposition now
+states integer interaction coefficients, as in every formula model in the
+paper. Its earlier additional claim for arbitrary continuously distributed
+real coefficients is not claimed. This narrows that auxiliary statement
+without changing any computational input family, main theorem, constant,
+density condition or algorithm. The paper and formal statement agree.
+
+All 34 numbered PROVED statements have checked mathematical content,
+conditional on the two recorded published estimates where used. Actual
+search-node bounds are formalized; final polynomial bit-operation overhead
+and polynomial space remain conventional manuscript arguments. No compiler
+or machine-cost proof is claimed. The biased-subset extension remains an
+unproved target. Paper-to-Lean semantic correspondence still warrants
+independent mathematical review, distinct from kernel proof checking.
+
+The full pinned build, fifteen example modules, proof-dependency audit,
+external-signature register, dependency revisions and all statement
+fingerprints pass. Both edited LaTeX documents compile in the desktop editor.
+No custom axiom or proof placeholder was introduced. No new external result
+was added. Earlier archives are preserved. See SUBMISSION_SCOPE.txt,
+paper-correspondence.json, external-results.json and result.json for scope
+and exact checked-source fingerprints.
+
+Reproduce from this artifact directory with: python3 verify.py

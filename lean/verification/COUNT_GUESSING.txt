@@ -1,0 +1,200 @@
+HISTORICAL BATCH REPORT. The common-gap and quadratic concentration inputs,
+parameter substitutions, and count/projection node-bound assembly described
+as remaining below are now complete. See COUNT_COMPLETE.txt for current
+status, revised constants, and the precise remaining obligations. The older
+conditional lemmas remain valid dependencies of the complete proofs.
+
+Count guessing: correctness, grids, and deterministic search costs
+================================================================
+
+Later analytic progress is documented in COUNT_ANALYTICS.txt. The sections
+below describe the correctness/enumeration batch; the remaining-work list is
+updated to distinguish it from the subsequent analytic results.
+
+Completed scope
+---------------
+lem:count_correctness and lem:counts-exact are checked for the Max 2-SAT
+objectives in the manuscript, with arbitrary supplied rational adjustments,
+projection representations, and valid prefix-round partitions. The code
+constructs rational comparisons from the actual formula. It does not assume
+that a separately supplied polynomial correctly represents its score.
+
+All earlier random-input obligations retain their status. This batch does
+not complete their running-time assembly. Nor does it prove the analytic
+passing-probability estimate needed for the count-guessing runtime theorem.
+
+Formula correspondence
+----------------------
+Counts.Affine represents a constant plus a rational coefficient for each
+Boolean variable. Its budget uses the existing rational weighted-sum
+checker and enumerator. This is a representation of one inequality, not
+an oracle for joint constraint feasibility.
+
+FormulaGains constructs each gain expression by scanning the formula's
+pruning-constraint terms. gainExpr_eval proves that its evaluation is
+exactly score(F[x_t=1])-score(F[x_t=0]). The diagonal coefficient is zero.
+Thus the implementation computes the a_t and J_tw row appearing in the
+paper's gain formula directly, without relying on an unproved quadratic
+encoding assumption. This construction has polynomial size and rational
+coefficients. oriented_score_gain verifies both directions of a flip;
+scoreGain_preprocess proves that preprocessing preserves these gains.
+
+Adjustments proves the actual count identity
+
+  H_t^{h,beta}(x) = gain_t(x)+beta*(h-ones(x)+x_t).
+
+The correct count is in 0,...,n. The beta=0 implementation uses only the
+single guess zero, as in the pseudocode. count_guesses_length proves at
+most n+1 runs. The diagonal beta*x_t term is bounded by |beta|, including
+negative beta. No constraint enforces that a candidate's count equals h.
+
+For arbitrary rational lam_k and v_k, projection_gain_error_identity proves
+
+  gain_t(x)-H_t^guess(x)
+    = sum_k lam_k*v_k(t)*(<v_k,x>-guess_k-v_k(t)*x_t).
+
+projection_gain_error_bound proves the paper's allowance
+sum_k |lam_k|*|v_k(t)|*(delta_k+|v_k(t)|) whenever the projections are
+within the supplied errors. No orthogonality or spectral assertion is
+assumed for correctness. Such properties are only needed in later analyses.
+
+Rounds and survival
+-------------------
+A prefix is a Finset P of the original variable labels. A function round
+assigns round indices. EarlierInPrefix says that every variable earlier
+than a prefix variable is itself in P. Any ordered partition of a prefix
+with the suffix last has this property. This slightly more general
+formalization also allows empty rounds and an empty prefix.
+
+preference substitutes the prefix assignment on earlier rounds and one
+half elsewhere, with nonnegative ties choosing true. comparisonExpr adds
+exactly the oriented adjusted gain minus its allowance when the assigned
+bit is nonpreferred. comparison_budget_iff identifies this expression with
+the weighted budget. comparison_stable proves it depends only on the
+completed prefix, rather than assuming this property of the comparisons.
+
+Every optimum has nonpositive gain for every flip. optimum_satisfies
+combines this fact with the verified error allowance. Every optimum
+therefore survives its appropriate count/projection run. This is stronger
+than retaining one tie-broken optimum; the inequalities are weak and ties
+are retained. projection_optimum_enumerated proves actual list membership,
+not just feasibility of an abstract constraint.
+
+Executable enumeration and optimum output
+----------------------------------------
+PrefixSearch enumerates prefix bits in increasing original-label order,
+then uses Weighted.fold to stream the suffixes satisfying the one summed
+inequality. Its list version is a proof specification. mem_outputs proves
+that it visits exactly assignments passing their own prefix's budget;
+outputs_nodup proves there are no repeats within a run. Runs.fold streams
+each guess's candidates through the shared best-solution accumulator.
+Assignments repeated in different runs are counted repeatedly in the cost.
+
+Counts.countResult is the formula-input procedure: preprocess, retain the
+original labels and supplied rounds, search over the count guesses, and
+return the preprocessed score plus its offset together with an assignment.
+countResult_correct proves that the returned value is the original optimum
+and the returned assignment attains it. The proof covers repeated clauses,
+units, zero variables, empty prefixes, and either sign of beta under the
+paper's distinct-variable-in-each-binary-clause assumption.
+
+projectionComparisons_correct proves the supplied-representation procedure
+for any finite guess list covering every projection tuple. grid_search_correct
+discharges this coverage condition for the constructed grids below.
+These functions optimize actual formula scores; they do not optimize the
+auxiliary objective. Inputs with hidden communities do not need to satisfy
+any probabilistic model for this comparison-stage correctness to hold.
+
+Explicit grids and quantitative bounds
+-------------------------------------
+Let A=sum_i |v_i|, delta>0 and q=floor(A/delta). coordinateGrid builds the
+multiples delta*z for integers -q-1 <= z <= q+1, using a range of length
+2*q+3. Since A>=0, this is the paper's grid of multiples of delta in
+[-A-delta,A+delta]. coordinate_grid_cover uses rounding down to prove
+coverage, including negative projections. It does not enumerate assignments
+to construct a grid. tuples computes the Cartesian product using List.pi.
+Its membership, product length, and B^r length bound are proved, including
+r=0, when there is one empty tuple.
+
+GridBounds proves Cauchy--Schwarz in the needed form: sum_i v_i^2<=1 implies
+sum_i |v_i|<=sqrt(n), with rational coordinates cast to real numbers.
+It then proves both estimates from cor:spectral:
+
+  number of guesses <= (2*sqrt(n)/delta+3)^r,
+  sum_{t in P} s_t <= sum_k |lam_k|*(delta*sqrt(n)+1).
+
+The prefix bound uses nonnegative allowances; the exact allowance sum over
+all vertices is also proved. The corollary remains partial because its
+running-time application uses the unverified analytic accumulation theorem.
+The finite tuple list specifies the runs. The formal node analysis does not
+claim compiler-level memory verification or establish storage bounds for
+materializing an exponential tuple list. In the paper, tuples are streamed;
+for the capped fixed-rank grids their number is polynomial.
+
+Accumulation identity and node conversion
+----------------------------------------
+AccumulationIdentity proves that the implemented comparison expression
+is exactly S'+Q, where S' sums |Delta_t|-s_t over creators and Q contains
+the centered contributions from variables outside the earlier rounds.
+It handles the bit-to-sign conversion, preference ties, and the negative
+sign for a nonpreferred assignment. passing_requires_compensation proves
+that passing with S'>=b requires Q<=-b. The within-round quadratic expansion
+and the relevant probability estimates are separate; the subsequently verified
+components are listed in COUNT_ANALYTICS.txt.
+
+PrefixSearch.nodes_bound includes failed suffix tests:
+
+  nodes <= 2^(|P|+1)-1 + 2*|suffix|*(number of outputs).
+
+Runs.nodeCount_bound sums this bound across guesses. Resources proves the
+conversion from a per-run passing probability p (uniform assignments) to
+
+  total nodes <= number of guesses*(2^(|P|+1)+2*n*2^n*p).
+
+If |P|<=tau*n and p<=A*exp(-c*n), all_runs_exponential yields
+
+  total nodes <= number of guesses*(2+2*n*A)*b^n,
+  b=exp(max(tau*log(2),log(2)-c)).
+
+exponential_base_lt_two proves b<2 for tau<1 and c>0. These are CONDITIONAL
+bounds: the passing probability is a named hypothesis, not a theorem of this
+batch. No norm, gap, convex-concentration, or quadratic-tail hypothesis has
+silently been treated as verified.
+
+Remaining work
+--------------
+1. lem:counts-profile: finish convex concentration and its mean/median constants;
+   the signed-row bridge, first moments, and clipping are now checked.
+2. res:counts: finish the full block-conditioning/compensation argument and
+   within-round quadratic tail, then instantiate the structural parameters.
+   Creator concentration, sequential compensation under the operator norm, and
+   its combination with an assumed profile probability are now checked.
+   See COUNT_ANALYTICS.txt for the precise boundary.
+3. lem:count_accumulation and cor:spectral: complete their applications of
+   that analytic result, including the stated constants and size thresholds.
+4. cor:maxcut: regular-graph spectral, mixing, and row-mass estimates and the
+   bounded-degree branch. Named graph families need their membership proofs.
+5. lem:community_correctness: the comparison stage and covered grids are
+   proved, but the full numerical preprocessing, capped-grid selection,
+   and exhaustive fallback integration are not yet formalized.
+6. Stochastic-block-model concentration, matrix norm estimates, discovery,
+   and final runtime assembly remain unverified.
+
+The polynomial per-node arithmetic and space arguments remain ordinary
+paper arguments, distinguished from the formal recursion-node bounds.
+No algorithm, theorem statement, input family, or constant changes here.
+The approximate-projection correctness proof in the paper is expanded to
+make the checked diagonal correction and flip orientation explicit.
+
+Audit and regressions
+---------------------
+Examples checks zero adjustment (one run), negative adjustment, a Max-Cut
+pair, preprocessing, an accepted assignment whose count differs from the
+guess, a tight allowance boundary and its rejection if the allowance is
+removed, negative grid points, and the rank-zero Cartesian product.
+The executable Max-Cut example also returns the expected score.
+
+The full build, all example modules, transitive axiom audit, and source and
+manuscript fingerprints are recorded in result.json. Only propext,
+Classical.choice, and Quot.sound are permitted. These checks do not replace
+independent mathematical review of the paper-to-Lean translation.

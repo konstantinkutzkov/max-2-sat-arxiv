@@ -1,0 +1,10 @@
+{
+  "formulas": 18,
+  "weighted_assignments": 1344,
+  "round_race_identities": 2688,
+  "projection_gain_bounds": 17280,
+  "optimum_survival_checks": 70,
+  "rational_jacobi_rotations": 36,
+  "status": "passed",
+  "scope": "Finite exact identities and optimum preservation, not asymptotic bounds."
+}

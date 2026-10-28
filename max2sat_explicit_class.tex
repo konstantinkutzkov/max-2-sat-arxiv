@@ -1,0 +1,364 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=28mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\sat}{\mathrm{sat}}
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=2em
+\hypersetup{pdftitle={Max 2-SAT on Unaligned Formulas}}
+
+\title{Max 2-SAT Below $2^n$ on Unaligned Formulas:\\ Theorem and Proof Sketch}
+\author{}
+\date{8 October 2026\\[3pt]\small Working notes}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We define an explicit class of 2-CNF formulas by three conditions on the
+quadratic polynomial that counts satisfied clauses. Every formula in the class
+is solved exactly by a deterministic polynomial-space algorithm in time
+$\Ostar(c^n)$, with a constant $c<2$ that depends only on a parameter of the
+class and not on the number of clauses. The class contains almost all formulas
+of density at least $C\log n$ and excludes the aligned formulas that defeat
+single-flip pruning. The algorithm is the search of~\cite{N7}: pruning clauses
+and the sum check, along a fixed order. The proof is the argument of~\cite{N8}
+for a fixed formula: random signs are replaced by the conditions of the class,
+and the only randomness left is the random partial assignment of Knuth's
+identity. This note states the theorem and sketches the proof; the details
+have not been written out.
+\end{abstract}
+
+\section{The class and the theorem}\label{sec:theorem}
+
+Let $F$ be a 2-CNF formula over $x_1,\dots,x_n$. Its clauses have one literal
+or two literals on distinct variables; several clauses on the same pair of
+variables are allowed, but no binary clause occurs twice. A literal on $x_v$
+has sign $s=+1$ if it is $x_v$ and $s=-1$ if it is $\neg x_v$. For an
+assignment write $a_v=+1$ if $x_v$ is true and $a_v=-1$ otherwise.
+
+\begin{definition}[Coefficients]\label{def:coef}
+\begin{enumerate}
+ \item The \emph{parity matrix} of $F$ is the symmetric $n\times n$ integer
+ matrix $J=(J_{uv})_{u,v=1}^n$ with zero diagonal, $J_{vv}=0$, and, for
+ $u\ne v$,
+ \[
+ J_{uv}=\sum_{\text{binary clauses on }\{x_u,x_v\}}s_us_v ,
+ \]
+ where $s_u,s_v$ are the signs of the two literals of the clause. So
+ $J_{uv}=0$ if no clause contains both $x_u$ and $x_v$.
+ \item The \emph{imbalance vector} of $F$ is $h=(h_1,\dots,h_n)\in\mathbb
+ Z^n$, where $h_v$ is the sum of the signs of $x_v$ over its binary clauses
+ plus twice the sum of its signs over its unit clauses.
+ \item $L$ is the strictly lower triangular part of $J$: the $n\times n$
+ matrix with $L_{uv}=J_{uv}$ for $u>v$ and $L_{uv}=0$ for $u\le v$. It
+ depends on the numbering of the variables.
+ \item $d=\frac1n\sum_{u,v}J_{uv}^2$, the mean of the squared row norms of
+ $J$.
+\end{enumerate}
+\end{definition}
+
+A binary clause $(\ell_u\lor\ell_v)$ is satisfied with indicator
+$\frac34+\frac14s_ua_u+\frac14s_va_v-\frac14s_us_va_ua_v$, and a unit clause
+$(\ell_v)$ with indicator $\frac12+\frac12s_va_v$. Hence the number of
+satisfied clauses is
+\[
+ \sat_F(a)=c_0+\frac14\sum_vh_va_v-\frac14\sum_{u<v}J_{uv}a_ua_v ,
+\]
+where $c_0$ is $\frac34$ times the number of binary clauses plus $\frac12$
+times the number of unit clauses. So $J$ and $h$ are the coefficients of the score, and every simplification that
+changes the score by a constant leaves them unchanged. For example,
+$(x\lor y)$ and $(x\lor\neg y)$ together score $1+[x]$: they give $J_{xy}=0$
+and add $2$ to $h_x$, exactly as the unit clause $(x)$ does. A complementary
+pair $(x\lor y),(\neg x\lor\neg y)$ gives $J_{xy}=2$ and adds nothing to $h$.
+If every pair carries at most one clause, $J$ is the signed adjacency matrix
+with entries $\pm1$ and $d=2m/n$ is the average degree.
+
+\begin{definition}[Unaligned formulas]\label{def:unaligned}
+For $K\ge1$, a formula is \emph{$K$-unaligned} if
+\[
+ \|J\|\le K\sqrt d,\qquad \|L\|\le K\sqrt d,\qquad \sum_vh_v^2\le K\,nd,
+\]
+where $\|\cdot\|$ is the spectral norm.
+\end{definition}
+
+\begin{theorem}\label{thm:main}
+For every $K\ge1$ there is $\varepsilon_K>0$, for instance
+$\varepsilon_K=10^{-5}K^{-4}$, such that Max 2-SAT on $K$-unaligned formulas
+can be solved by a deterministic algorithm in time
+$\Ostar(2^{(1-\varepsilon_K)n})$ using polynomial space, for every number of
+clauses.
+\end{theorem}
+
+The algorithm is the same for all $K$; it does not need to know $K$ or to test
+membership in the class.
+
+\begin{remark}[About the class]\label{rem:class}
+The class has the following properties.
+\begin{enumerate}
+ \item Membership can be checked in polynomial time.
+ \item Random formulas lie in the class with small $K$
+ (Table~\ref{tab:params}). If each pair carries a clause with probability
+ $d/(n-1)$, with uniform signs, and $d\ge C\log n$, then the formula is
+ $3$-unaligned with probability $1-o(1)$. This follows from norm bounds for
+ random matrices with independent entries~\cite{BvH16} and from Chernoff
+ bounds for $\sum_vh_v^2$.
+ \item The aligned formulas of~\cite{N3,N4} lie far outside. In the circulant
+ formulas $C_{n,c}$ all entries of $J$ equal $1$, and in Max-Cut on $K_m$ all
+ equal $2$, so $\|J\|$ is of order $d$ and $K$ would have to be of order
+ $\sqrt d$.
+ \item The numbering of the variables enters only through $L$; the algorithm
+ branches in this order.
+ \item Sparse random formulas with $d$ below about $\log n$ are not
+ $K$-unaligned for a fixed $K$, because a few variables of high degree make
+ $\|J\|$ large. For them only the average-case result of~\cite{N8} is
+ available.
+ \item The definition is spectral; the algorithm is not.
+\end{enumerate}
+\end{remark}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+ & $d$ & $\|J\|/\sqrt d$ & $\|L\|/\sqrt d$ & $\sum_vh_v^2/(nd)$\\
+\midrule
+random, one clause per pair & 30 & 2.02 & 1.67 & 1.02\\
+ & 100 & 2.03 & 1.66 & 1.01\\
+ & 999 & 2.00 & 1.64 & 0.94\\
+random, pairs and unit clauses & 189 & 2.00 & 1.66 & 0.38\\
+circulant $C_{401,100}$ & 400 & 20.0 & 12.8 & 0.00\\
+Max-Cut on $K_{400}$ & 1596 & 20.0 & 12.7 & 0.00\\
+\bottomrule
+\end{tabular}
+\caption{The three parameters of Definition~\ref{def:unaligned}; random
+formulas have $n=1000$. In the fourth row, $30\%$ of the interacting pairs are
+complementary pairs of random type, and each variable has up to two random
+unit clauses.}\label{tab:params}
+\end{table}
+
+\section{The algorithm}\label{sec:algorithm}
+
+\paragraph{Preprocessing.} Exact pair reductions~\cite{N3} bring $F$ into
+canonical form: unit clauses, kept with multiplicity, and on each pair of
+variables nothing, one binary clause, or one complementary pair. They change
+the score by a constant, so $J$, $h$, $L$ and $d$ do not change.
+
+\paragraph{The search~\cite{N7}.} Branch on $x_1,\dots,x_n$ in this order. At
+a node where $x_1,\dots,x_{t-1}$ are assigned, let $\Delta_t$ be the effective
+gap of $x_t$: the sum of its signs over its remaining binary clauses plus twice
+the sum over its unit clauses. Let $D_t$ be the number of its remaining binary
+clauses, $\ell$ its preferred literal ($x_t$ if $\Delta_t\ge0$, else $\neg
+x_t$), and $p=(D_t-|\Delta_t|)/2$. The child in which $\ell$ is false receives
+the pruning clause $\langle N_t\le p-1\rangle$. Here $N_t$ counts the true
+literals among $\neg m$ for each binary clause $(\ell\lor m)$ and $m$ for each
+binary clause $(\neg\ell\lor m)$, with multiplicity; a complementary pair
+contributes the same literal twice. The bad value of a variable in a pruning
+clause is the value that makes its literal true. A node is cut when a pruning
+clause has more true literals than it allows, or when the \emph{sum check}
+fires:
+\[
+ \sum_{w\text{ free}}\min\{m^0_w,m^1_w\}>\sum_ck_c ,
+\]
+over the live pruning clauses that are not vacuous. Here $k_c$ is the remaining
+allowance of $c$, and $m^b_w$ counts, with multiplicity, the clauses in which
+$b$ is the bad value of $w$.
+
+\paragraph{Soundness and cost.} Each branching adds a clause to one child
+only, and the flip identity holds for canonical formulas with multiplicities.
+So the path-order argument of~\cite[Proposition~20]{N3} shows that an optimal
+assignment survives, and the sum check is implied by the clauses~\cite{N4}.
+Let $\pi_t$ be the probability that a uniformly random $\sigma\in\{0,1\}^n$
+survives the checks at depths $1,\dots,t$. By Knuth's
+identity~\cite{Knu75,N7}, the search has at most $1+2n\max_t2^t\pi_t$ nodes. It
+uses polynomial space and polynomial time per node.
+
+\section{Proof sketch}\label{sec:proof}
+
+Fix a $K$-unaligned formula; all probabilities are over the uniform $\sigma$.
+Put $a=2\sigma-1$ and $T=(1-\delta)n$, with $\delta=\delta(K)$ chosen in
+Step~6.
+
+\paragraph{Step 1: one depth.} $\max_t2^t\pi_t\le\max\{2^T,\,2^n\pi_T\}$,
+because $\pi_t$ is non-increasing. It suffices to show $\pi_T\le6e^{-cn}$.
+
+\paragraph{Step 2: the race.} Run $\sigma$ through the search without cutting
+and keep every pruning clause created up to depth $T$. Put
+$Z_T=S_T+Q_T-U_T$, with
+\[
+ S_T=\sum_c\Bigl(\frac{|\Delta_c|}2+1\Bigr),\quad
+ Q_T=\sum_c\Bigl(j_c-\frac{e_c}2\Bigr),\quad
+ U_T=\frac12\sum_{w>T}|m^1_w-m^0_w| .
+\]
+Here $\Delta_c$ is the gap at the creation of $c$, $e_c$ is the number of its
+assigned support variables, and $j_c$ is the number of those that took their
+bad value, both with multiplicity. By the race identity and the remark on
+vacuous clauses~\cite[Lemma~2, Remark~3]{N7}, whose algebra is unchanged by
+multiplicities, a $\sigma$ that survives depth $T$ has $Z_T\le0$.
+
+\paragraph{Step 3: the race in terms of $J$ and $h$.}
+\begin{lemma}[Representation]\label{lem:rep}
+Let $C$ be the set of $s\le T$ at which $\sigma_s$ is the non-preferred value,
+and $y_s=a_s$ for $s\in C$, $y_s=0$ otherwise. Then
+\begin{enumerate}
+ \item[(a)] $\Delta_t=h_t-\sum_{u<t}J_{tu}a_u$, and $t\in C$ if and only if
+ $a_t=-\operatorname{sign}\Delta_t$ (with $\operatorname{sign}0=+1$);
+ \item[(b)] the balance $m^1_w-m^0_w$ of a variable $x_w$, taken when $x_w$ is
+ assigned (or at depth $T$ if $w>T$), equals $\sum_{s<\min\{w,T+1\}}J_{sw}y_s$;
+ \item[(c)] $S_T=\sum_{t\in C}(|\Delta_t|/2+1)$,
+ $Q_T=\frac12\sum_{t\le T}a_t(Ly)_t$ and
+ $U_T=\frac12\sum_{w>T}|\sum_{s\le T}J_{sw}y_s|$.
+\end{enumerate}
+\end{lemma}
+
+\noindent\emph{Why.} After $a_1,\dots,a_{t-1}$ are fixed, the coefficient of
+$a_t$ in the score polynomial is $\frac14(h_t-\sum_{u<t}J_{tu}a_u)$. The
+remaining formula is canonical, and there the same coefficient is
+$\frac14\Delta_t$; this gives~(a). For~(b), let $x_s$ create a clause and $x_w$
+be in its support. A case distinction shows that the bad value of $x_w$,
+written as $\pm1$ and taken with its multiplicity, is $J_{sw}a_s$. For a single
+clause this is $\pm1$. For a complementary pair both clauses give the same bad
+value, $\sigma_s$ for the pair $(x\lor y),(\neg x\lor\neg y)$ and
+$1-\sigma_s$ for the other type, which is $J_{sw}a_s$ with $J_{sw}=\pm2$.
+Part~(c) follows: $Q$ changes at step $t$ by $\frac12a_t(m^1_{x_t}-m^0_{x_t})$.
+All parts were checked numerically, including complementary pairs and unit
+clauses (Section~\ref{sec:checks}).
+
+\paragraph{Step 4: uncertainty, for every $\sigma$.} By (c) and
+Cauchy--Schwarz, using $\|y\|^2\le T$,
+\[
+ U_T\le\tfrac12\sqrt{n-T}\,\|J\|\,\|y\|\le\tfrac12\sqrt{T(n-T)}\,\|J\|
+ \le\tfrac12K\sqrt{\delta}\,n\sqrt d .
+\]
+
+\paragraph{Step 5: the martingale.} By (c), $Q$ changes at step $t$ by
+$\pm\frac12(Ly)_t$. The sign is $a_t$, which is independent of
+$\sigma_1,\dots,\sigma_{t-1}$, while $(Ly)_t$ is determined by them. The squared
+steps sum to at most $\frac14\|L\|^2\|y\|^2\le\frac14K^2dn$ for every $\sigma$.
+Azuma's argument gives
+$\Pr[Q_T\le-\kappa]\le\exp(-2\kappa^2/(K^2dn))$.
+
+\paragraph{Step 6: the shortfall.} Let $G=\sum_{t\le T}|\Delta_t|$.
+\begin{enumerate}
+ \item[(a)] \emph{Coin flips.} Given $\sigma_1,\dots,\sigma_{t-1}$, the gap
+ $\Delta_t$ is fixed and $t\in C$ with probability $\frac12$. So
+ $X_t=[t\in C]\,|\Delta_t|/2\ge0$ has conditional mean $|\Delta_t|/4$ and
+ conditional second moment $\Delta_t^2/8$. Moreover
+ $\sum_t\Delta_t^2\le2\|h\|^2+2\|L\|^2n\le2(K+K^2)nd$ by~(a). The one-sided
+ bound for nonnegative increments~\cite{Mau03,N8} gives
+ $S_T\ge\frac14G-\alpha$, except with probability
+ $\exp(-\alpha^2/(2V))$, where $V=(K+K^2)nd/4$.
+ \item[(b)] \emph{Mean.} By (a), $\Delta_t$ is a fixed number plus the
+ symmetric sum $-\sum_{u<t}J_{tu}a_u$. So by symmetry and Szarek's
+ inequality~\cite{Sza76}, $\E|\Delta_t|\ge(W_t/2)^{1/2}$ with
+ $W_t=\sum_{u<t}J_{tu}^2$. Every row of $J$ has
+ $\sum_uJ_{tu}^2\le\|J\|^2\le K^2d$, so
+ $\sum_{t\le T}W_t\ge\frac12nd-\delta n K^2d$ and $W_t\le K^2d$. Hence
+ \[
+ \E G\ge\sum_{t\le T}\sqrt{W_t/2}\ge\frac{\sum_tW_t}{\sqrt2\,K\sqrt d}
+ \ge\frac{\frac12-\delta K^2}{\sqrt2\,K}\,n\sqrt d .
+ \]
+ \item[(c)] \emph{Concentration.} $G$ is a convex function of
+ $a\in[-1,1]^n$, Lipschitz with constant $\sqrt T\|L\|\le K\sqrt{nd}$. By
+ Talagrand's inequality~\cite{Tal95},
+ $\Pr[G\le\E G-15K\sqrt{nd}-\eta]\le4\exp(-\eta^2/(16K^2nd))$. Here
+ $15K\sqrt{nd}$ bounds the distance between the mean and the median.
+\end{enumerate}
+
+\paragraph{Step 7: the constants.} Take $\delta=1/(128K^4)$. Steps 4 and 6
+give a margin
+\[
+ A=\frac{\frac12-\delta K^2}{4\sqrt2\,K}-\frac K2\sqrt\delta\ \ge\
+ \frac{0.0428}K
+\]
+in units of $n\sqrt d$. Take $\alpha=\kappa=\eta=\frac14An\sqrt d$. Outside the
+three exceptional events,
+\[
+ Z_T\ \ge\ \tfrac14(\E G-15K\sqrt{nd}-\eta)-\alpha-\kappa-U_T\
+ \ge\ \tfrac7{16}An\sqrt d-4K\sqrt{nd}\ >\ 0
+\]
+for $n\ge n_0(K)$. The three events have probabilities at most
+$e^{-A^2n/(16K^2)}$, $4e^{-A^2n/(256K^2)}$ and $e^{-A^2n/(8K^2)}$. So
+$\pi_T\le6e^{-cn}$ with $c=A^2/(256K^2)\ge7\cdot10^{-6}K^{-4}$. By Step~1 the
+search has $\Ostar(2^{(1-\varepsilon)n})$ nodes, with
+$\varepsilon=\min\{\delta,c/\ln2\}\ge10^{-5}K^{-4}$. \hfill$\square$
+
+\section{What has to be written out}\label{sec:todo}
+
+\begin{enumerate}
+ \item The race identity and the remark on vacuous clauses with
+ multiplicities, and Lemma~\ref{lem:rep} in full. All are checked numerically,
+ but only the version with one clause per pair is written~\cite{N7,N8}.
+ \item The exact form of Talagrand's inequality used in Step~6(c), with its
+ constants.
+ \item The claim of Remark~\ref{rem:class}(2) on random formulas, with the
+ constants of~\cite{BvH16}.
+\end{enumerate}
+The constants are not optimized. The measured saving of the same search on
+random formulas is about $0.5n$~\cite{N7}, many orders of magnitude more than
+$\varepsilon_K$. Three questions stay open: whether $\|L\|$ can be replaced by
+$\|J\|$ (it is at most $O(\log n)$ times larger, and that factor would cost
+too much); whether the class can be widened to sparse formulas by discounting
+high-degree variables; and whether repeated clauses (weights) can be admitted.
+
+\section{Checks}\label{sec:checks}
+
+\texttt{explore\_explicit\_class.py}, each mode in a few seconds:
+\begin{itemize}
+ \item \texttt{identities}: $128{,}826$ checks on random canonical formulas
+ (one clause per pair, complementary pairs, unit clauses) and on $C_{21,6}$,
+ $C_{31,9}$, Max-Cut on $K_{12}$ and $K_{16}$. Covered: the gap formula and
+ the bad-value formula of Lemma~\ref{lem:rep}, the race identity with
+ multiplicities, the formula for $U_T$, and $Z_t\le0$ on every surviving
+ prefix.
+ \item \texttt{params}: Table~\ref{tab:params}.
+ \item \texttt{constant}: Step~7 for $K=1,\dots,4$, giving
+ $\varepsilon_K K^4\approx1.04\cdot10^{-5}$ to $1.10\cdot10^{-5}$.
+\end{itemize}
+
+\begin{thebibliography}{99}
+\raggedright
+\bibitem{N3} Max 2-SAT and the domination rule: results and ideas so far.
+ Working note, 5 October 2026 (\texttt{max2sat\_results\_and\_ideas.tex}).
+\bibitem{N4} Max 2-SAT with pruning clauses: pair decisions, sums, and a
+ measure. Working note, 6--7 October 2026
+ (\texttt{max2sat\_pairs\_sums\_measure.tex}).
+\bibitem{N7} A simplified plan for Max 2-SAT: one search, one count, one Key
+ Lemma. Working note, 8 October 2026 (\texttt{max2sat\_plan\_key\_lemma.tex}).
+\bibitem{N8} The Key Lemma for random signs. Working note, 8 October 2026
+ (\texttt{max2sat\_key\_lemma\_proof.tex}).
+\bibitem{BvH16} A.~S.~Bandeira and R.~van Handel. Sharp nonasymptotic bounds
+ on the norm of random matrices with independent entries. \emph{The Annals of
+ Probability} 44(4):2479--2506, 2016.
+\bibitem{Knu75} D.~E.~Knuth. Estimating the efficiency of backtrack
+ programs. \emph{Mathematics of Computation} 29(129):121--136, 1975.
+\bibitem{Mau03} A.~Maurer. A bound on the deviation probability for sums of
+ non-negative random variables. \emph{Journal of Inequalities in Pure and
+ Applied Mathematics} 4(1), Article~15, 2003.
+\bibitem{Sza76} S.~J.~Szarek. On the best constants in the Khinchin inequality.
+ \emph{Studia Mathematica} 58(2):197--208, 1976.
+\bibitem{Tal95} M.~Talagrand. Concentration of measure and isoperimetric
+ inequalities in product spaces. \emph{Publications Math\'ematiques de
+ l'IH\'ES} 81:73--205, 1995.
+\end{thebibliography}
+
+\end{document}

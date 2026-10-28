@@ -1,0 +1,131 @@
+Constructive rational diagonalization and the formula-only algorithm
+==================================================================
+
+Later batch: SBM_COMPLETE.txt completes parameter substitution, bounded-size
+runtime and the original SBM specialization. The remaining-work list below
+records the boundary of this earlier numerical batch.
+
+This batch follows SPECTRAL_TRUNCATION.txt and adds 73 audited mathematical
+declarations. The hidden-community correctness lemma is now CHECKED.
+The hidden-mean discovery running-time lemma cor:planted remains PARTIAL;
+the full SBM running-time theorem remains unverified. No external-result
+hypothesis has been added. The same two published probability estimates
+remain explicit hypotheses of the search-node probability theorem.
+
+1. The actual rational construction
+-----------------------------------
+RotationScalar proves the circle parameterization c(t)=(1-t^2)/(1+t^2),
+s(t)=2t/(1+t^2), exact orthogonality and a Lipschitz estimate. For a symmetric
+pivot block (a,b;b,d), its new off-diagonal entry is
+  f(t)=b*(c(t)^2-s(t)^2)+(d-a)*c(t)*s(t).
+Since f(0)=b and f(1)=-b, the intermediate value theorem gives a zero on
+[0,1]. This real zero is used only in the proof. It is not an algorithm
+input or an exact-real computation. If |a|,|b|,|d|<=M, then
+  |f(t)-f(u)| <= 16*M*|t-u|.
+
+GridRotation implements the finite minimization over t=j/D, 0<=j<=D.
+A floor argument proves grid coverage, and the selected rational pivot is
+at most 16*M/D in absolute value. PlaneRotation implements the exact
+rational matrix and proves its orthogonality and conjugation identities.
+PlaneEnergy proves conservation of the squared Frobenius norm and the
+exact identity Enew=E-2*b^2+2*f(t)^2 for off-diagonal energy E.
+
+JacobiStep chooses an actual largest off-diagonal entry by finite argmax.
+It handles the empty pivot list, preserves symmetry and squared norm, and
+proves E<=n^2*b^2 and the resulting progress estimate. JacobiIteration
+composes these actual rational rotations, with early stopping and finite
+fuel; its proofs establish both orthogonality and the final energy bound.
+
+JacobiParameters makes every numerical parameter explicit from the input:
+  M = ceil(sum_ij J_ij^2)+1,
+  D = 32*n^5*M,
+  energy target = 1/n^8,
+  step decrease = 1/n^10,
+  fuel = M*n^10.
+For n>0 every active step decreases energy by at least 1/n^10. Initial
+energy is at most M. Thus the total computedFrame routine reaches its
+energy target within the supplied fuel. It uses the identity for n=0.
+FrameResidual proves unitary invariance of the Frobenius norm, identifies
+the rational off-diagonal energy with the squared real residual, and obtains
+  ||J-Q diag(Q^T J Q) Q^T||_F <= 1/n^4.
+There is no numerical existence or termination hypothesis left.
+
+2. Polynomial resource bounds: checked and conventional parts
+--------------------------------------------------------------
+FormulaScale bounds a clause score and score gain and proves
+  |J_ij|<=2*m, sum_ij J_ij^2<=4*n^2*m^2,
+  M<=4*n^2*m^2+1
+for a well-formed formula with m explicitly listed clauses. Consequently
+the actual grid denominator is at most 32*n^5*(4*n^2*m^2+1), and the fuel
+is at most (4*n^2*m^2+1)*n^10. These are kernel-checked inequalities.
+
+The paper gives the remaining ordinary bit-cost argument: at t=j/D the
+rotation has a common denominator D^2+j^2<=2*D^2. An A update multiplies
+its common denominator by the square of this integer; a Q update multiplies
+its common denominator by the integer. Matrix magnitudes stay bounded by
+Frobenius conservation and orthogonality. Bit lengths therefore grow at
+most linearly in the number of iterations times log D, plus input length.
+Scanning the polynomial grid and performing polynomially many exact
+matrix updates takes polynomial time and space.
+
+This is not a compiler-level cost verification. Nor does the construction
+claim polynomial dependence on log magnitude for succinctly weighted
+arbitrary matrices. The intended input is the paper's explicitly listed
+unweighted formula, and accuracy is the required n^-4. The paper replaces
+the previous generic numerical sketch with this sufficient construction.
+The comparison search and the input-family claims are unchanged.
+
+3. Concrete formula-only discovery and search
+---------------------------------------------
+ComputedDiscovery defines discoverFormula using computedFrame, the previous
+checked rational sorting, and retained Rayleigh coefficients. For n<r it
+uses the zero representation; exactness holds in this bounded-size case.
+The actual comparison wrapper then computes its spacing and applies its
+previously checked fallbacks, projection grids and comparison runs.
+
+Theorem diagonalized_result_correct proves that this fully specified
+algorithm returns an attained optimum for every well-formed input. It has
+no callback, approximation-quality, probability or input-family hypothesis.
+This closes the statement of lem:community_correctness, which concerns
+exactness, not running time.
+
+computed_discovery_guarantees derives all four ApproximationGuarantees for
+this actual construction, with residual n^-4. The assumptions concern the
+original mean-rank/model and noise/size conditions, not numerical output.
+Theorem diagonalized_search_probability combines this with the original
+finite product law and gives probability at least 1-1/n of
+  nodes <= (4*n+3)^r * (2+14*n) * c^n,  c<2,
+where c is the previously explicit exponentialBase/roundRate expression
+with K=400*chi. The hypotheses include n>=100, r<=n, density
+10^9*chi*B^2*log(n)<=n*nu, and the explicit mean and size cutoffs used in
+the paper's proof. The algorithm uses F, r and rational g; it does not
+receive the hidden mean or variance. Both positive and zero coefficient
+mass branches are covered. No numerical callback or quality guarantee is
+assumed. The two published probability estimates are registered explicitly
+in external-results.json and printed in ExternalAudit.lean.
+
+4. Remaining boundary
+----------------------
+The discovery lemma's asymptotic assumption still needs to be substituted
+into all these explicit conditions, with bounded-size running-time cases
+assembled into a single fixed exponential base. The stochastic block model
+must then be instantiated as an original input law, including the hidden
+mean rank and norm bounds and the Max-Cut encoding. These are INTERNAL
+proof tasks, not external assumptions. The complete discovery and SBM
+running-time statements are not yet claimed as formally verified.
+
+The independent-pair proposition retains its arbitrary non-finite-law gap;
+the biased-subset appendix remains an unproved target. Earlier verified
+results retain their status. Paper/Lean correspondence review is distinct
+from the kernel proof check and remains useful.
+
+5. Checks and reproducibility
+------------------------------
+The Community examples check the rational 3/5,4/5 rotation, a grid minimum
+with nonzero residual, exact elimination of a non-diagonal 2-by-2 block by
+an actual update, one-step recursion, empty input and n<r cases. They also
+evaluate the full concrete algorithm on empty formulas. These checks
+supplement, rather than replace, the universally quantified proofs.
+Run python3 verify.py for the complete pinned build, fifteen example
+modules, public-declaration axiom audit, external-dependency register and
+paper statement fingerprints. See result.json for the recorded outcome.

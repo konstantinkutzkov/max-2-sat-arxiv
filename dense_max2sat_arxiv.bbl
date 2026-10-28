@@ -1,0 +1,118 @@
+\begin{thebibliography}{10}
+
+\bibitem{Abbe18}
+Emmanuel Abbe.
+\newblock Community detection and stochastic block models: recent developments.
+\newblock {\em Journal of Machine Learning Research}, 18(177):1--86, 2018.
+
+\bibitem{BvH16}
+Afonso~S. Bandeira and Ramon van Handel.
+\newblock Sharp nonasymptotic bounds on the norm of random matrices with
+  independent entries.
+\newblock {\em Annals of Probability}, 44(4):2479--2506, 2016.
+
+\bibitem{BLM13}
+St{\'e}phane Boucheron, G{\'a}bor Lugosi, and Pascal Massart.
+\newblock {\em Concentration Inequalities: A Nonasymptotic Theory of
+  Independence}.
+\newblock Oxford University Press, 2013.
+
+\bibitem{BH12}
+Andries~E. Brouwer and Willem~H. Haemers.
+\newblock {\em Spectra of Graphs}.
+\newblock Springer, 2012.
+
+\bibitem{SETH}
+Chris Calabro, Russell Impagliazzo, and Ramamohan Paturi.
+\newblock The complexity of satisfiability of small depth circuits.
+\newblock In {\em Parameterized and Exact Computation, 4th International
+  Workshop, {IWPEC} 2009}, volume 5917 of {\em Lecture Notes in Computer
+  Science}, pages 75--85, 2009.
+
+\bibitem{best_sparse_maxsat}
+Ruiwen Chen and Rahul Santhanam.
+\newblock {Improved Algorithms for Sparse MAX-SAT and MAX-k-CSP}.
+\newblock In {\em Theory and Applications of Satisfiability Testing -- SAT
+  2015}, pages 33--45, 2015.
+
+\bibitem{CGJ18}
+Nicholas Cook, Larry Goldstein, and Tobias Johnson.
+\newblock Size biased couplings and the spectral gap for random regular graphs.
+\newblock {\em Annals of Probability}, 46(1):72--125, 2018.
+
+\bibitem{davis1962machine}
+Martin Davis, George Logemann, and Donald Loveland.
+\newblock A machine program for theorem-proving.
+\newblock {\em Communications of the ACM}, 5(7):394--397, 1962.
+
+\bibitem{davis1960computing}
+Martin Davis and Hilary Putnam.
+\newblock A computing procedure for quantification theory.
+\newblock {\em Journal of the ACM}, 7(3):201--215, 1960.
+
+\bibitem{feige2007refuting}
+Uriel Feige.
+\newblock Refuting smoothed 3{CNF} formulas.
+\newblock In {\em Proceedings of the 48th Annual IEEE Symposium on Foundations
+  of Computer Science}, pages 407--417, 2007.
+
+\bibitem{GK14}
+Alexander Golovnev and Konstantin Kutzkov.
+\newblock New exact algorithms for the 2-constraint satisfaction problem.
+\newblock {\em Theoretical Computer Science}, 526:18--27, 2014.
+
+\bibitem{Hastings}
+Matthew~B. Hastings.
+\newblock Local maxima and improved exact algorithm for {MAX-2-SAT}.
+\newblock arXiv:1610.07100, 2016.
+
+\bibitem{impagliazzo2001problems}
+Russell Impagliazzo and Ramamohan Paturi.
+\newblock On the complexity of $k$-{SAT}.
+\newblock {\em Journal of Computer and System Sciences}, 62(2):367--375, 2001.
+
+\bibitem{KulikovK07}
+Alexander~S. Kulikov and Konstantin Kutzkov.
+\newblock New bounds for {MAX-SAT} by clause learning.
+\newblock In {\em {CSR} 2007}, volume 4649 of {\em Lecture Notes in Computer
+  Science}, pages 194--204, 2007.
+
+\bibitem{Ledoux99}
+Michel Ledoux.
+\newblock Concentration of measure and logarithmic {S}obolev inequalities.
+\newblock In {\em S{\'e}minaire de Probabilit{\'e}s XXXIII}, volume 1709 of
+  {\em Lecture Notes in Mathematics}, pages 120--216. Springer, 1999.
+
+\bibitem{OpenAI26ETH}
+{OpenAI}.
+\newblock The exponential time hypothesis is false.
+\newblock Preprint, OpenAI Math Release, 2026.
+\newblock Dated 17 October 2026, revised 25 October 2026,
+  \mbox{\url{https://github.com/openai/math}}.
+
+\bibitem{max_sat_width_reduction}
+Takayuki Sakai, Kazuhisa Seto, and Suguru Tamaki.
+\newblock {Solving Sparse Instances of Max SAT via Width Reduction and Greedy
+  Restriction}.
+\newblock In {\em Theory and Applications of Satisfiability Testing -- SAT
+  2014}, pages 32--47, 2014.
+
+\bibitem{shrinkage}
+Rahul Santhanam.
+\newblock {Fighting Perebor: New and Improved Algorithms for Formula and QBF
+  Satisfiability}.
+\newblock In {\em 51th Annual {IEEE} Symposium on Foundations of Computer
+  Science, {FOCS}}, pages 183--192, 2010.
+
+\bibitem{TY19}
+Konstantin Tikhomirov and Pierre Youssef.
+\newblock The spectral gap of dense random regular graphs.
+\newblock {\em Annals of Probability}, 47(1):362--419, 2019.
+
+\bibitem{Williams}
+Ryan Williams.
+\newblock A new algorithm for optimal 2-constraint satisfaction and its
+  implications.
+\newblock {\em Theoretical Computer Science}, 348(2--3):357--365, 2005.
+
+\end{thebibliography}

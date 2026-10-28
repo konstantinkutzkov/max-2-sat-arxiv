@@ -1,0 +1,297 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\Ostar}{O^{*}}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\title{Near-Twin Neighborhoods as a Structural Exit\\
+\large A deterministic bound from three-state pair compression}
+\author{}
+\date{8 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Pairs with almost identical signed neighborhoods are a concrete source of
+correlated gap functions. We prove a structural algorithm for this case:
+if $m$ disjoint pairs disagree at an average of at most $r$ other paired
+variables, Max
+2-SAT can be solved exactly in polynomial space and time
+$\Ostar(2^n(3/4)^{m/(r+1)})$. Thus a linear number of such pairs and
+constant $r$ give a fixed exponential base below two, independently of
+clause density. The proof chooses compatible pairs, assigns the remaining
+variables, and removes one of the four states of each retained pair by
+domination. This extends the exact interaction-class rule in the earlier
+notes to local errors. It does not prove that small total gap necessarily
+forces near-twin pairs, and makes no literature novelty claim.
+\end{abstract}
+
+\section{The neighborhood property}
+
+Write the objective, after multiplying by four and omitting a constant,
+as
+\begin{equation}
+ f(a)=\sum_i h_i a_i-\sum_{i<j}J_{ij}a_i a_j,
+ \qquad a_i\in\{-1,+1\}.                           \label{eq:score}
+\end{equation}
+For a single binary clause on $ij$, $J_{ij}$ is the product of its two
+literal signs. Initial unit clauses add twice their signs to $h$.
+The theorem holds for general rational quadratic coefficients of
+polynomial encoding length as well; the simple-clause setting has
+$J_{ij}\in\{-1,0,+1\}$.
+
+A pair $P=\{u,v\}$, with an orientation $\varepsilon\in\{-1,+1\}$,
+has discrepancy set
+\begin{equation}
+ D(P,\varepsilon)=
+ \{w\notin\{u,v\}:J_{uw}\ne\varepsilon J_{vw}\}.      \label{eq:D}
+\end{equation}
+Call it an $r$-near-twin pair when $|D(P,\varepsilon)|\le r$.
+The case $\varepsilon=-1$ allows negating one variable before comparing
+the neighborhoods. Fields $h_u,h_v$ may be completely different.
+Neither the degree nor the size of the common neighborhood is bounded.
+
+For simple clauses, discrepancy can be read from co-occurrence counts.
+Let $s_{uv}$ be the number of variables adjacent to exactly one of $u,v$,
+excluding the two centers. Let $o_{uv}^{\varepsilon}$ count common
+neighbors where the interaction signs disagree after orientation.
+Then
+\begin{align}
+ |D(P,\varepsilon)|&=s_{uv}+o_{uv}^{\varepsilon},     \label{eq:dist}\\
+ \sum_{w\notin P}(J_{uw}-\varepsilon J_{vw})^2
+ &=s_{uv}+4o_{uv}^{\varepsilon}
+  =d_u^{\rm ext}+d_v^{\rm ext}-2\varepsilon C_{uv}, \label{eq:gram}\\
+ C_{uv}&=\sum_{w\notin P}J_{uw}J_{vw}.
+\end{align}
+Here $d_u^{\rm ext}$ excludes a possible edge to $v$. Thus a near-twin
+test is an explicit signed-neighborhood counting test.
+
+\section{The local three-state rule}
+
+\begin{lemma}[Pair domination]\label{lem:pair}
+Suppose $J_{uw}=\varepsilon J_{vw}$ for every other remaining variable
+$w$. For any fixed assignment of variables already removed, an optimum
+of the residual soft objective uses one of three explicitly determined
+assignments of $u,v$.
+\end{lemma}
+\begin{proof}
+Let $H_u,H_v$ be the residual fields, including all effects of the fixed
+assignment, and set $z_u=a_u$, $z_v=\varepsilon a_v$.
+The pair interacts with every other variable only through $z_u+z_v$.
+Its internal contribution is $-\varepsilon J_{uv}z_uz_v$.
+The two mixed states $(z_u,z_v)=(+1,-1)$ and $(-1,+1)$ have the same
+external and internal contributions. Their field contributions are
+$H_u-\varepsilon H_v$ and $-H_u+\varepsilon H_v$.
+Keep the first when $H_u\ge\varepsilon H_v$, and the second otherwise.
+Together with $(+1,+1)$ and $(-1,-1)$, these are the three states.
+The discarded state is no better for any assignment of the other
+remaining variables. Ties may be broken consistently.
+\end{proof}
+
+This is an actual domination rule, not an assumption about independence
+or about how many local optima exist. The choice of mixed state must use
+the \emph{residual} fields: it can change when an exceptional neighbor is
+assigned.
+
+\section{Making many pairs compatible}
+
+Suppose $P_1,\ldots,P_m$ are disjoint near-twin pairs, with specified
+orientations. Form a graph $H$ on these pairs. Join $i,j$ if
+\[
+ D(P_i,\varepsilon_i)\cap P_j\ne\varnothing
+ \quad\text{or}\quad
+ D(P_j,\varepsilon_j)\cap P_i\ne\varnothing.
+\]
+An edge says that retaining both pairs would prevent at least one from
+being an exact twin pair. Discrepancies at variables outside all pairs
+do not create edges: those variables will be assigned before compression.
+
+\begin{lemma}[Compatible family]\label{lem:compatible}
+Let $U=\bigcup_iP_i$ and
+$R=\sum_i|D(P_i,\varepsilon_i)\cap U|$ be the total number of
+discrepancies at other paired variables. Then $H$ has a polynomial-time
+computable independent set of size at least
+$m^2/(m+R)$. In particular, $R\le rm$ gives size at least $m/(r+1)$.
+\end{lemma}
+\begin{proof}
+Orient the variables inside pairs $i,j$ according to their signs
+$\varepsilon_i,\varepsilon_j$. Their interactions form a $2\times2$
+matrix. Pair $i$'s discrepancies count unequal entries in its columns;
+pair $j$'s discrepancies count unequal entries in its rows. If these
+four entries are not all equal, at least two of the four comparisons
+are unequal: three equalities around a four-cycle imply the fourth.
+Consequently, every edge of $H$ accounts for at least two discrepancies,
+and $2|E(H)|\le R$.
+
+In a uniformly random ordering of $V(H)$, retain every vertex that
+precedes all its neighbors. These vertices form an independent set,
+of expected size
+\[
+ \sum_i\frac1{\deg_H(i)+1}
+ \ge\frac{m^2}{m+2|E(H)|}\ge\frac{m^2}{m+R}.
+\]
+The first inequality is Cauchy--Schwarz. This construction is
+deterministic by conditional expectations: at each position, choose a
+vertex whose placement does not decrease the conditional expected
+size. The expectation is computable in polynomial time. A not-yet-placed
+vertex contributes zero if it already has a placed neighbor, and
+otherwise contributes $1/(\deg_H(i)+1)$; placed retained vertices
+contribute one.
+
+If each individual discrepancy count is at most an integer $r$, a
+simpler certificate is available: every induced subgraph has average
+degree at most $r$ by the same counting argument, so reverse greedy
+coloring uses at most $r+1$ colors. Its largest color class suffices.
+\end{proof}
+
+More generally, any independent set of $s$ pairs in $H$ can be used.
+For example, a bipartite $H$ permits $s\ge m/2$ even if individual
+discrepancy counts grow without bound. A star permits keeping all its
+leaves. Thus bounded discrepancies are one sufficient certificate,
+not the only useful form of this structural condition.
+
+\begin{theorem}[Near-twin algorithm]\label{thm:main}
+Given $m$ disjoint oriented pairs in a formula on $n$ variables,
+with total internal discrepancy count $R\le rm$,
+there is a deterministic exact algorithm using polynomial space and
+time
+\begin{equation}
+ \Ostar\left(2^n(3/4)^{m/(r+1)}\right).             \label{eq:time}
+\end{equation}
+For fixed $\beta>0$ and $r\ge0$, at least $\beta n$ disjoint pairs
+with this average discrepancy bound give a fixed base below two:
+\[
+ c_{\beta,r}=2(3/4)^{\beta/(r+1)}<2.
+\]
+There is no restriction on clause density or initial literal gaps.
+\end{theorem}
+\begin{proof}
+Use Lemma~\ref{lem:compatible} to choose $s\ge m/(r+1)$ compatible
+pairs. Enumerate assignments of the $n-2s$ variables outside them.
+All discrepancies of each retained pair have now been assigned, so
+Lemma~\ref{lem:pair} applies to each pair. Their three-state reductions
+are simultaneously sound: replacing a discarded mixed state preserves
+all interaction contributions and never decreases the objective.
+
+For each outside assignment, enumerate the $3^s$ retained pair states
+and evaluate the objective. The total number of candidates is
+\[
+ 2^{n-2s}3^s=2^n(3/4)^s.
+\]
+The outside assignments and pair states can both be traversed depth
+first with polynomial storage and polynomial work per candidate.
+\end{proof}
+
+The theorem includes the simpler full-neighborhood class with $m$
+disjoint $r$-near-twin pairs. For that class the pairs need not be supplied.
+Construct a compatibility graph on the original variables: edge $uv$
+exists when at least one orientation satisfies~\eqref{eq:D} with at most
+$r$ discrepancies. Record a qualifying orientation. A maximum matching
+finds the largest disjoint collection in polynomial time. Alternatively,
+a simple greedy maximal matching loses at most a factor two in $m$,
+still giving a fixed exponential saving without a matching subroutine.
+Once a collection is given, ignoring discrepancies outside its union
+can improve the bound further; finding the best collection under that
+weaker restricted test is not claimed to be easy.
+
+If all variables are covered by pairs ($m=n/2$), illustrative bases are
+\[
+ r=0:\ 1.732051,\qquad
+ r=1:\ 1.861210,\qquad
+ r=2:\ 1.906369.
+\]
+These are conservative worst-case bounds. The actual discrepancy graph
+often permits retaining substantially more pairs.
+
+\section{Why this relates to small gaps}
+
+Let $A$ be an assigned set not containing $u,v$. Their effective gaps
+are $\Delta_i(A)=h_i-\sum_{w\in A}J_{iw}a_w$. Therefore
+\begin{equation}
+ \Delta_u(A)-\varepsilon\Delta_v(A)
+ =h_u-\varepsilon h_v
+  -\sum_{w\in A}(J_{uw}-\varepsilon J_{vw})a_w.       \label{eq:coupled}
+\end{equation}
+For simple clauses and an $r$-near-twin pair,
+\[
+ |\Delta_u(A)-\varepsilon\Delta_v(A)|
+ \le |h_u-\varepsilon h_v|+2r.
+\]
+Thus when the initial fields also agree after orientation, their gaps
+remain close under \emph{every} common partial assignment, however large
+their degrees are. If both are exposed to a uniform assignment on $A$,
+the variance of the difference of their centered gaps is exactly
+$\sum_{w\in A}(J_{uw}-\varepsilon J_{vw})^2\le4r$.
+
+The extreme example is a family with the same exposed neighborhood and
+the same field. Their gaps are copies of one signed sum. When its degree
+$d$ is even and its field is zero, all those gaps vanish together on
+$\binom d{d/2}$ of the $2^d$ assignments of the exposed neighborhood.
+The fraction is $\Theta(d^{-1/2})$, regardless of how many variables
+share the gap function. This illustrates how simultaneous small gaps
+can fail to behave as many independent events. It is a statement about
+that family's gap functions, not by itself a bound for every earlier
+gap in a full branching order.
+
+The structural algorithm does not need the fields to agree. If they
+differ, the mixed-state comparison simply chooses the better orientation.
+This is useful: the same neighborhood test can support compression
+whether the current gaps are small, large, or asymmetric.
+
+\section{The resulting class and the remaining dichotomy}
+
+The class can be dense and non-bipartite. Start with arbitrary quadratic
+interactions on $n/2$ classes, replace each class by a pair, and make
+interactions constant across each pair of classes after optional variable
+negations. Internal pair interactions and all fields are arbitrary.
+Perturb a bounded number of coefficients incident to each pair. Taking
+both internal and class-to-class interactions nonzero gives a complete interaction
+graph, with density proportional to $n$. The quotient can contain a
+linear number of classes; there need not be a small separator or a small
+total number of neighborhood types. This is more permissive than
+requiring a few exact interaction classes.
+
+The theorem establishes one structural exit when neighborhood responses
+are nearly identical. It does \emph{not} establish the converse:
+frequent small total gap need not yet be known to force linearly many
+such pairs. The remaining inverse question is whether persistent small
+gap yields near-twin pairs, larger compressible groups, a small set of
+shared influential variables, or some other structure with a provable
+algorithmic saving.
+
+For integration into a pruning search, the theorem is directly safe as
+a terminal solver of the residual \emph{soft} objective. Auxiliary
+pruning constraints may break the pair symmetry; discarding them for
+this terminal optimization is safe because every returned assignment is
+still valid for the original soft problem. Genuinely imposed hard
+constraints cannot be discarded this way.
+
+\begingroup\small\raggedright
+\paragraph{Relation to the previous notes.}
+This develops the approximate interaction-class direction left open in
+\texttt{max2sat\_branching\_frontier.tex} and the pair-decision direction
+in \texttt{max2sat\_pairs\_sums\_measure.tex}. The agreement counts of
+\texttt{max2sat\_counting\_conditions.tex} concern cancellation; the
+near-twin test here instead detects strong alignment that can be
+exploited by domination after resolving discrepancies.
+
+\paragraph{Verification.}
+The companion program \texttt{explore\_near\_twin\_pairs.py} compares
+the three-state algorithm with exhaustive optimization on dense planted
+examples with negated pairs, unequal fields, exceptional edges, and
+unpaired variables. All 26 instances preserved the optimum, comparing
+21,795 compressed candidates with 59,648 exhaustive assignments.
+There were 2,160 gap-identity checks, and 30 retained pairs whose chosen
+mixed state changed between outside assignments. The compatibility
+lemmas passed checks on all 324 oriented $2\times2$ interaction blocks
+over $\{-1,0,+1\}$ and all 1,099 labeled graphs on one to five vertices.
+Results are recorded in \texttt{near\_twin\_pair\_checks.json}.
+\par\endgroup
+\end{document}

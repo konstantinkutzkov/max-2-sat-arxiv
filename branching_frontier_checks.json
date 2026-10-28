@@ -1,0 +1,147 @@
+{
+  "phase_checks": {
+    "tail_checks": 41650,
+    "forced_transition_checks": 3599,
+    "full_phase_bases": [
+      {
+        "D": 16,
+        "k": 4,
+        "base": 1.6723610423606508
+      },
+      {
+        "D": 32,
+        "k": 8,
+        "base": 1.6951853441186553
+      },
+      {
+        "D": 64,
+        "k": 16,
+        "base": 1.7153587845442544
+      },
+      {
+        "D": 128,
+        "k": 32,
+        "base": 1.7301897603135872
+      }
+    ]
+  },
+  "certificate_checks": {
+    "seed": 7102026,
+    "systems": 150,
+    "split_checks": 918,
+    "added_clause_checks": 150,
+    "improved_over_best_single": 55,
+    "improved_over_unweighted_all_sum": 103
+  },
+  "examples": {
+    "distracting_clause": {
+      "unweighted_count": 134215040,
+      "weighted_count": 0,
+      "weights": [
+        1,
+        1,
+        0
+      ]
+    },
+    "odd_cycle": {
+      "actual_completions": 0,
+      "min_bound_weights_0_to_2": 4
+    }
+  },
+  "max2sat_checks": {
+    "formulas": 80,
+    "phase_nodes": 103
+  },
+  "small_branching_comparison": [
+    {
+      "n": 12,
+      "instance": 0,
+      "optimum": 38,
+      "results": {
+        "static": {
+          "visited": 14,
+          "lookahead_children": 22
+        },
+        "joint-volume": {
+          "visited": 6,
+          "lookahead_children": 56
+        }
+      }
+    },
+    {
+      "n": 12,
+      "instance": 1,
+      "optimum": 38,
+      "results": {
+        "static": {
+          "visited": 16,
+          "lookahead_children": 28
+        },
+        "joint-volume": {
+          "visited": 7,
+          "lookahead_children": 86
+        }
+      }
+    },
+    {
+      "n": 12,
+      "instance": 2,
+      "optimum": 45,
+      "results": {
+        "static": {
+          "visited": 4,
+          "lookahead_children": 4
+        },
+        "joint-volume": {
+          "visited": 2,
+          "lookahead_children": 22
+        }
+      }
+    },
+    {
+      "n": 16,
+      "instance": 0,
+      "optimum": 72,
+      "results": {
+        "static": {
+          "visited": 91,
+          "lookahead_children": 162
+        },
+        "joint-volume": {
+          "visited": 32,
+          "lookahead_children": 694
+        }
+      }
+    },
+    {
+      "n": 16,
+      "instance": 1,
+      "optimum": 77,
+      "results": {
+        "static": {
+          "visited": 40,
+          "lookahead_children": 72
+        },
+        "joint-volume": {
+          "visited": 19,
+          "lookahead_children": 412
+        }
+      }
+    },
+    {
+      "n": 16,
+      "instance": 2,
+      "optimum": 68,
+      "results": {
+        "static": {
+          "visited": 107,
+          "lookahead_children": 190
+        },
+        "joint-volume": {
+          "visited": 51,
+          "lookahead_children": 866
+        }
+      }
+    }
+  ]
+}

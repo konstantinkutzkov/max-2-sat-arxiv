@@ -1,0 +1,1028 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=28mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb{E}}
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=2em
+\hypersetup{pdftitle={Max 2-SAT and the Domination Rule: Results and Ideas}}
+
+\title{Max 2-SAT and the Domination Rule:\\ Results and Ideas So Far}
+\author{}
+\date{5 October 2026\\[3pt]\small Working notes, updated}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We collect the current state of our work on deterministic polynomial-space
+algorithms for Max 2-SAT analyzed in the number $n$ of variables. Two earlier
+notes give an additive deficit measure, which certifies savings for bounded
+deficits, and an exponential saving for formulas in which a linear number of
+variables have an absolute linear polarity gap. For DPLL with the domination
+rule we add a \emph{level budget}: for every static variable order, the number
+of leaves is at most one plus the number of predecessor assignments that leave
+a variable undominated, summed over all variables. For formulas with at most
+one binary clause per pair this gives
+$\Ostar(2^{\max\{1-\eta,\,H((1-\varepsilon)/2)\}n})$, and a circulant family
+shows that no DPLL algorithm whose only simplification is domination can do
+better on the gap term. We then study an extension of domination: when
+branching on $x$, the branch against the literal $\ell$ closer to domination
+keeps only the assignments under which $\ell$ would not become dominated,
+recorded as a \emph{pruning clause} $\langle L_x\le p_\ell-1\rangle$. The search
+stays exact when these clauses are nested and combined with domination; with
+them the gap bound holds for every static order; and with disjoint supports
+their savings multiply exactly. With overlapping supports two things limit the
+savings: correlation, measured by the signed Gram matrix of the clauses, and
+timing, since a clause is decided only once most of its support is assigned.
+Finally we record a spectral view, domination for sets of variables, and two
+special cases that separate the remaining difficulties.
+\end{abstract}
+
+\section{Goal and context}
+
+\paragraph{Goal.} A deterministic algorithm that solves Max 2-SAT in time
+$\Ostar(c^n)$ for a constant $c<2$, using polynomial space, for formulas of
+\emph{every} clause density. Williams' algorithm runs in time
+$\Ostar(2^{\omega n/3})$ but needs exponential space~\cite{Wil05}; beating
+$2^n$ in polynomial space is open~\cite{Wil05,Woe08}, already for Max-Cut.
+The known polynomial-space bounds in terms of $n$ depend on the average
+degree $d$ and save only $O((\log d)/d)\cdot n$
+\cite{Gol11,GK14,Has16}. They give $c^n$ only for constant density.
+
+\paragraph{Approach.} Identify classes of formulas of unbounded density that
+DPLL with the domination rule solves in time $c^n$, understand which proof
+techniques capture the saving, and then extend the rule. The first class: a
+linear number of variables with an absolute linear polarity gap~\cite{N2}.
+
+\section{Setting and notation}\label{sec:setting}
+
+We follow~\cite{N1,N2}. A formula is \emph{canonical} if it consists of unit
+clauses, kept with multiplicity, and binary clauses on distinct variables such
+that every unordered pair carries zero clauses, one clause, or two clauses
+complementary in both positions. Let $B\in\{1,2\}$ bound the number of binary
+clauses per pair. Exact pair reductions~\cite[Sec.~2]{N2} bring every
+unweighted 2-CNF without repeated binary clauses into canonical form. They
+preserve the score up to an additive offset and preserve the effective gaps
+defined below. If every variable has distinct neighbors in the input, then
+$B=1$.
+
+For a literal $\ell$, let $d_1(\ell)$ and $d_2(\ell)$ count its occurrences in
+unit and binary clauses. Its \emph{deficit} is
+\[
+ p_\ell=d_2(\neg\ell)-d_1(\ell)+d_1(\neg\ell).
+\]
+For a variable $v$ put $D_v=d_2(v)+d_2(\neg v)$ and
+$\Delta_v=d_2(v)-d_2(\neg v)+2\bigl(d_1(v)-d_1(\neg v)\bigr)$. Then
+\begin{equation}
+ p_v=\frac{D_v-\Delta_v}{2},\qquad p_{\neg v}=\frac{D_v+\Delta_v}{2},\qquad
+ p_v+p_{\neg v}=D_v.
+ \label{eq:deficit-gap}
+\end{equation}
+For a partial assignment $\sigma$, $F|_\sigma$ denotes substitution: delete
+satisfied clauses and shorten the others, with no further simplification.
+Canceling opposite unit clauses never changes a deficit and is ignored below.
+We write $H(t)=-t\log_2t-(1-t)\log_2(1-t)$ for the binary entropy.
+
+\begin{lemma}[Domination~\cite{N1,N2}]\label{lem:dom}
+If $p_\ell\le0$, some optimal assignment makes $\ell$ true.
+\end{lemma}
+
+\begin{lemma}[Local update~\cite{N2}]\label{lem:update}
+Let $c_{xv}\in\{0,1,2\}$ be the number of binary clauses on $\{x,v\}$.
+Assigning $x$ lowers exactly one of $p_v,p_{\neg v}$ by $c_{xv}$, for every
+unassigned $v\ne x$; which one depends on the value of $x$ and on the clause
+signs. Non-neighbors are unaffected.
+\end{lemma}
+
+\begin{corollary}[Monotonicity]\label{cor:mono}
+Deficits never increase under assignments. In particular, if $v$ is
+dominated in $F|_\sigma$, then it is dominated in $F|_{\sigma\tau}$ for every
+assignment $\tau$ to further variables other than $v$.
+\end{corollary}
+
+\paragraph{DPLL with domination.} \emph{Closure} fixes dominated variables
+until none is left. If no variable remains, the node is a leaf; otherwise
+a branching rule picks a variable and both values are explored recursively.
+Let $L(F)$ be the number of leaves, with unary closure steps contracted, so
+that every internal node has two children. The \emph{static rule}
+$A_\pi$ for an order $\pi$ always branches on the first unassigned variable
+of $\pi$. Depth-first search uses polynomial space, and the running time is
+$\Ostar(L(F))$.
+
+\section{Results of the earlier notes}
+
+\begin{theorem}[Literal-deficit measure~\cite{N1}]\label{thm:n1}
+Let $B=1$ and $q_v=\min\{p_v,p_{\neg v}\}$. Branching on a variable of maximum
+$q_v$ and using the measure $\mu(F)=\sum_v\bigl(1-\tfrac1{3q_v}\bigr)$ over the
+undominated variables gives $L(F)\le2^{\mu(F)}$, that is, time
+$\Ostar\bigl(2^{\,n-\frac13\sum_v1/q_v}\bigr)$.
+\end{theorem}
+
+The saving comes only from variables of bounded deficit. For a linear gap,
+$q_v=\Theta(n)$ and the certified saving is $O(1)$; see
+Section~\ref{sec:additive} for why additive measures cannot do better here.
+
+\begin{theorem}[Absolute linear gap~\cite{N2}]\label{thm:n2}
+Let the input be an unweighted 2-CNF without unit clauses and without
+repeated binary clauses, and suppose at least $\eta n$ variables satisfy
+$|d_2(v)-d_2(\neg v)|\ge\varepsilon n$ in the input. Then Max 2-SAT can be
+solved deterministically in polynomial space and time
+$\Ostar(2^{(1-\kappa)n})$ with $\kappa=\min\{\eta,\varepsilon^2/(4B^2)\}$.
+\end{theorem}
+
+The proof reserves a set $L\subseteq S$ of size at most
+$\lfloor\varepsilon^2n/(4B^2)\rfloor$ and enumerates all assignments to
+$H=V\setminus L$. Hoeffding's inequality and a union bound show that all of
+$L$ is dominated except for a $2^{-\gamma n}$ fraction of these assignments,
+with $\gamma>|L|/n$. The search-work budget
+$W(F;H,L)=2^h+2^s\sum_{v\in L}N_v(F;H)$ also covers domination applied during
+the search.
+
+\begin{remark}[Constant]\label{rem:alpha}
+With $|L|=\alpha n$ the margin is $(\varepsilon-B\alpha)n/2$, so the failure
+exponent is $\gamma(\alpha)=(\varepsilon-B\alpha)^2/(2B^2\ln2)$ and the saving
+is $\min\{\eta,\alpha,\gamma(\alpha)\}$. Choosing $\alpha=\gamma(\alpha)$ gives
+about $\varepsilon^2/(2B^2\ln2)\approx0.72\,\varepsilon^2/B^2$ for small
+$\varepsilon$. Theorem~\ref{thm:tight} below removes the loss $B\alpha$ and
+the restriction to two blocks.
+\end{remark}
+
+\section{The level budget}\label{sec:budget}
+
+Let $\pi=(x_1,\dots,x_r)$ be an order of the variables of $F$ and
+$P_k=\{x_1,\dots,x_{k-1}\}$. Define
+\begin{gather}
+ N_k(F,\pi)=\bigl|\{\sigma\in\{0,1\}^{P_k}:
+ p_{x_k}(F|_\sigma)>0\text{ and }p_{\neg x_k}(F|_\sigma)>0\}\bigr|,
+ \notag\\
+ B_\pi(F)=1+\sum_{k=1}^rN_k(F,\pi).
+ \label{eq:budget}
+\end{gather}
+Thus $N_k$ counts the assignments to the predecessors of $x_k$ under which
+$x_k$ is dominated in neither polarity.
+
+\begin{lemma}[Level budget]\label{lem:level}
+For every canonical formula $F$ and every order $\pi$,
+$L_{A_\pi}(F)\le B_\pi(F)$.
+\end{lemma}
+
+\begin{proof}
+Since every internal node has two children,
+$L_{A_\pi}(F)=1+{}$(number of internal nodes). Let $u$ be an internal node
+that branches on $x_k$. The rule $A_\pi$ branches on the first unassigned
+variable of $\pi$, so all of $P_k$ is assigned at $u$; let
+$\sigma_u\in\{0,1\}^{P_k}$ record these values, whether they were branched on
+or fixed by closure. The formula at $u$ arises from $F|_{\sigma_u}$ by
+assigning further variables that closure fixed. Since $x_k$ is not dominated
+at $u$, Corollary~\ref{cor:mono} shows that $x_k$ is dominated in neither
+polarity in $F|_{\sigma_u}$.
+
+It remains to show that $u\mapsto\sigma_u$ is injective on the internal nodes
+branching on $x_k$. Two distinct such nodes $u,u'$ are incomparable, because
+$x_k$ is still unassigned at both. Their lowest common ancestor $w$ is an
+internal node branching on some $x_j$. Since $w$ is a proper ancestor of $u$,
+the variable $x_k$ is unassigned at $w$ and $j\ne k$; as $A_\pi$ picks the
+first unassigned variable, $j<k$. The nodes lie below different children of
+$w$, so $\sigma_u(x_j)\ne\sigma_{u'}(x_j)$. Hence at most $N_k(F,\pi)$
+internal nodes branch on $x_k$.
+\end{proof}
+
+\begin{remark}[Two blocks]\label{rem:twoblock}
+For $\pi=(H,L)$ with $L=(v_1,\dots,v_s)$, positions in $H$ contribute at most
+$2^h-1$. By Corollary~\ref{cor:mono}, $N_{h+j}(F,\pi)\le2^{j-1}N_{v_j}(F;H)$.
+Hence $B_\pi(F)\le2^h+\sum_j2^{j-1}N_{v_j}(F;H)\le W(F;H,L)$: the budget
+of~\cite[Sec.~7]{N2} is the two-block case, with the factor $2^s$ replaced by
+$2^{j-1}$.
+\end{remark}
+
+\begin{lemma}[Computing $N_k$]\label{lem:compute}
+Let $U$ be the set of neighbors of $x=x_k$ in $P_k$, put $c_u=c_{ux}$ and
+$K=\sum_{u\in U}c_u$, and let $a_j$ be the coefficient of $z^j$ in
+$\prod_{u\in U}(1+z^{c_u})$. Then
+\[
+ N_k(F,\pi)=2^{k-1-|U|}\sum_{j}a_j\,[\,p_x-j>0\,]\,[\,p_{\neg x}-(K-j)>0\,].
+\]
+In particular $N_k$ and $B_\pi(F)$ are computable in polynomial time.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:update}, each $u\in U$ lowers $p_x$ by $c_u$ for one of its
+values and $p_{\neg x}$ by $c_u$ for the other; predecessors outside $U$ do
+not affect $x$. Thus $a_j$ counts the assignments to $U$ that lower $p_x$ by
+exactly $j$, and then $p_{\neg x}$ is lowered by $K-j$.
+\end{proof}
+
+\begin{proposition}[A measure for adaptive branching]\label{prop:adaptive}
+For a formula $F$ let $\Phi(F)=\min_\pi B_\pi(F)$ over all orders of its
+variables, and $\Phi(F)=1$ if none remain.
+\begin{enumerate}
+ \item If $F'$ arises from $F$ by fixing a dominated variable, then
+ $\Phi(F')\le\Phi(F)$.
+ \item If $x$ is undominated in $F$, then for every order $\pi'$ of the
+ remaining variables,
+ $B_{(x,\pi')}(F)=B_{\pi'}(F|_{x=0})+B_{\pi'}(F|_{x=1})$.
+\end{enumerate}
+Consequently, the algorithm that after closure branches on the first variable
+of an order minimizing $B_\pi$ has at most $\Phi(F)$ leaves.
+\end{proposition}
+
+\begin{proof}
+(2) The first position contributes $N_1=1$ because $x$ is undominated. For a
+later position, split the assignments to the predecessors according to the
+value of $x$; this gives
+$N_k(F,(x,\pi'))=N_{k-1}(F|_{x=0},\pi')+N_{k-1}(F|_{x=1},\pi')$. Summing,
+$B_{(x,\pi')}(F)=2+\sum_j\bigl(N_j(F|_{x=0},\pi')+N_j(F|_{x=1},\pi')\bigr)$,
+which is the claim.
+
+(1) Let $y$ be fixed to $b$ and let $\pi$ be any order of the variables of
+$F$; write $\pi\setminus y$ for its restriction. For a variable before $y$ in
+$\pi$, the predecessor set is unchanged, and the extra assignment $y=b$ can
+only lower its deficits. For a variable after $y$, the count in $F'$ equals
+the number of assignments to its predecessors in $F$ with $y=b$ that leave it
+undominated. The term of $y$ disappears. Hence
+$B_{\pi\setminus y}(F')\le B_\pi(F)$, and minimizing over $\pi$ gives
+$\Phi(F')\le\Phi(F)$.
+
+For the consequence, use induction on the number of variables. Closure does
+not increase $\Phi$ by (1). If no variable remains, $L=1\le\Phi$. Otherwise
+let $(x,\pi')$ minimize $B_\pi$ for the closed formula $G$; then $x$ is
+undominated, and
+$L(G)=L(G|_{x=0})+L(G|_{x=1})\le\Phi(G|_{x=0})+\Phi(G|_{x=1})
+\le B_{\pi'}(G|_{x=0})+B_{\pi'}(G|_{x=1})=B_{(x,\pi')}(G)=\Phi(G)$.
+\end{proof}
+
+$\Phi$ is a measure of the formula alone. It is not obviously computable, but
+for every concrete order the bound $L_{A_\pi}\le B_\pi$ is certified in
+polynomial time by Lemma~\ref{lem:compute}, so orders can be optimized
+heuristically per instance.
+
+\section{A tight bound for the absolute linear gap class}
+
+\begin{theorem}\label{thm:tight}
+Let $F$ be canonical with $B=1$ on $n$ variables, let $\varepsilon\in(0,1]$,
+and let $S$ be a set of variables with $|\Delta_v(F)|\ge\varepsilon n$ for all
+$v\in S$. For every order $\pi$ that lists $V\setminus S$ before $S$,
+\[
+ L_{A_\pi}(F)\le2^{\,n-|S|}+|S|\cdot2^{\,H((1-\varepsilon)/2)\,n}.
+\]
+Hence, if $|S|\ge\eta n$, DPLL with domination solves Max 2-SAT on $F$ in
+polynomial space and time
+\[
+ \Ostar\bigl(2^{\max\{1-\eta,\,H((1-\varepsilon)/2)\}\,n}\bigr).
+\]
+For $\eta=1$ every order works.
+\end{theorem}
+
+The saving in the exponent is $\min\{\eta,1-H((1-\varepsilon)/2)\}$, and
+$1-H((1-\varepsilon)/2)=\varepsilon^2/(2\ln2)+O(\varepsilon^4)$. By gap
+preservation~\cite[Lemma~3]{N2}, the hypothesis holds for the class of
+Theorem~\ref{thm:n2} whenever canonical form has no complementary pairs.
+
+\begin{proof}
+Use Lemma~\ref{lem:level}. Positions in $V\setminus S$ contribute at most
+$\sum_{k\le n-|S|}2^{k-1}<2^{n-|S|}$. Fix a position $k$ with $x=x_k\in S$,
+rename so that $\Delta:=\Delta_x(F)\ge\varepsilon n$, and let $K$ and $R$ be
+the numbers of neighbors of $x$ before and after position $k$. Then
+$D_x=K+R$ and $p_x=(K+R-\Delta)/2$ by~\eqref{eq:deficit-gap}. If
+$\Delta\ge D_x$, then $x$ is dominated under every $\sigma$ and $N_k=0$; assume
+$\Delta<D_x$.
+
+For uniform $\sigma$ on $P_k$, the number $X$ of neighbors in $P_k$ whose
+value lowers $p_x$ is $\operatorname{Bin}(K,\tfrac12)$, by
+Lemma~\ref{lem:update} with $B=1$. An undominated $x$ needs $p_x-X>0$, so
+\[
+ N_k\le2^{m}\Pr\bigl[X\le K/2-g/2\bigr],\qquad m:=k-1\ge K,\quad g:=\Delta-R\le K.
+\]
+\emph{Case $m<(1-\varepsilon)n$.} Then $N_k\le2^m\le2^{(1-\varepsilon)n}\le
+2^{H((1-\varepsilon)/2)n}$, since $H(t)\ge2t$ on $[0,\tfrac12]$.
+
+\emph{Case $m\ge(1-\varepsilon)n$.} Since $R\le n-k=n-1-m$, we have
+$g\ge m+1-(1-\varepsilon)n>0$. The binomial tail bound
+$\Pr[\operatorname{Bin}(K,\tfrac12)\le K/2-t]\le2^{-K\varphi(t/K)}$ with
+$\varphi(u)=1-H(\tfrac12-u)$ gives $N_k\le2^{m-K\varphi(g/(2K))}$. As
+$\varphi$ is convex with $\varphi(0)=0$, $\varphi(u)/u$ is nondecreasing, so
+$K\mapsto K\varphi(g/(2K))$ is nonincreasing; with $K\le m$,
+\[
+ N_k\le2^{\,mH(\frac12-\frac g{2m})}\le2^{\,mH(c/m)},\qquad
+ c:=\tfrac{(1-\varepsilon)n}{2},
+\]
+using that $H$ increases on $[0,\tfrac12]$ and
+$\tfrac12-\tfrac g{2m}\le\tfrac{(1-\varepsilon)n-1}{2m}\le\tfrac cm\le\tfrac12$.
+Finally $\psi(m)=mH(c/m)$ satisfies $\psi'(m)=-\log_2(1-c/m)>0$, so
+$\psi(m)\le\psi(n)=nH((1-\varepsilon)/2)$. Summing over the at most $|S|$
+positions of $S$ proves the bound.
+\end{proof}
+
+The two monotonicity facts in the proof have a simple meaning: for a fixed
+gap, more neighbors mean more noise, so the worst case is that all predecessors
+are neighbors; and an earlier position saves on the factor $2^{k-1}$ but loses
+more in the margin, so the last position dominates.
+
+\begin{remark}[$B=2$]\label{rem:b2}
+With complementary pairs, $X=\sum_uc_uZ_u$ with $c_u\in\{1,2\}$. Hoeffding's
+inequality with $Q\le B^2m$ and margin $(\Delta-R')/2$, where $R'\le B(n-1-m)$
+is the weighted number of later neighbors, gives
+$N_k\le2^{\,m-(\varepsilon n-B(n-1-m))^2/(2B^2m\ln2)}$. The exponent is
+decreasing in $n-1-m$ on the relevant range, so the last position dominates
+again and $L_{A_\pi}(F)\le2^{n-|S|}+|S|\,2^{(1-\varepsilon^2/(2B^2\ln2))n}$.
+This improves $\varepsilon^2/(4B^2)$ by the factor $2/\ln2\approx2.9$. The
+exact rate function for $B=2$ has not been worked out.
+\end{remark}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}cccccc@{}}
+\toprule
+$\varepsilon$ & Thm.~\ref{thm:n2} ($1-\varepsilon^2/4$) &
+Rem.~\ref{rem:alpha} (optimized) & Thm.~\ref{thm:tight}
+($H(\frac{1-\varepsilon}2)$) & circulant, $n=3201$ \\
+\midrule
+0.2 & 0.990 & 0.977 & 0.971 & 0.969 \\
+0.4 & 0.960 & 0.924 & 0.881 & 0.879 \\
+0.6 & 0.910 & 0.852 & 0.722 & 0.720 \\
+\bottomrule
+\end{tabular}
+\caption{Exponents (in units of $n$) for $B=1$ and $\eta$ large. The last
+column is the exact $\tfrac1n\log_2$ of the tree size on the family of
+Theorem~\ref{thm:lower}, which every branching rule attains.}
+\label{tab:exponents}
+\end{table}
+
+\section{A matching lower bound for domination-based DPLL}
+
+For odd $n$ and an integer $c$ with $(n-1)/4\le c<(n-1)/2$, let $C_{n,c}$
+contain, for each pair $i<j$, the clause $(x_i\lor x_j)$ if the circular
+distance $\min\{j-i,n-j+i\}$ is at most $c$, and $(\neg x_i\lor\neg x_j)$
+otherwise. Every variable has $p_v=a:=n-1-2c$ and $p_{\neg v}=b:=2c$, hence
+the same gap $\Delta=4c-(n-1)$.
+
+\begin{theorem}\label{thm:lower}
+Every DPLL algorithm on $C_{n,c}$ whose simplifications are domination
+fixings and opposite-unit cancellations has exactly $\binom{n-1}{a}$ leaves,
+for every branching rule. Choosing $c$ with $\Delta\ge\varepsilon n$ and
+$\Delta=\varepsilon n+O(1)$, where $0<\varepsilon<1$, gives
+$2^{H((1-\varepsilon)/2)n-O(\log n)}$ leaves, while every variable has gap at
+least $\varepsilon n$ and $B=1$.
+\end{theorem}
+
+\begin{proof}
+Every pair carries exactly one clause, of the form $(u\lor v)$ or
+$(\neg u\lor\neg v)$. Assigning $u:=0$ turns $(u\lor v)$ into the unit
+$(v)$ and satisfies $(\neg u\lor\neg v)$; in both cases $p_v$ drops by one.
+Symmetrically, $u:=1$ lowers $p_{\neg v}$ by one. Hence at a node where $z$
+zeros and $o$ ones have been assigned, by branching or by closure, every
+unassigned variable has deficits $(a-z,b-o)$, and $a-z+b-o$ equals its
+current degree. If $z<a$ and $o<b$, no variable is dominated and the node
+branches, with children of types $(z+1,o)$ and $(z,o+1)$; as soon as $z=a$
+or $o=b$, closure fixes all remaining variables and the node is a leaf. Thus
+the number of leaves $\lambda(a',b')$ below a node with deficits $(a',b')$
+satisfies $\lambda(a',b')=\lambda(a'-1,b')+\lambda(a',b'-1)$ and
+$\lambda(0,\cdot)=\lambda(\cdot,0)=1$, so $\lambda(a,b)=\binom{a+b}a$ with
+$a+b=n-1$. The asymptotic form follows from
+$\binom NK\ge2^{NH(K/N)}/(N+1)$.
+\end{proof}
+
+\begin{remark}[Exactness of the budget]\label{rem:exact}
+On $C_{n,c}$ the predecessors of $x_k$ are all its neighbors, and $x_k$ is
+undominated in $F|_\sigma$ if and only if $\sigma$ has fewer than $a$ zeros
+and fewer than $b$ ones. Hence $B_\pi(C_{n,c})=1+\sum_{z<a,\,o<b}\binom{z+o}z
+=\binom{a+b}a$ for every order: the level budget is exact on this family.
+\end{remark}
+
+\paragraph{Consequences.} For formulas with $B=1$ the gap term
+$H((1-\varepsilon)/2)$ is optimal for domination alone. Any extension of the
+domination rule that aims at a better exponent must fire on $C_{n,c}$; this
+family is the benchmark for the next step. Note that $C_{n,c}$ is strongly
+aligned: all clauses are $(u\lor v)$ or $(\neg u\lor\neg v)$, so one value of
+each assigned variable helps all remaining variables at once.
+
+\section{Branching rules and measures: what we learned}
+
+\subsection{Maximum-degree branching}
+
+\begin{remark}[Sketch, not verified numerically]\label{rem:maxdeg}
+For $\eta<1$, maximum-degree branching can lose the whole saving. Let the gap
+variables $S$ form a clique with balanced signs inside $S$. Join $S$ to every
+variable of $R=V\setminus S$ with signs biased at the $S$-end, so that every
+$v\in S$ has gap $\varepsilon'|R|\ge\varepsilon n$, and balanced at the
+$R$-end. Let $R$ be dense with balanced signs but sparser than $S$. Then $S$
+has the larger degree, and each branching on $S$ lowers every degree in
+$S\cup R$ by one, so all of $S$ is branched before any of $R$. A variable of
+$S$ has deficit $(|S|-1+(1-\varepsilon')|R|)/2$ in its gap direction, and
+during this phase only its $|S|-1$ neighbors in $S$ are assigned; so it is
+never dominated if $|S|-1<(1-\varepsilon')|R|$. Afterwards the variables of
+$R$ have unit imbalance $O(\sqrt n)$ against degree $\Theta(n)$, so the
+remaining search is essentially exhaustive and the total is $2^{n-o(n)}$.
+The last step is heuristic, and simulations with $n\le20$ are too small to
+show the effect. For $\eta=1$ no adaptive rule is needed, since every static
+order is optimal by Theorem~\ref{thm:tight}.
+\end{remark}
+
+\subsection{Additive measures}\label{sec:additive}
+
+\begin{observation}\label{obs:entropy}
+Let $W(p,q)=\log_2\binom{p+q}p/(p+q+1)$ for $p,q\ge1$ and $W=0$ otherwise, and
+$\mu(F)=\sum_vW(p_v,p_{\neg v})$. Then $W\approx H(p/D)\approx
+1-(\Delta/D)^2/(2\ln2)$ depends only on the variable's own deficits.
+\begin{enumerate}
+ \item On $C_{n,c}$, at every node, $2^{\mu}$ equals the number of leaves
+ below, and the branching inequality $2^{\mu(F_0)}+2^{\mu(F_1)}\le2^{\mu(F)}$
+ holds with equality by Pascal's rule.
+ \item On heterogeneous instances the inequality fails. With maximum-degree
+ branching on random aligned instances with $n=12$ it was violated in $28$ of
+ $357$ branchings, with ratio up to $1.17$.
+\end{enumerate}
+The reason is that $W$ is not monotone: moving toward balance raises the
+entropy, for example $W(1,8)>W(1,9)$. In the branch that is unfavorable for a
+gap variable its weight goes up, and nothing compensates when the branching
+variable itself carries no gap.
+\end{observation}
+
+The same mechanism explains why the measure of Theorem~\ref{thm:n1} certifies
+only bounded deficits: an additive measure must certify the saving branch by
+branch, while for linear gaps the saving is a large-deviation effect spread
+over many branches.
+
+\subsection{The counting view}
+
+For any search tree, choose a child uniformly at random at every internal
+node and let $\beta$ be the number of branchings on the resulting
+root-to-leaf walk. A leaf at branching depth $\beta_\ell$ is reached with
+probability $2^{-\beta_\ell}$, so
+\[
+ L=\E\bigl[2^{\beta}\bigr]=\sum_{T\subseteq V}\Pr[\text{every }v\in T\text{ is branched on}],
+\]
+where the second form uses $2^\beta=\prod_v(1+[v\text{ branched}])$. An
+additive measure with $2^{\mu(F_0)}+2^{\mu(F_1)}\le2^{\mu(F)}$ makes
+$2^\beta2^\mu$ a supermartingale along the walk, so it has to certify the
+inequality at every single node, for the worst sign pattern. The gain per
+neighbor is of order $1/D$, and the gains must compensate in both branches;
+this works on perfectly symmetric instances (Observation~\ref{obs:entropy})
+but not in general. The level budget counts failures level by level instead,
+and is valid for arbitrary correlations between the neighbors' progress.
+
+\subsection{What the method needs from a reduction rule}
+
+Lemma~\ref{lem:level} and Proposition~\ref{prop:adaptive} use only two
+properties of domination:
+\begin{enumerate}
+ \item[(R1)] \emph{Soundness:} applying the rule preserves some optimal
+ assignment.
+ \item[(R2)] \emph{Monotonicity:} if the rule fixes $v$ in $F|_\sigma$, it
+ fixes $v$ in $F|_{\sigma\tau}$ for every further assignment $\tau$ that does
+ not touch $v$.
+\end{enumerate}
+For any rule with (R1) and (R2) that fixes single variables, the level budget
+holds verbatim with $N_k$ counting the predecessor assignments under which the
+rule does not fire on $x_k$. Rules that fix several variables at once or
+impose relations between variables need an adapted version. Pruning clauses
+(Section~\ref{sec:pruning}) are not fixing rules, but they are monotone in the
+same sense: the number of true literals of a clause only grows, so a violated
+clause stays violated. Lemma~\ref{lem:level-prune} uses exactly this.
+
+\begin{remark}[Limits of domination]\label{rem:limits}
+For the budget to certify a saving $\kappa n$, every position
+$k>(1-\kappa)n$ must have $\Pr_\sigma[x_k\text{ undominated}]\le
+2^{(1-\kappa)n-k+1}$, which is exponentially small for the last positions.
+For $X\sim\operatorname{Bin}(K,\frac12)$ this requires $(\Delta-R)^2=\Omega(nK)$
+there; since $\Delta\le D\le Bn$, the variables placed last must have gap and
+degree linear in $n$. Variables with smaller gaps yield only polynomial
+savings. This is not an artifact of the analysis: $C_{n,c}$ with gap
+$\Delta=o(n)$ has $\binom{n-1}a=2^{n-o(n)}$ leaves for every branching rule
+by Theorem~\ref{thm:lower}. Going beyond absolute linear gaps needs a
+stronger rule.
+\end{remark}
+
+\section{Pruning clauses}\label{sec:pruning}
+
+Let $x$ be an undominated variable and $\ell$ one of its literals; the search
+below uses the literal with the smaller deficit, the one closer to domination.
+The \emph{pruning literals} of $x$ with respect to $\ell$ are
+\begin{itemize}
+ \item the literal $\neg m$ for every binary clause $(\ell\lor m)$, and
+ \item the literal $m$ for every binary clause $(\neg\ell\lor m)$.
+\end{itemize}
+We write $L_x$ for this set, with multiplicities if $B=2$. By
+Lemma~\ref{lem:update}, the pruning literals are exactly the neighbour literals
+whose truth lowers $p_\ell$. In the notation of the original formulation, with
+$d_1(x)=k$, $d_1(\neg x)=0$, $d_2(\neg x)=q$, $d_2(x)=r$ and $\ell=x$, we have
+$|L_x|=q+r$ and $p_\ell=q-k$.
+
+\begin{lemma}[Flip identity]\label{lem:flip}
+Let $\tau$ assign all variables other than $x$, and let $c(\tau)$ be the number
+of literals of $L_x$ that are true under $\tau$. Then
+\[
+ \mathrm{score}(\tau,\ \ell\text{ true})-\mathrm{score}(\tau,\ \ell\text{ false})
+ =c(\tau)-p_\ell .
+\]
+In particular, $\ell$ is dominated in $F|_\tau$ if and only if $c(\tau)\ge p_\ell$.
+\end{lemma}
+
+\begin{proof}
+Making $\ell$ true changes the score of the unit clauses on $x$ by
+$d_1(\ell)-d_1(\neg\ell)$. A clause $(\ell\lor m)$ gains one exactly when $m$ is
+false, that is, when its pruning literal $\neg m$ is true. A clause
+$(\neg\ell\lor m)$ loses one exactly when $m$ is false, that is, when its
+pruning literal $m$ is false. Hence the difference is
+$d_1(\ell)-d_1(\neg\ell)+c(\tau)-d_2(\neg\ell)=c(\tau)-p_\ell$.
+\end{proof}
+
+The \emph{pruning clause} of $x$ is $P_x=\langle L_x\le p_\ell-1\rangle$: an
+assignment satisfies it if at most $p_\ell-1$ literals of $L_x$ are true. By
+Lemma~\ref{lem:flip}, every complete assignment that makes $\ell$ false and
+violates $P_x$ is at least as good after flipping $x$. So when we branch on $x$,
+the child with $\ell$ true is explored in full, and the child with $\ell$ false
+only has to cover the assignments that satisfy $P_x$.
+
+\begin{remark}[One clause, not two]\label{rem:combined}
+The two kinds of progress add up. If $s$ true pruning literals come from
+clauses $(\neg\ell\lor m)$ and $t$ from clauses $(\ell\lor m)$, the condition is
+$s+t\le p_\ell-1$. Two separate clauses, one for each kind and each with the
+full budget $p_\ell-1$, are implied and therefore sound, but weaker: they keep
+$s=t=p_\ell-1$. Splitting the budget, $s\le s_1$ and $t\le s_2$ with
+$s_1+s_2=p_\ell-1$, is not implied and would lose optimal assignments. The
+clause is only an upper bound: nothing forces any pruning literal to be true.
+\end{remark}
+
+\paragraph{Soft and hard clauses.} The clauses of $F$ are soft: they define the
+score and never force a value; only domination fixes variables from them. A
+pruning clause is hard for the subtree in which it was created, because that
+subtree is responsible only for the assignments that satisfy it. Accordingly, a
+node is \emph{cut} as soon as an active pruning clause has more true literals
+than its bound, and \emph{propagation} sets every remaining literal of a
+pruning clause false once the number of its true literals equals its bound.
+Propagation is a shortcut: it fixes values on which the search would otherwise
+branch and immediately cut one side.
+
+\paragraph{The search.} $\mathrm{Solve}(F,\mathcal P)$ takes a formula $F$ and
+a set $\mathcal P$ of active pruning clauses.
+\begin{enumerate}
+ \item Repeat until nothing changes:
+ \begin{enumerate}
+  \item[(a)] if some $\langle L\le b\rangle\in\mathcal P$ has more than $b$ true
+  literals, return $-\infty$ (cut);
+  \item[(b)] if some literal $\ell$ has $p_\ell\le0$, set $\ell$ true
+  (domination);
+  \item[(c)] if some $\langle L\le b\rangle\in\mathcal P$ has exactly $b$ true
+  literals and an unassigned literal $\lambda\in L$, set $\lambda$ false
+  (propagation).
+ \end{enumerate}
+ \item If no variable is left, return the score.
+ \item Choose a variable $x$, and let $\ell$ be its literal with the smaller
+ deficit; $p_\ell\ge1$ because $x$ is undominated.
+ \item Return $\max\bigl\{\mathrm{Solve}(F|_{\ell\text{ true}},\mathcal P),\
+ \mathrm{Solve}(F|_{\ell\text{ false}},\mathcal P\cup\{P_x\})\bigr\}$.
+\end{enumerate}
+The numbers of true literals change whenever a variable is set, by branching,
+domination or propagation.
+
+\begin{proposition}[Soundness]\label{prop:sound}
+$\mathrm{Solve}$ returns the optimum for every branching rule and every choice
+of the pruned literal, provided each branching adds a clause to only one of its
+two children.
+\end{proposition}
+
+\begin{proof}
+A complete assignment $\alpha$ determines a path from the root: at a branching
+node follow the child that agrees with $\alpha$, and at a fixing step
+(domination or propagation) continue if $\alpha$ takes the fixed value and stop
+otherwise. Call the child without a new clause, and the fixed value, the
+\emph{preferred} side. For $\alpha\ne\beta$ let $w$ be the first node at which
+their paths part, and write $\alpha\succ\beta$ if $\alpha$ takes the preferred
+side at $w$. This is a strict total order on complete assignments.
+
+Let $\alpha^*$ be the $\succ$-largest optimal assignment, and suppose it is
+never evaluated. Then it disagrees with a domination step, or it violates a
+pruning clause on its path; disobeying a propagation step is such a violation.
+Let $w$ be the shallowest node on its path that is either a domination step
+disagreeing with $\alpha^*$ or the creation node of a clause that $\alpha^*$
+violates. If $w$ fixes $v$ by domination, the proof of Lemma~\ref{lem:dom}
+shows that flipping $v$ to the fixed value does not decrease the score. If $w$
+branches on $x$, then $\alpha^*$ lies in its pruned child, and
+Lemma~\ref{lem:flip}, applied to the formula at $w$, shows the same for
+flipping $x$. The flipped assignment agrees with $\alpha^*$ on every variable
+decided above $w$, so it follows the same path to $w$ and takes the preferred
+side there. It is optimal and larger than $\alpha^*$, a contradiction.
+\end{proof}
+
+\begin{remark}[Surviving leaves]\label{rem:localopt}
+By Lemma~\ref{lem:flip}, at every surviving leaf each variable that was branched
+to its pruned side is strictly better than its flip, given all other values.
+The surviving leaves are one-sided local optima.
+\end{remark}
+
+\begin{observation}[Benchmark]\label{obs:cnc}
+On $C_{n,c}$ pruning clauses do not change the search tree: it still has
+$\binom{n-1}a$ leaves, for every branching rule.
+\end{observation}
+
+\begin{proof}
+At a node with $z$ zeros and $o$ ones assigned, all unassigned variables have
+deficits $(a',b')=(a-z,b-o)$. Let $a'\le b'$; then $\ell=x$ and the pruned child
+is $x=0$. For every neighbour $y$ the pruning literal is $\neg y$, both for
+$(x\lor y)$ and for $(\neg x\lor\neg y)$, so $P_x$ allows at most $a'-1$ further
+zeros. In that child all other variables have deficits $(a'-1,b')$. If $a'-1$
+further zeros occur, closure fixes all remaining variables to $1$ and the bound
+holds; propagation only repeats these fixings. If instead $b'$ further ones
+occur first, closure fixes all remaining variables to $0$ and may exceed the
+bound, but at a node that is a leaf anyway. So the rule turns some leaves into
+cuts and leaves the tree unchanged. The case $a'>b'$ is symmetric.
+\end{proof}
+
+\section{How much do pruning clauses prune?}\label{sec:prune-analysis}
+
+\subsection{The level budget with pruning clauses}
+
+\begin{lemma}\label{lem:level-prune}
+Let $B=1$, let $\pi$ be a static order, let $Q$ be a set of variables, and fix
+for each $x\in Q$ a literal $\ell_x$ in advance. Run the static rule $A_\pi$
+with domination and cuts, without propagation, where branching on $x\in Q$ adds
+the pruning clause of $x$ with respect to $\ell_x$ to the $\ell_x$-false child,
+and other branchings add nothing. For $\sigma\in\{0,1\}^{P_k}$ and
+$x\in Q\cap P_k$ let $\mathrm{prog}_x(\sigma)$ be the number of neighbours of
+$x$ in $P_k$ whose value under $\sigma$ lowers $p_{\ell_x}$. Then at most
+$|G_k|$ internal nodes branch on $x_k$, where
+\[
+ G_k=\bigl\{\sigma\in\{0,1\}^{P_k}:\ \text{for every }x\in Q\cap P_k,\
+ \sigma\text{ makes }\ell_x\text{ true or }
+ \mathrm{prog}_x(\sigma)\le p_{\ell_x}(F)\bigr\}.
+\]
+\end{lemma}
+
+\begin{proof}
+As in Lemma~\ref{lem:level}, the values $\sigma_u$ of $P_k$ at the internal
+nodes $u$ branching on $x_k$ are pairwise distinct; cuts do not affect that
+argument. Fix such a $u$ and $x\in Q\cap P_k$.
+If $x$ was branched or fixed to make $\ell_x$ true, then $\sigma_u$ makes
+$\ell_x$ true.
+If $x$ was branched to $\ell_x$ false at a node $w$, its clause is active and
+not violated at $u$. The neighbours assigned before $w$ lowered $p_{\ell_x}$
+from $p_{\ell_x}(F)$ to $p_{\ell_x}(w)$; the neighbours assigned between $w$
+and $u$ with their lowering value are true literals of the clause, at most
+$p_{\ell_x}(w)-1$ of them. So at most $p_{\ell_x}(F)-1$ neighbours of $x$ have
+their lowering value at $u$, and those in $P_k$ are among them.
+If $x$ was fixed by domination to make $\ell_x$ false at a node $v$, then
+$p_{\neg\ell_x}(v)\le0$, hence $p_{\ell_x}(v)\ge D_x(v)$, the number of
+neighbours unassigned at $v$. The neighbours assigned before $v$ lowered
+$p_{\ell_x}$ by at most $p_{\ell_x}(F)-D_x(v)$, and the later ones add at most
+$D_x(v)$ because $B=1$. So $\mathrm{prog}_x(\sigma_u)\le p_{\ell_x}(F)$.
+\end{proof}
+
+\begin{theorem}[Order independence]\label{thm:orderfree}
+Let $F$ be canonical with $B=1$ on $n$ variables, let $\varepsilon\in(0,1]$, and
+let $S$ be a set of variables with $|\Delta_v(F)|\ge\varepsilon n$. Let $\ell_v$
+be the literal of $v$ in its gap direction, so that
+$p_{\ell_v}(F)=(D_v-|\Delta_v|)/2$. Run the algorithm of
+Lemma~\ref{lem:level-prune} with $Q=S$ and these literals, for an
+\emph{arbitrary} static order $\pi$. Then
+\[
+ L\le1+n\cdot2^{\,n-|S|}+n|S|\cdot2^{\,H((1-\varepsilon)/2)\,n}.
+\]
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:level-prune}, $L\le1+\sum_k|G_k|$. Take $\sigma$ uniform on
+$P_k$. If $\sigma\in G_k$, then either $\sigma$ makes every $\ell_x$ with
+$x\in S\cap P_k$ true, which has probability $2^{-|S\cap P_k|}$, or
+$\mathrm{prog}_x(\sigma)\le p_{\ell_x}(F)$ for some such $x$. Hence
+\[
+ |G_k|\le2^{\,|P_k\setminus S|}+\sum_{x\in S\cap P_k}2^{k-1}
+ \Pr\Bigl[\mathrm{Bin}(K_x,\tfrac12)\le\tfrac{K_x+R_x-\Delta}{2}\Bigr],
+\]
+where $K_x$ and $R_x$ are the numbers of neighbours of $x$ inside and outside
+$P_k$, $\Delta=|\Delta_x(F)|\ge\varepsilon n$, and $B=1$ makes
+$\mathrm{prog}_x(\sigma)$ binomial. The first term is at most $2^{n-|S|}$.
+Variables with $\Delta\ge D_x$ are dominated at the root and fixed toward
+$\ell_x$, so they do not occur in the second term. Otherwise put $m=k-1\ge K_x$
+and $g=\Delta-R_x<K_x$; since $R_x\le n-m$, we have $g\ge m-(1-\varepsilon)n$.
+If $m<(1-\varepsilon)n$, the summand is at most
+$2^m\le2^{H((1-\varepsilon)/2)n}$. Otherwise the computation in the proof of
+Theorem~\ref{thm:tight} applies with this lower bound on $g$ and bounds the
+summand by $2^{\psi(m)}\le2^{nH((1-\varepsilon)/2)}$. Summing over the at most
+$n$ levels and $|S|$ variables proves the bound.
+\end{proof}
+
+Theorem~\ref{thm:tight} needed the gap variables last, and
+Remark~\ref{rem:maxdeg} indicates that the order matters for domination alone.
+With pruning clauses on the gap side the order no longer matters; the exponent
+is the same, and by Theorem~\ref{thm:lower} it cannot be improved by
+domination-type arguments. Adding further pruning clauses, for variables
+outside $S$, can only cut more nodes. The theorem is stated without
+propagation, which is sound (Proposition~\ref{prop:sound}) but whose effect on
+the count we have not analyzed.
+
+\subsection{Disjoint supports: the savings multiply}
+
+\begin{proposition}\label{prop:blocks}
+Let $B=1$. Let $x_1,\dots,x_m$ be variables at pairwise distance at least $3$
+in the constraint graph, so that their closed neighbourhoods
+$N[x_i]=\{x_i\}\cup N(x_i)$ are pairwise disjoint. Let $D_i=|N(x_i)|$, let
+$\ell_i$ be the literal of $x_i$ with the smaller deficit $p_i$, assume
+$p_i\ge1$, and let $R$ be the remaining variables. Branch in the order
+$x_1,N(x_1),\dots,x_m,N(x_m),R$, with pruning clauses only at the $x_i$, with
+cuts and propagation, and without domination. Then the number of leaves is
+exactly
+\[
+ 2^n\prod_{i=1}^m\frac{1+\theta_i}{2},\qquad
+ \theta_i=2^{-D_i}\sum_{j<p_i}\binom{D_i}{j}.
+\]
+\end{proposition}
+
+\begin{proof}
+When $x_i$ is branched, none of its neighbours is assigned: they lie in its own
+block, and the clauses of earlier blocks only involve earlier blocks. So its
+deficit is $p_i$ on every path, and its clause bounds the number of true
+pruning literals among its $D_i$ neighbours by $p_i-1$. In the $\ell_i$-true
+child the block is branched freely, giving $2^{D_i}$ assignments of $N(x_i)$.
+In the $\ell_i$-false child, propagation sets the rest of the block as soon as
+the count reaches $p_i-1$, so no cut occurs, and every assignment of $N(x_i)$
+with at most $p_i-1$ true pruning literals is reached exactly once:
+$\theta_i2^{D_i}$ of them. When block $i$ opens, the clauses of earlier blocks
+are decided, so every leaf of block $i$ continues into an identical subtree.
+Multiplying, with $2^{|R|}$ for $R$ and $n=|R|+\sum_i(1+D_i)$, gives the
+formula.
+\end{proof}
+
+For a balanced centre $\theta_i\approx\frac12$, so each centre saves about
+$\log_2\frac43\approx0.4$ bits. Two ingredients make the count exact: (a)
+disjoint supports, so the survival events are independent and the factors
+multiply; and (b) each clause is decided right after it is created, because its
+support is the next block, so propagation leaves no dead ends.
+
+\begin{remark}[What the example does and does not show]\label{rem:blocks}
+The example isolates the mechanism; it is not an advantage of the rule. Here
+the classical order is better: branching on all non-centres first leaves every
+centre isolated, domination fixes it, and each centre costs a factor $1$
+instead of $1+\theta_i$; this only needs the centres to be pairwise
+non-adjacent. In general, a single pruning clause carries exactly the
+information whether $\ell$ is dominated once all neighbours of $x$ are
+assigned, which placing $x$ after its neighbourhood provides directly. The
+rule's advantage is that it provides this for every branched variable at once,
+whereas an order provides it only for an independent set. Moreover, disjoint
+closed neighbourhoods allow at most $n/(d+1)$ centres in a graph of minimum
+degree $d$, so linearly many disjoint clauses force bounded degree.
+\end{remark}
+
+\subsection{Overlapping supports}
+
+\begin{lemma}[Joint survival]\label{lem:joint}
+Let $\langle L_i\le b_i\rangle$, $i\in T$, be pruning clauses, let $X_i$ be the
+number of true literals of $L_i$ under a uniformly random assignment, and let
+$\lambda_i\ge0$. For a variable $z$ let $A^1_z$ (resp.\ $A^0_z$) be the sum of
+the $\lambda_i$ over the clauses in which the literal of $z$ is true for $z=1$
+(resp.\ $z=0$). Then
+\[
+ \Pr[X_i\le b_i\text{ for all }i\in T]\le e^{\sum_i\lambda_ib_i}
+ \prod_z\frac{e^{-A^1_z}+e^{-A^0_z}}{2}.
+\]
+\end{lemma}
+
+\begin{proof}
+On the event, $\sum_i\lambda_i(b_i-X_i)\ge0$, so its indicator is at most
+$\exp\bigl(\sum_i\lambda_i(b_i-X_i)\bigr)$. Take expectations:
+$\sum_i\lambda_iX_i=\sum_z\bigl(A^1_z[z=1]+A^0_z[z=0]\bigr)$ is a sum of
+independent terms, one per variable.
+\end{proof}
+
+Each variable contributes one factor, which depends only on how its memberships
+split between its two values. With one clause per variable the factors are
+$(1+e^{-\lambda})/2$, which is ordinary stacking. A variable shared with
+opposite literals contributes $(e^{-\lambda_1}+e^{-\lambda_2})/2$, less than
+two independent memberships: better than stacking. A variable shared with the
+same literal contributes $(e^{-\lambda_1-\lambda_2}+1)/2$, more: worse than
+stacking; identical clauses cut no more than one. For example,
+$\langle\{u,z\}\le0\rangle$ survives with probability $\frac14$; together with
+$\langle\{w,z\}\le0\rangle$ both survive with probability $\frac18>\frac1{16}$,
+and together with $\langle\{w,\neg z\}\le0\rangle$ with probability $0$. In
+general, survival events that share only same literals are positively
+correlated and those that share only opposite literals are negatively
+correlated, by the Harris inequality after orienting each shared variable.
+
+\begin{corollary}[Signed Gram matrix]\label{cor:gram}
+Let $M$ be the signed incidence matrix of the clauses: $M_{iz}=1$ if the
+literal of $z$ in $L_i$ is true for $z=1$, $M_{iz}=-1$ if it is true for $z=0$,
+and $M_{iz}=0$ otherwise; let $C=MM^{\mathsf T}$. Up to fourth-order terms in
+the $\lambda_i$, the logarithm of the bound in Lemma~\ref{lem:joint} exceeds its
+value for clauses with disjoint supports by
+\[
+ \frac18\sum_{i\ne j}\lambda_i\lambda_jC_{ij},
+\]
+where $C_{ij}$ is the number of shared variables with the same literal minus
+the number with opposite literals.
+\end{corollary}
+
+\begin{proof}
+$\log\frac{e^{-a}+e^{-b}}2=-\frac{a+b}2+\log\cosh\frac{a-b}2
+=-\frac{a+b}2+\frac{(a-b)^2}8+O\bigl((a-b)^4\bigr)$, and
+$A^1_z-A^0_z=\sum_i\lambda_iM_{iz}$. Summing the squares over $z$ gives
+$\sum_{i,j}\lambda_i\lambda_jC_{ij}$, and the diagonal part
+$\sum_i\lambda_i^2C_{ii}$ is the value for disjoint supports.
+\end{proof}
+
+So the obstruction is not density but aligned density. Dense overlaps with
+random signs give $C_{ij}\approx0$ and stack like independent clauses;
+opposite signs give $C_{ij}<0$; aligned dense overlaps give large $C_{ij}$,
+equivalently large singular values of $M$. The rows of $M$ are signed
+neighbourhoods: up to the sign chosen by $\ell$, $M$ is the block of the signed
+adjacency matrix $A$ of Section~\ref{sec:spectral} between branched and
+unassigned variables. $C_{n,c}$ is the extreme case: after orientation all rows
+of $M$ are equal.
+
+\subsection{Timing}
+
+\begin{remark}[Heuristic]\label{rem:timing}
+Lemma~\ref{lem:joint} bounds the surviving \emph{leaves}; the tree also
+contains the nodes visited before the clauses are decided. A clause can be
+violated only once the unassigned part of its support is smaller than the
+imbalance of its variable. In balanced instances the imbalance grows like the
+square root of the number of assigned neighbours, so with large overlapping
+supports no order decides clauses early. On random root-to-leaf walks (random
+dense balanced instances with edge probability $\delta=\frac12$, random static
+orders), the first cut occurred with $24$, $42$, $72$ and $113$ variables still
+unassigned for $n=50,100,200,400$, close to the estimate
+$(|\Delta|+\sqrt{2\delta n\ln n})/\delta$, which gives $36$, $54$, $81$ and
+$121$. So the tree reaches depth about $n-O(\sqrt{n\log n})$ before anything is
+cut, however few leaves survive. For independent clauses the saving is roughly
+$n\cdot(\text{imbalance})/(\text{degree})$: linear for linear gaps, about
+$n/\sqrt d$ for balanced instances of degree $d$, and about $\sqrt n$ for dense
+ones.
+\end{remark}
+
+\section{A spectral view: domination for sets}\label{sec:spectral}
+
+In spin notation $s_v\in\{\pm1\}$, a clause is a constant plus linear terms
+plus one coupling; for instance $(x\lor y)$ has value
+$\frac34+\frac{s_x+s_y}4-\frac{s_xs_y}4$. With $B=1$ the score is
+\[
+ \mathrm{const}+\sum_vh_vs_v+\tfrac12s^{\mathsf T}Ks,\qquad
+ h_v=\Delta_v/4,\qquad K=A/4,
+\]
+where $A$ is the signed adjacency matrix of the constraint graph: $A_{uv}=-1$
+for a clause $(u\lor v)$ or $(\neg u\lor\neg v)$, and $A_{uv}=+1$ for a mixed
+clause. The field of a variable is a quarter of its effective gap, and its sign
+gives the majority literal, the literal with the smaller deficit.
+
+\begin{lemma}[Set domination]\label{lem:setdom}
+Fix a set $T$ of $t$ variables and assign all others. Let $H_i$ be the fields
+on $T$ in the resulting formula, $s^0=\operatorname{sign}(H)$ the majority
+literals, and $K_{TT}$ the couplings inside $T$.
+\begin{enumerate}
+ \item If $s^*$ is optimal on $T$ and $S$ is the set where it differs from
+ $s^0$, then $\sum_{i\in S}|H_i|\le\|K_{TT}\|\bigl(\sqrt{|S|\,t}+|S|\bigr)$.
+ \item If every variable of a set $S'\subseteq T$ is set against its field and
+ is strictly better than its flip, then $\sum_{i\in S'}H_i^2<\|K_{TT}\|^2\,t$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(1) Write $s^*=s^0-2v$, where $v$ agrees with $s^0$ on $S$ and is $0$
+elsewhere. The linear part changes by $-2\sum_{i\in S}|H_i|$, and the quadratic
+part by $-2v^{\mathsf T}K_{TT}s^0+2v^{\mathsf T}K_{TT}v
+\le2\|K_{TT}\|\bigl(\sqrt{|S|t}+|S|\bigr)$. Optimality of $s^*$ gives the
+claim.
+(2) Flipping $x$ changes the score by $-2s_x\bigl(H_x+(K_{TT}s)_x\bigr)$.
+Strictly worse means $s_x(H_x+(K_{TT}s)_x)>0$; with $s_x=-\operatorname{sign}(H_x)$
+this gives $s_x(K_{TT}s)_x>|H_x|$. Summing squares,
+$\sum_{x\in S'}H_x^2<\|K_{TT}s\|^2\le\|K_{TT}\|^2t$.
+\end{proof}
+
+In clause terms, part (1) reads
+$\sum_{i\in S}|\Delta_i|\le\|A_T\|\bigl(\sqrt{|S|t}+|S|\bigr)$. Single-variable
+domination, and a single pruning clause, is the $\ell_1$ version
+$|\Delta_i|\le D_i$: the worst case over the neighbours. The operator norm
+allows for sign cancellations; for random signs $\|A_T\|$ is of the order of
+the square root of the degree rather than the degree, so only few variables can
+go against their majority literal at the same time. Part (2) certifies that
+many pruning clauses cannot survive together (Remark~\ref{rem:localopt}): it is
+a joint use of clauses. The same matrix appears in both routes, since the rows
+of $M$ in Corollary~\ref{cor:gram} are, up to sign, rows of a block of $A$;
+large singular values spoil the stacking of pruning clauses and the set bound
+alike.
+
+\paragraph{Expected consequence (not yet proved).} For pseudo-random dense
+instances, let $T$ be the last $\varepsilon n$ variables of the order. Most
+fields are then of order $\sqrt d$ while $\|A_T\|$ is of order
+$\sqrt{\varepsilon d}$, so by part (1) the optimum on $T$ agrees with the
+majority literals up to a small fraction of $T$, and the search on $T$ can be
+replaced by an enumeration of $2^{o(1)\cdot t}$ candidates, for a total of
+$2^{(1-\Omega(\varepsilon))n}$. A complete proof needs a small-ball estimate over
+the outer assignments, which fails for near-twin variables, whose fields are
+small together.
+
+\subsection{Two special cases that separate the difficulties}
+
+\begin{enumerate}
+ \item \textbf{Pseudo-random dense balanced instances.} Single-variable rules,
+ domination and single pruning clauses, act only in the last
+ $O(\sqrt{n\log n})$ levels (Remark~\ref{rem:timing}) and save only
+ $2^{O(\sqrt{n\log n})}$. The set bound should give $c^n$. This case isolates
+ the need for joint certificates.
+ \item \textbf{Aligned structure.} $C_{n,c}$ defeats every single-variable rule
+ (Theorem~\ref{thm:lower} and Observation~\ref{obs:cnc}) and the set bound as
+ well, since $A=-(J-I)$ has the eigenvalue $-(n-1)$ in the all-ones direction.
+ Yet it is easy, by the next proposition. This case isolates the need to
+ exploit low-rank structure.
+\end{enumerate}
+
+\begin{proposition}\label{prop:aligned-easy}
+If every pair of variables carries exactly one clause, of the form $(x\lor y)$
+or $(\neg x\lor\neg y)$, then Max 2-SAT is solvable in polynomial time.
+\end{proposition}
+
+\begin{proof}
+Since $[x\lor y]=x+y-xy$ and $[\neg x\lor\neg y]=1-xy$, the score equals
+$N^-+\sum_vd^+_vx_v-\binom m2$, where $N^-$ is the number of clauses
+$(\neg x\lor\neg y)$, $d^+_v$ the number of clauses $(v\lor y)$, and $m$ the
+number of true variables. For each $m$, the best assignment makes true the $m$
+variables with the largest $d^+_v$; try all $m$.
+\end{proof}
+
+The general case is a mixture: aligned parts, which are low-rank and should be
+handled structurally, and pseudo-random parts, which need joint certificates.
+
+\section{Numerical checks}
+
+The scripts are in this folder.
+\begin{itemize}
+ \item \texttt{explore\_dpll\_measures.py} (about three minutes):
+ Lemma~\ref{lem:level} on 240 random canonical instances with
+ $n\in\{8,10,12\}$, $B\in\{1,2\}$ and random orders, $L\le B_\pi$ always, with
+ equality attained; Theorem~\ref{thm:lower} and Remark~\ref{rem:exact} on
+ $C_{n,c}$ for $n\le19$, where the natural order, maximum-degree branching and
+ random orders give identical trees with $\binom{n-1}a$ leaves, equal to
+ $B_\pi$, and for $n=3201$ the exponents of Table~\ref{tab:exponents} are
+ within $0.003$ of $H((1-\varepsilon)/2)$; Observation~\ref{obs:entropy}, with
+ no violation on $C_{n,c}$ and $28$ of $357$ branchings violated on random
+ aligned instances.
+ \item \texttt{explore\_extended\_rule.py} (seconds):
+ Proposition~\ref{prop:sound} on 240 random canonical instances with $n\le12$,
+ nested pruning clauses, domination, random unit clauses and complementary
+ pairs, where the optimum found with the rule, with and without propagation,
+ equals the brute-force optimum; Observation~\ref{obs:cnc}, with identical leaf
+ counts on $C_{n,c}$ for $n\le19$. On small random families the rule removes
+ $7$--$27\%$ of the leaves without propagation and $29$--$43\%$ with it.
+ \item \texttt{explore\_disjoint\_blocks.py}: Proposition~\ref{prop:blocks},
+ exact equality on 12 instances.
+ \item \texttt{explore\_late\_detection.py}: the measurements of
+ Remark~\ref{rem:timing}.
+\end{itemize}
+
+\section{Open questions and next steps}
+
+\begin{enumerate}
+ \item \textbf{Overlaps, quantitatively.} Turn Lemma~\ref{lem:joint} and
+ Corollary~\ref{cor:gram} into a bound on the whole tree, under a condition on
+ the signed Gram matrix (for example a bounded aligned degree), together with
+ the timing.
+ \item \textbf{Early joint detection.} Certify that many active pruning clauses
+ cannot all survive long before any single one is violated.
+ Lemma~\ref{lem:setdom}(2) is one such certificate; pairs of clauses with
+ opposite literals are another.
+ \item \textbf{Special case 1.} Turn the set bound into a pruning rule inside
+ DPLL and prove $c^n$ for random dense balanced instances.
+ \item \textbf{Special case 2.} Exploit aligned, low-rank structure beyond
+ Proposition~\ref{prop:aligned-easy}, and combine it with item 3.
+ \item \textbf{Smaller items.} Adaptive orders such as maximum degree with
+ pruning clauses; the exact rate for $B=2$; a lower bound matching the term
+ $1-\eta$.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{N1} A literal-deficit measure for Max 2-SAT. Working note,
+ 22 September 2026 (\texttt{max2sat\_literal\_deficit\_proof.tex}).
+\bibitem{N2} Exact Max 2-SAT with an absolute linear polarity gap. Working
+ note, 23 September 2026 (\texttt{max2sat\_absolute\_linear\_gap\_proof.tex}).
+\bibitem{Wil05} R.~Williams. A new algorithm for optimal 2-constraint
+ satisfaction and its implications. \emph{Theoretical Computer Science}
+ 348(2--3):357--365, 2005.
+\bibitem{Woe08} G.~J.~Woeginger. Open problems around exact algorithms.
+ \emph{Discrete Applied Mathematics} 156(3):397--405, 2008.
+\bibitem{Gol11} A.~Golovnev. New upper bounds for MAX-2-SAT and MAX-2-CSP
+ w.r.t.\ the average variable degree. In \emph{IPEC 2011}, LNCS 7112,
+ pp.~106--117, 2012.
+\bibitem{GK14} A.~Golovnev and K.~Kutzkov. New exact algorithms for the
+ 2-constraint satisfaction problem. \emph{Theoretical Computer Science}
+ 526:18--27, 2014.
+\bibitem{Has16} M.~B.~Hastings. Local maxima and improved exact algorithm for
+ MAX-2-SAT. arXiv:1610.07100, 2016.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,587 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Pcal}{\mathcal P}
+\newcommand{\Hbin}{H}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\title{Exploring the Branching Frontier for Max 2-SAT\\
+\large Full clause phases, joint completion bounds, and coverage}
+\author{}
+\date{7 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We develop two concrete variations on the branching program of the October
+5--6 notes. First, resolving a pruning clause completely gives an explicit
+measure based on its exact completion count. Its analysis walk is uniform on
+the permitted assignments, giving a simple concentration lemma. This changes
+the algorithm and does not prove the earlier missing lemma for clauses that
+are released. Second, counting the assignments satisfying a weighted sum of
+active pruning clauses gives an overlap-aware, polynomial-time certificate
+when the integer weights are polynomially bounded. Inherited certificates
+give a branching inequality and an explicit variable-selection score. We
+prove a conditional theorem identifying the cumulative progress still needed
+for a fixed base below two. We also formalize when neighborhood coverage
+helps, why it need not yield small separators, and how exact interaction
+classes offer a different structural exit. No density-uniform running-time
+theorem is claimed.
+\end{abstract}
+
+\section{Target and status}
+
+The target is a deterministic polynomial-space algorithm with time
+$\Ostar((2-\delta)^n)$ for a constant $\delta>0$ independent of a growing
+density bound $\rho(n)$. Here $\rho=m_2/n$ counts binary clauses per variable;
+the average occurrence degree is $d=2\rho$. An exponent saving that tends to
+zero with $d$ does not meet this target, even if it is a useful improvement.
+The first milestone could be all instances with $\rho(n)=\log\log n$;
+$\rho=O(n)$ covers the full simple unweighted setting.
+
+The notes already identify three difficulties: obtaining useful gaps,
+overlap between pruning supports, and detecting contradictions before the
+search reaches almost all variables. Our contributions below are mathematical
+derivations within that program, with small exact checks. They have not been
+independently refereed, and no novelty claim relative to all literature is made.
+
+The polynomial-space baselines we checked have degree-dependent savings
+\cite{Gol11,Has16}; these support the distinction above. Hastings also gives
+instances with very many strict local optima. Consequently, a bound based only
+on enumerating all local optima cannot provide a uniform constant saving.
+Our web check did not locate a newer theorem settling the target; it is not
+an exhaustive literature survey.
+
+We use the deficit notation of the earlier notes. In a residual formula,
+$p=\min(p_x,p_{\neg x})$, and $D$ is the free binary degree. For $B=1$,
+branching against the literal with smaller deficit creates the valid
+constraint $\langle L_x\le p-1\rangle$ on $D$ distinct variables. The preferred
+child receives no new constraint. The soundness arguments in the earlier
+notes apply to the modified strategies considered here.
+
+\section{Resolve a pruning clause as one phase}
+
+\subsection{An explicit branching rule and measure}
+
+Define the exact cardinality volume
+\[
+ V(r,k)=\sum_{j=0}^{\min\{r,k\}}\binom rj,
+ \qquad V(r,k)=0\quad\hbox{if }k<0.
+\]
+Consider this variant of the rule. At a phase boundary choose an undominated
+$x$. Explore its preferred child recursively. In the other child enumerate
+all assignments of its $D$ neighbors satisfying the new clause, then recurse
+on the remaining variables. During this enumeration postpone other
+domination fixings and additional pruning clauses. Earlier constraints may
+be retained, but for the clean phase-distribution argument do not condition
+the enumeration on them. They can be checked at the phase boundary.
+This may do more work, but it preserves exactness. Combinations enumerate the
+allowed assignments in polynomial space with polynomial overhead per output;
+there is no need to scan all $2^D$ assignments.
+
+\begin{proposition}[Full-phase branching]
+For $k=p-1$, the phase has one child with a decrease of one free variable,
+and $V(D,k)$ children with a decrease of $D+1$. It is admissible at base
+$1<\lambda<2$ whenever
+\begin{equation}
+ \lambda^{-1}+V(D,k)\lambda^{-(D+1)}\le1,
+ \quad\text{equivalently}\quad
+ V(D,k)\le(\lambda-1)\lambda^D.                 \label{eq:phase}
+\end{equation}
+If every phase satisfies this condition, the search runs in
+$\Ostar(\lambda^n)$ time and polynomial space.
+\end{proposition}
+\begin{proof}
+These are exactly the enumerated alternatives. Induct on the number of free
+variables using \eqref{eq:phase}. The work enumerating phase alternatives
+is polynomial per child, and there are at most $n$ levels of recursive
+phases on a path. Retained constraints can only remove alternatives.
+\end{proof}
+
+For an equivalent binary-step analysis put
+\begin{equation}
+ e_\lambda(r,k)=r-\log_\lambda V(r,k),\qquad
+ \mu=u+\sum_C\log_\lambda V(r_C,k_C)
+       =n_{\rm free}-\sum_C e_\lambda(r_C,k_C),                 \label{eq:signed}
+\end{equation}
+where $u$ counts uncovered free variables and the counted supports are
+disjoint. A single active clause is sufficient for the phase algorithm.
+Weights $e_\lambda$ are permitted to be negative. This is intentional:
+a weak residual constraint carries the cost of completing its support.
+The measure is still nonnegative because each live clause has $V\ge1$.
+
+\begin{lemma}[Binary steps and forced assignments]
+Resolving a clause variable satisfies the branching inequality with equality
+for the measure \eqref{eq:signed}. A forced assignment never increases
+$\mu$. These statements do not require $e_\lambda\ge0$.
+\end{lemma}
+\begin{proof}
+Use $V(r,k)=V(r-1,k)+V(r-1,k-1)$. If the literal is set to $b$, the measure
+drop is $\log_\lambda(V(r,k)/V(r-1,k-b))$. Summing $\lambda^{-\text{drop}}$
+over the nonempty children gives one. Restriction cannot increase $V$.
+For an uncovered variable the drop is one. At $k=0$ there is one completion,
+so propagating the remaining literals also respects the measure.
+\end{proof}
+
+The same inequality shows that a transition cannot decrease $e_\lambda$
+by more than one. At a vacuous state $e_\lambda=r(1-\log_\lambda2)<0$.
+Keeping the clause until its support is completed is permitted. Releasing
+it would reduce the measure, but would change the distribution used next.
+
+\subsection{A concentration lemma without an unproved walk assumption}
+
+\begin{proposition}[Distribution inside an isolated full phase]
+Choose each child during clause resolution with probability equal to its
+remaining completion count divided by that of its parent. The resulting
+assignment is uniform among the $V(D,k)$ permitted assignments. If $J$ is
+its number of true pruning literals and $0\le k<D/2$, then for $1\le t\le k$,
+\begin{equation}
+ \Pr[J\le k-t]\le
+ \left(\frac{k}{D-k+1}\right)^t.                 \label{eq:tail}
+\end{equation}
+\end{proposition}
+\begin{proof}
+The child probabilities telescope to $1/V(D,k)$ at every completion.
+For $q=k/(D-k+1)$ and $j\le k$,
+$\binom D{j-1}/\binom Dj=j/(D-j+1)\le q$. Thus
+$\binom D{i}\le q^t\binom D{i+t}$ for $i\le k-t$.
+Sum and divide by $V(D,k)$.
+\end{proof}
+
+For fixed $k/D\le\beta<1/2$, deviations of $\eta D$ below the allowance
+have probability at most $\exp(-\Omega_\beta(\eta D))$. This proves a
+phase-level statement at least as strong as the sought concentration scale,
+\emph{for this modified full-resolution rule}. It does not establish that
+statement for the October 6 walk, whose zero-weight states are released.
+It also does not establish the availability of subsequent good phases.
+
+The mean satisfies
+\[
+ \E[J]\ge k-\frac{q}{1-q}.
+\]
+By symmetry each support literal is true with probability
+$\E[J]/D=k/D-O_\beta(1/D)$ when $k/D\le\beta<1/2$.
+For another variable, its helpful values need not agree with all of these
+literals, and it may share only part of the support. The following bound
+handles both issues for a single complete phase.
+
+\begin{lemma}[Helpful updates on any fixed overlap]
+Fix $s\ge1$ variables of the clause support and designate one helpful value
+for each, with arbitrary signs. Let $Y$ be the number taking that value in
+a uniform permitted completion. If $0<\eta<k/D<1/2$ and
+$q=k/(D-k+1)$, then
+\begin{equation}
+ \Pr\!\left[Y<\left(\frac{k}{D}-\eta\right)s\right]
+ \le q^{\lceil\eta D/2\rceil}+2e^{-\eta^2s/8}.       \label{eq:overlap}
+\end{equation}
+\end{lemma}
+\begin{proof}
+By \eqref{eq:tail}, except with probability at most the first term,
+$J/D\ge k/D-\eta/2$. Condition on such a value $J=j$ and write $p=j/D$.
+The true positions form a uniform $j$-subset. Split the designated positions
+into $a$ where true is helpful and $b=s-a$ where false is helpful.
+Their helpful counts have means $pa$ and $(1-p)b$, whose sum is at least
+$ps$, since $p<1/2$. Each count is a sample without replacement from a
+zero-one population. Hoeffding's bound \cite{Hoe63} applies to each.
+For their sum to be below $(k/D-\eta)s$, one of the two counts must be at
+least $\eta s/4$ below its mean. The two lower-tail bounds are at most
+$e^{-\eta^2s^2/(8a)}$ and $e^{-\eta^2s^2/(8b)}$, omitting an empty group.
+Each is at most $e^{-\eta^2s/8}$. A union bound proves the claim; no
+independence between the two counts is assumed.
+\end{proof}
+
+The designation is fixed at the beginning of the phase, for example toward
+a chosen deficit of a variable that remains outside its support. This is
+conditional on the phase-start history and imposes no alignment assumption.
+It is not a theorem about many adaptive phases: their ratios $k/D$ may be
+too low, intersections may be small, and the deficit orientation may change.
+
+\subsection{Entropy scale and a remaining availability problem}
+
+For $k\le\beta D$ with $0<\beta<1/2$,
+$V(D,k)\le2^{H(\beta)D}$. Therefore, for any
+$2^{H(\beta)}<\lambda<2$, every such phase with
+\begin{equation}
+ D\ge \frac{\ln(1/(\lambda-1))}
+                 {\ln\lambda-H(\beta)\ln2}                 \label{eq:threshold}
+\end{equation}
+is feasible. Small degrees can be checked directly or handled separately.
+Do not infer uniform finite-size feasibility at the exact entropy base
+from an asymptotic estimate alone.
+
+For $k=D/4$, the numerical roots of \eqref{eq:phase} are:
+\begin{center}
+\begin{tabular}{rrrrr}
+\toprule
+$D$ & 16 & 32 & 64 & 128\\
+\midrule
+full-phase base & 1.67236 & 1.69519 & 1.71536 & 1.73019\\
+\bottomrule
+\end{tabular}
+\end{center}
+They approach $2^{H(1/4)}\simeq1.75477$. These are local branching numbers,
+not global bounds without an availability argument. The earlier optimized
+release rule can have smaller finite-size branching numbers.
+
+Allow plain steps and use the previous averaging construction. At a feasible
+phase give the preferred child probability $1/\lambda$ and spread the
+remaining probability uniformly across its $V(D,k)$ alternatives. Each
+alternative then has probability at least $\lambda^{-(D+1)}$ by
+\eqref{eq:phase}. The proof of the earlier averaging lemma gives
+\[
+ L\le\lambda^n\E[(2/\lambda)^S]
+\]
+for the number $S$ of plain steps on this phase walk. The exponentially
+weighted cost of plain steps remains the actual obstacle. A small empirical
+mean for $S$ is insufficient.
+
+A useful next experiment is to choose the largest feasible ratio below a
+fixed threshold, rather than the smallest ratio. A very strong clause can
+force values unfavorable to its neighbors; a ratio near the threshold
+passes on a less biased distribution. This is a motivated strategy, not
+a proved universal improvement.
+
+\section{A joint measure from exact weighted-sum counts}
+
+\subsection{The certificate}
+
+At a search state let the active pruning inequalities be
+$L_i(x)\le k_i$, $i=1,\ldots,m$, over $r$ free variables. For nonnegative
+integer weights $a_i$ define
+\begin{equation}
+ N_a=\#\{x\in\{0,1\}^r:\ \textstyle\sum_i a_i L_i(x)
+                          \le\sum_i a_i k_i\}.             \label{eq:Na}
+\end{equation}
+Every completion satisfying all active clauses is counted by $N_a$.
+Unlike an additive clause weight, $N_a$ explicitly incorporates overlapping
+supports, cancellation and redundant clauses.
+
+For free variable $w$, let $A_w^b$ be its contribution to
+$\sum_i a_iL_i$ when it takes value $b$. Set
+\[
+ K=\sum_i a_i k_i-\sum_w\min(A_w^0,A_w^1),\qquad
+ c_w=|A_w^1-A_w^0|.
+\]
+After orienting each variable so that its cheaper value is zero,
+\begin{equation}
+ N_a=\sum_{j\le K}[z^j]\prod_w(1+z^{c_w}).                  \label{eq:dp}
+\end{equation}
+This is a one-dimensional integer dynamic program. It takes
+$O(r(1+\sum_w c_w))$ arithmetic operations, with counts having at most
+$r+1$ bits. If clause multiplicities and the weights $a_i$ are bounded by
+polynomials in the input size, both time and space are polynomial. Merely
+bounding the \emph{bit length} of arbitrary huge weights is not enough.
+
+The unweighted sum cut is exactly the test $N_{\boldsymbol 1}=0$.
+The certificate gives useful information before that cut becomes possible.
+For a single cardinality clause it gives its exact binomial volume, including
+the roughly one-half factor for a nearly balanced clause that a Chernoff
+bound can miss.
+
+\subsection{Inheritance makes the branching inequality rigorous}
+
+\begin{theorem}[Joint completion certificate]
+Store a weight vector $a$ and $U=N_a$ at every live node. Cut if $U=0$.
+For each child, evaluate the inherited vector after substitution and any
+polynomial-size list of additional candidate vectors, and store the smallest
+count. Extend the inherited vector by zero on newly created pruning clauses.
+Then, after branching and any further sound fixings,
+\begin{equation}
+ U_0+U_1\le U.                                             \label{eq:super}
+\end{equation}
+Also $U\ge1$ at every kept node and $U=2^n$ at an unconstrained root.
+\end{theorem}
+\begin{proof}
+For a fixed vector, assignments counted at the parent partition according
+to the value of the branching variable:
+$N_a=N_{a,0}+N_{a,1}$. Further fixings restrict these sets. A new constraint
+has inherited weight zero and therefore does not invalidate the old
+certificate. Minimization over a list containing the inherited vector
+cannot increase either child count. These facts prove \eqref{eq:super}.
+The counts are nonnegative integers and upper-bound all jointly feasible
+completions, so a zero count justifies a cut.
+\end{proof}
+
+The value $U$ here is part of the augmented search state, together with its
+witness. We do not claim that globally minimizing \eqref{eq:Na} over all
+bounded integer vectors is polynomial-time. Polynomial candidate lists and
+bounded rounds of coordinate improvement suffice for the theorem.
+If every state were optimized independently by a heuristic without retaining
+the inherited witness, \eqref{eq:super} would not be guaranteed.
+
+Useful candidates are the zero vector, each single clause, all clauses with
+weight one, promising clause pairs, and bounded coordinate modifications.
+A linear program or a smooth Chernoff optimization can propose weights;
+the final integer count still certifies the result exactly.
+
+\subsection{A concrete strategy and the missing global theorem}
+
+The measure $\log_2 U$ has a valid base-two branching inequality. It does
+not yet give a base below two. For candidate variable $x$, form its two
+children, including its new pruning clause, and calculate
+\begin{equation}
+ I_x=\log_2 U-\log_2(U_{x=0}+U_{x=1})\ge0.                \label{eq:info}
+\end{equation}
+Choose the variable maximizing this certified decrease. If the denominator
+is zero, both children can be discarded. Polynomially many candidates and
+certificate evaluations preserve polynomial time per visited node and
+polynomial space. This is an explicit branching strategy optimizing a
+proved certificate; its worst-case advantage is still unproved.
+
+It is essential to count work spent forming all candidate children. A
+smaller selected search tree need not give a faster implementation at small
+sizes. Fixed polynomial lookahead overhead is harmless for an eventual
+exponential-base theorem, but matters in experiments.
+
+\begin{theorem}[A sufficient cumulative-progress condition]
+Use the certificate search above, with polynomial work per visited node.
+Normalize child probabilities to $U_i/(U_0+U_1)$ whenever the sum is nonzero.
+Absorb successful terminal nodes with $U=1$, and regard a node with no kept
+children as death. Let $G_t$ be the sum of \eqref{eq:info} along this walk
+through branching depth $t$, with $G_t=+\infty$ after death.
+
+Suppose, for constants $\alpha,\gamma,\xi>0$ and
+$t_0=\lfloor(1-\alpha)n\rfloor$,
+\[
+ \Pr[G_{t_0}<\gamma n]\le2^{-\xi n}.
+\]
+Then the search runs in
+\[
+ \Ostar\!\left(2^{(1-\min\{\alpha,\gamma,\xi\})n}\right).
+\]
+\end{theorem}
+\begin{proof}
+Write $R_v=(U_{v0}+U_{v1})/U_v=2^{-I_v}$. For a frontier node $w$, the
+probability of reaching it under normalized transitions times
+$\prod_{v\prec w}R_v$ is $U_w/2^n$. Hence the total certificate mass at
+depth $t$ is $2^n\E[2^{-G_t}]$.
+At $t_0$ this is at most
+$2^n(2^{-\gamma n}+2^{-\xi n})$.
+Subsequent total mass cannot increase, and each kept node has integer mass
+at least one. There are at most $n$ branching levels. The earlier levels
+have at most $2^{t_0+1}$ nodes. Discarded children and polynomial lookahead
+add only polynomial overhead to these counts.
+\end{proof}
+
+This is a precise replacement for ``encounter many variables with gaps''.
+The required quantity is linear cumulative \emph{joint} progress, early
+enough in the tree, with exponentially controlled bad paths under the stated
+walk. Repeatedly creating almost redundant clauses need not contribute to it.
+So far no condition depending only on $\rho(n)=\omega(1)$ proves this premise.
+
+\subsection{A real limitation of weighted sums}
+
+Suppose the relaxation $0\le x_w\le1$, $L_i(x)\le k_i$ is feasible.
+For any nonnegative weights $a$, its feasible fractional point gives
+\[
+ \min_{x\in\{0,1\}^r}\sum_i a_i L_i(x)
+ =\min_{x\in[0,1]^r}\sum_i a_i L_i(x)
+ \le\sum_i a_i k_i.
+\]
+The equality holds because the objective is linear on a box. Therefore
+$N_a\ge1$ for every weighted sum, even if the Boolean conjunction is
+infeasible. For example, $x+y=y+z=z+x=1$ has the fractional solution
+$(1/2,1/2,1/2)$ but no Boolean solution. Encode each equality by its two
+cardinality inequalities. No nonnegative weighted-sum cut detects the
+contradiction at the root.
+
+Conversely, separating the image of the box from the lower orthant shows
+that an infeasible linear relaxation admits a nonnegative combination whose
+minimum exceeds its bound. Such multipliers need not lie in our small
+candidate list or have small numerical values. Thus weighted sums need
+either branching or stronger integer reasoning in the remaining cases.
+
+\section{What coverage actually certifies}
+
+Let $C$ be the union of selected active supports and let
+$S\subseteq V\setminus C$ be a set of candidate variables.
+
+\begin{proposition}[Exact and approximate coverage]
+If $N(v)\subseteq C$ for every $v\in S$, then $S$ is independent and the
+residual Max 2-SAT instance can be solved in time $\Ostar(2^{n-|S|})$ and
+polynomial space. More generally, if every $v\in S$ has at most $b$ neighbors
+outside $C$, then a polynomial-time construction gives an independent set
+of size at least $|S|/(b+1)$, and time
+$\Ostar(2^{n-|S|/(b+1)})$ follows.
+\end{proposition}
+\begin{proof}
+In the first case no edge has both endpoints in $S$. Assign its complement
+and optimize every variable of $S$ independently. In the second case
+$G[S]$ has maximum degree at most $b$; a greedy independent-set construction
+removing a chosen vertex and its neighbors proves the claim.
+\end{proof}
+
+Here $n$ is the number of variables in the residual subproblem. The statement
+does not require a small separator. For instance, $K_{t,t}$ has exact
+coverage of one side by the other, a linear independent set, and no
+sublinear balanced separator. Conversely, if $C$ contains nearly every
+variable, coverage by $C$ says little. Also, $b=\varepsilon d$ is not enough
+for a constant saving when $d$ grows: the independent-set guarantee can
+still be sublinear.
+
+A useful coverage dichotomy therefore must quantify both the number of
+\emph{uncovered centers} and the absolute amount of their remaining internal
+interaction. Merely counting covered neighbors, or measuring a covered
+fraction, misses these quantities.
+
+If a candidate cut $C$ really does leave components $K_j$ with
+$\max_j|K_j|=q$, independent optimization after enumerating $C$ gives time
+$\Ostar(2^{|C|+q})$. Inherited pruning clauses can couple these components.
+One safe terminal action is to discard those auxiliary constraints and solve
+the residual \emph{soft} Max 2-SAT objective exactly. Every returned assignment
+is still an assignment of the original formula, and the enlarged subtree
+contains every originally retained completion. This is valid for this
+optimization search, though it forfeits the discarded pruning information.
+
+\section{An alternative structural exit: interaction classes}
+
+Small separators are not the only useful outcome of aligned neighborhoods.
+Write a residual objective in Boolean quadratic form
+\[
+ f(x)=c+\sum_i h_i x_i+\sum_{i<j}J_{ij}x_i x_j.
+\]
+Suppose the remaining variables can be partitioned into $t$ classes such
+that $J_{ij}$ depends only on the classes of $i,j$, including a uniform
+coefficient for distinct variables in the same class. The $h_i$ can differ.
+
+\begin{proposition}[Exact interaction classes]
+Such an instance is solvable in polynomial space and time
+$\Ostar(\prod_{a=1}^t(|C_a|+1))\le\Ostar((n+1)^t)$.
+If the property holds after deleting an exception set $E$, time
+$\Ostar(2^{|E|}(n+1)^t)$ suffices.
+\end{proposition}
+\begin{proof}
+Enumerate the number $k_a$ of ones in each class. All quadratic contributions
+are determined: they are $J_{aa}\binom{k_a}{2}$ within a class and
+$J_{ab}k_a k_b$ across classes. The best linear contribution selects the
+$k_a$ largest $h_i$ in each class. Enumerating $E$ changes only fields on
+the remaining vertices and a constant.
+\end{proof}
+
+Thus $|E|\le(1-\delta)n$ and $t\log_2(n+1)=o(n)$ give a fixed-base
+improvement. This extends the complete aligned example in the earlier notes
+and can apply with very large separators. It requires \emph{exact signed
+interaction classes}. Shared supports, large Gram correlations, approximate
+low rank, and a small number of active rows do not alone prove this property.
+Turning approximate alignment into a small exception set or a manageable
+residual interaction graph is a separate open direction.
+
+\section{Checks and what the experiments do not establish}
+
+The reproducible script is \path{explore_branching_frontier.py}.
+Its output is \path{branching_frontier_checks.json}. No existing notes or experiments
+were modified. The script uses exact integer counts, except for reported
+branching roots and numerical checks of logarithmic identities.
+
+\begin{itemize}
+\item The full-phase search matches brute-force optimum on 80 random
+$B=1$ formulas with $3\le n\le10$, exercising 103 phase nodes.
+\item There are 41,650 checks of \eqref{eq:tail} and 3,599 checks of forced
+measure transitions, including negative-weight states.
+\item On 150 random cardinality systems with $3\le n\le9$, every tested
+certificate upper-bounds the brute-force joint completion count. All 918
+variable-splitting identities and inequalities pass, as do 150 tests adding
+an extra constraint in one child.
+\item The small candidate optimizer improves over the best single-clause
+bound in 55 of these 150 systems, and over the all-ones weighted sum in 103.
+These are certificate comparisons on synthetic systems, not Max 2-SAT
+running-time estimates.
+\item A contradictory pair on seven variables plus a weak clause on 20 new
+variables has all-ones count $134{,}215{,}040$. Weights $(1,1,0)$ give zero.
+The odd-cycle equality example remains positive for every tested vector
+with weights in $\{0,1,2\}$; its actual joint count is zero.
+\end{itemize}
+
+We also implemented one-step candidate branching using \eqref{eq:info} and
+compared it with static branching on six random $B=1$ formulas, edge
+probability $0.7$. Both versions use the same completion certificates and
+domination. For speed, their weight candidates are just zero, singletons,
+all ones, and the inherited vector. All optimum values match brute force.
+
+\begin{center}
+\begin{tabular}{rrrrr}
+\toprule
+& \multicolumn{2}{c}{kept nodes visited}
+& \multicolumn{2}{c}{candidate children evaluated}\\
+$n$ & static & volume strategy & static & volume strategy\\
+\midrule
+12 & 14 & 6 & 22 & 56\\
+12 & 16 & 7 & 28 & 86\\
+12 & 4 & 2 & 4 & 22\\
+16 & 91 & 32 & 162 & 694\\
+16 & 40 & 19 & 72 & 412\\
+16 & 107 & 51 & 190 & 866\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The selected trees are smaller, but the lookahead performs more work.
+These tiny instances establish implementability and provide correctness
+checks; they do not show an asymptotic improvement, nor even a wall-clock
+speedup. They are also too small to test a growing-density claim.
+
+\section{The next mathematical questions}
+
+\paragraph{Availability under complete phases.}
+Use the single-phase overlap bound \eqref{eq:overlap} to study drift across
+adaptively chosen phases. Investigate largest-feasible-ratio branching and
+bound the exponential moment of plain steps. The unresolved issue is to
+control the chosen clause ratios and accumulation of local errors; full
+phases do not provide this global drift theorem for free.
+
+\paragraph{Joint progress before the last levels.}
+Prove the cumulative-progress premise in the theorem for an interesting
+class, initially pseudorandom signed instances. The critical quantitative
+question is whether useful inequalities add linear total information before
+branching depth $(1-\alpha)n$. Uniform assignments and the certificate walk
+are different distributions; substituting one for the other is not valid.
+
+\paragraph{From coverage failure to a certified structural exit.}
+Track the size of the uncovered candidate set, its internal degree, the
+components after a prospective cut, and signed interaction classes. A valid
+dichotomy must either create genuinely new joint progress or provide a
+quantified residual solver. High overlap alone cannot certify either side.
+
+\paragraph{Beyond one aggregate inequality.}
+The LP-feasible but integer-infeasible example motivates small groups of
+aggregate inequalities, parity reasoning, or class decisions. A constant
+number of weighted inequalities can be counted by a multidimensional dynamic
+program when all coefficient sums are polynomial. Letting this dimension
+grow raises a polynomial-space issue; the resulting table must not be
+silently charged as polynomial storage.
+
+\paragraph{The density milestone.}
+For a theorem covering all formulas with a growing density bound, explicitly
+include $B=2$ instances such as Max-Cut encodings. The weighted-sum certificate
+extends to integer multiplicities directly; the exchangeable binomial phase
+lemma is specifically $B=1$. A weighted phase has a computable generating
+function, but no automatic exchangeability. The missing result is a
+structural/probabilistic argument covering every instance at the selected
+growing density. None of the checks above supplies it.
+
+\begin{thebibliography}{9}
+\bibitem{N3} Max 2-SAT and the domination rule: results and ideas so far.
+Working note, 5 October 2026.
+\bibitem{N4} Max 2-SAT with pruning clauses: pair decisions, sums, and a
+measure. Working note, 6 October 2026.
+\bibitem{Gol11} A. Golovnev. New upper bounds for MAX-2-SAT and MAX-2-CSP
+w.r.t. the average variable degree. IPEC 2011.
+\url{https://golovnev.org/papers/max2sat.pdf}.
+\bibitem{Has16} M. B. Hastings. Local maxima and improved exact algorithm
+for MAX-2-SAT. 2016. \url{https://arxiv.org/abs/1610.07100}.
+\bibitem{Hoe63} W. Hoeffding. Probability inequalities for sums of bounded
+random variables. \emph{Journal of the American Statistical Association}
+58(301):13--30, 1963. \url{https://doi.org/10.1080/01621459.1963.10500830}.
+\end{thebibliography}
+\end{document}

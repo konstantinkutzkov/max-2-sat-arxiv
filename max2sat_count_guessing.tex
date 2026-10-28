@@ -1,0 +1,675 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\hypersetup{pdftitle={Count Guessing Makes Constraints Useful}}
+\title{Count Guessing Makes Constraints Useful\\
+\large Max 2-SAT for aligned blocks plus a pseudo-random remainder}
+\author{}
+\date{11 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The note on useful constraints and group counts~\cite{RG} names two exits for
+the branching algorithm: learned constraints that give useful additional
+pruning, and compression of redundant structure. We combine them. If the
+quadratic part of the score is a few \emph{count terms} plus a pseudo-random
+remainder, the algorithm first guesses the values of the counts. Every count
+term then becomes a field, the learned constraints come from the remainder
+only, and early enumeration~\cite{EE,CC} prunes as for a pseudo-random
+formula. The guess costs a polynomial factor. We prove a deterministic
+theorem: such formulas are solved exactly in time $\Ostar(c^n)$, $c<2$, and
+polynomial space, at every density, with arbitrary fields. The class contains
+the pseudo-random formulas of~\cite{CC}. With probability at least $1-1/n$ it
+also contains random formulas whose pairs carry independent clause parities:
+with any parity bias, at every density $d\ge C\log n$, with any number of
+clauses per pair and with arbitrary unit clauses
+(Proposition~\ref{prop:random}). Random planted bisections and random formulas
+with a bounded number of aligned groups are members as well, together with
+their planted decompositions. The aligned family
+of~\cite[Section~4]{RG} is its degenerate case. The simplest members need no
+unknowns: the parity matrix minus its mean is pseudo-random. On strongly biased random formulas, plain early enumeration
+keeps a constant fraction of $10^{-4}$ to $10^{-3}$ of all assignments
+up to $n=480$; with count guessing no sampled assignment survives.
+\end{abstract}
+
+\section{The idea in clause terms}\label{sec:idea}
+
+A learned constraint is redundant when its bad values agree with those of the
+constraints already present~\cite{RG}. Agreement on a large scale has a simple
+source: many clauses whose parities follow one pattern. In the aligned family
+of~\cite[Section~4]{RG}, every pair carries $(u\lor v)$ or
+$(\neg u\lor\neg v)$, and the score is a linear function minus
+$\binom k2$, where $k$ is the number of true variables. All learned constraints
+then push the same way, and the algorithm of~\cite{RG} instead sorts for every
+value of $k$.
+
+Now add noise. Let a fraction of the pairs carry the opposite parity at random.
+The count term is still there, so the constraints still largely agree, and the
+summed constraint stays weak. But sorting no longer solves the problem either.
+The two exits combine. For a \emph{guessed} final count $k$, the count term
+contributes to every single flip only a shift by a common field, which depends
+on $k$ alone. Replace it by that shift. The learned constraints then come from
+the noise, which is pseudo-random, and they prune as in~\cite{CC}. One of the
+$n+1$ guesses is right, and in that run the optimum survives.
+
+\section{The class}\label{sec:class}
+
+Write the score of a 2-CNF formula on $x\in\{0,1\}^n$ as
+\[
+ F(x)=c_0+\sum_uh_ux_u+\sum_{u<v}J_{uv}x_ux_v .
+\]
+Fix the order $1,\dots,n$ and a depth $T=\lfloor\tau n\rfloor$, $0<\tau<1$.
+
+\begin{definition}[Aligned decomposition]
+Let $s_1,\dots,s_r\in\{-1,0,1\}^n$ and $\beta_1,\dots,\beta_r\in\mathbb Q$.
+Put $A_{uv}=\sum_k\beta_ks_k(u)s_k(v)$ for $u\ne v$, the \emph{aligned part},
+and $N=J-A$ off the diagonal, the \emph{remainder}. The \emph{counts} of $x$
+are $c_k(x)=\langle s_k,x\rangle$, and $\sigma=\sum_k|\beta_k|$.
+\end{definition}
+
+If the $s_k$ are indicators of blocks, the aligned part is constant inside each
+block; sums and differences of two indicators add a constant bias between two
+blocks. The counts are then the group counts of~\cite{RG}, and the number of
+runs below is governed by the number of distinct group counts.
+
+\begin{definition}[Pseudo-random remainder]\label{def:prr}
+Let $D=\frac1n\sum_{u\ne v}N_{uv}^2$, let $R$ be the $T\times n$ matrix with
+$R_{tw}=N_{tw}$ for $w>t$ and $0$ otherwise, and $W_t=\sum_{j<t}N_{tj}^2$.
+For constants $K,g>0$, the remainder is \emph{$(K,g)$-pseudo-random} if
+\begin{align}
+ \|R\|^2&\le K\,D,\tag{R1}\label{R1}\\
+ \sum_{t\le T}\sqrt{W_t}&\ge4\sqrt3\,g\,n\sqrt D,\tag{R2}\label{R2}\\
+ \sigma&\le g\sqrt D/(8\tau).\tag{R3}\label{R3}
+\end{align}
+\end{definition}
+
+Condition~\eqref{R1} is the aggregate pair-count condition of~\cite{CC} for the
+remainder. Condition~\eqref{R2} asks the earlier neighbours to carry weight, as
+in~\cite{CA}. Condition~\eqref{R3} compares the strength of the aligned
+part per pair with the scale $\sqrt D$ of the remainder; it holds as soon as
+$D$ is large. No condition is placed on the fields $h$ or on the aligned part
+otherwise.
+
+\paragraph{Examples.}
+\begin{enumerate}
+ \item $r=0$: the pseudo-random formulas of~\cite{CC,CA}.
+ \item \emph{Mean-centred}: $r=1$, $s=\mathbf 1$, and $\beta$ the mean of
+ $J_{uv}$ over all pairs $u\ne v$. Nothing is unknown, and all conditions can
+ be checked in polynomial time (Corollary~\ref{cor:mean}). Random formulas
+ whose pairs carry independent clause parities with a common mean are members
+ with probability at least $1-1/n$: with any parity bias, at every density
+ $d\ge C\log n$, with any number of clauses per pair and with arbitrary unit
+ clauses (Section~\ref{sec:random}, Corollary~\ref{cor:random}). Both standard
+ models are of this kind: one clause per pair, and each of the four clauses of
+ a pair present independently.
+ \item \emph{Planted bisection}: $r=1$, $s\in\{\pm1\}^n$: pairs on the same
+ side have one parity bias, pairs across the other. Random planted bisections,
+ whose pairs carry independent parities with mean $\beta s(u)s(v)$, are members
+ by Proposition~\ref{prop:random}(ii) when $s$ is given.
+ \item \emph{Few groups}: $s_k$ the indicators of $r=O(1)$ groups and $\beta_k$
+ a bias per pair of groups, written as a sum of terms of this form. Random
+ formulas whose pairs carry independent parities with a mean that depends only
+ on the groups of the two variables are members by
+ Proposition~\ref{prop:random}(ii) when the groups are given.
+ \item \emph{Degenerate}: $N=0$. Then every run below optimizes a linear
+ function, which is the sorting argument of~\cite[Section~4]{RG}. The
+ theorem does not need this case.
+\end{enumerate}
+
+\section{The algorithm}\label{sec:algorithm}
+
+For every vector $c=(c_1,\dots,c_r)$ of integers with
+$|c_k|\le\|s_k\|_1$ run the following, and return the best assignment found
+over all runs.
+\begin{enumerate}
+ \item Shift the fields: $h^c=h+\sum_k\beta_kc_ks_k$, and let
+ $F'_c(x)=c_0+\langle h^c,x\rangle+\sum_{u<v}N_{uv}x_ux_v$.
+ \item Branch on $x_1,\dots,x_T$, visiting all $2^T$ prefixes. At step $t$
+ let
+ \[
+  \Delta_t=h^c_t+\sum_{j<t}N_{tj}x_j+\tfrac12\sum_{w>t}N_{tw},
+ \]
+ the gain of $x_t=1$ over $x_t=0$ under $F'_c$ when the later variables are
+ set to $\frac12$. The preferred value is $p_t=[\Delta_t\ge0]$. If $x_t\ne
+ p_t$, then $t$ is a \emph{creator}, and $\gamma_t(x)$ denotes the gain of
+ flipping $x_t$ to $p_t$ under $F'_c$, a linear function of the other
+ variables.
+ \item At each prefix, enumerate the completions satisfying the summed
+ constraint
+ \begin{equation}
+  \sum_{t\text{ creator}}\gamma_t(x)\le\sigma\cdot\#\{\text{creators}\},
+  \label{eq:summed}
+ \end{equation}
+ with the output-sensitive generator of~\cite{EE}, and evaluate $F$ on each.
+\end{enumerate}
+There are at most $(2n+1)^r$ runs. Every run uses polynomial space, and its
+time is $\Ostar(2^T+W_c)$, where $W_c$ is the number of assignments $x$ that
+satisfy~\eqref{eq:summed} for their own prefix~\cite[Lemma~2]{EE}.
+
+\section{Exactness}\label{sec:exact}
+
+\begin{lemma}[Gains]\label{lem:gain}
+Let $c(x)=c$. Flipping $x_t$ from $0$ to $1$ changes $F$ and $F'_c$ equally.
+Flipping $x_t$ from $1$ to $0$ changes $F$ by
+$\sum_k\beta_ks_k(t)^2\ge-\sigma$ more than it changes $F'_c$.
+\end{lemma}
+
+\begin{proof}
+The aligned part of $F$ is $\sum_k\frac{\beta_k}2\bigl(c_k(x)^2-\sum_u
+s_k(u)^2x_u\bigr)$, since $x_u^2=x_u$. Flipping $x_t$ up changes it by
+$\sum_k\beta_kc_ks_k(t)$, the same as the shift in $F'_c$. Flipping $x_t$
+down changes it by $\sum_k\beta_k(s_k(t)^2-c_ks_k(t))$, while the shift
+changes by $-\sum_k\beta_kc_ks_k(t)$. The remainder and $h$ contribute
+equally to both.
+\end{proof}
+
+\begin{lemma}[Exactness]\label{lem:exact}
+The algorithm returns an optimal assignment.
+\end{lemma}
+
+\begin{proof}
+Add to $F$ a generic perturbation $\langle\theta,x\rangle$ with $\|\theta\|_1$ below
+$1/q$, where $q$ is a common denominator of all coefficients. Let $x^\circ$
+be the unique maximizer of $F+\langle\theta,x\rangle$; it maximizes $F$. Consider
+the run $c=c(x^\circ)$, add the same perturbation to $F'_c$, and let $t$ be a
+creator on the path of $x^\circ$. If the perturbed gain of flipping $x_t$ to
+$p_t$ at $x^\circ$ were at least $\sigma$, Lemma~\ref{lem:gain} would make the
+perturbed gain under $F$ nonnegative, contradicting uniqueness. Summing the
+strict inequalities over the creators and removing the perturbation gives
+$\sum_t\gamma_t(x^\circ)<\sigma\cdot\#\{\text{creators}\}+1/q$. The left side
+minus $\sigma\cdot\#\{\text{creators}\}$ is a multiple of $1/q$, so it is at
+most zero. Hence $x^\circ$ satisfies~\eqref{eq:summed} at its own prefix and
+is enumerated.
+\end{proof}
+
+The argument needs no property of $N$: the algorithm is exact for every
+decomposition, and the conditions of Definition~\ref{def:prr} only bound its
+running time.
+
+\section{Running time}\label{sec:time}
+
+Fix a run $c$ and let $x$ be uniform; put $u=2x-1\in\{\pm1\}^n$. Write $H_t=
+h^c_t+\frac12\sum_{w\ne t}N_{tw}$ and let $L$ be the $T\times T$ matrix with
+$L_{tj}=N_{tj}$ for $j<t$. Then $\Delta_t=H_t+\frac12(Lu)_t$, and
+$L^{\mathsf T}$ is the leading block of $R$, so $\|L\|\le\|R\|$.
+
+\begin{lemma}[Passing]\label{lem:pass}
+With $I$ the set of creators, $x$ satisfies~\eqref{eq:summed} if and only if
+$S'+Q\le0$, where
+\[
+ S'=\sum_{t\in I}\bigl(|\Delta_t|-\sigma\bigr),\qquad
+ Q=-\tfrac12\sum_{w=1}^nu_w\sum_{t\in I,\,t<w}u_tN_{tw}.
+\]
+\end{lemma}
+
+\begin{proof}
+For a creator, $\gamma_t(x)=(2p_t-1)\bigl(\Delta_t+\frac12\sum_{w>t}
+N_{tw}u_w\bigr)$, $(2p_t-1)\Delta_t=|\Delta_t|$ and $u_t=-(2p_t-1)$.
+\end{proof}
+
+\begin{lemma}[Gap profile with arbitrary fields]\label{lem:profile}
+Assume \eqref{R1}, \eqref{R2} and $n\ge256\pi\tau K/g^2$. Let
+$\alpha=\max\{2,\frac94\tau\sqrt K/g\}$ and $M=\alpha\sqrt{KD}$. Then
+\[
+ \Prb\Bigl[\sum_{t\le T}\min\{|\Delta_t|,M\}<\tfrac34g\,n\sqrt D\Bigr]
+ \le4e^{-g^2n/(16\tau K)} .
+\]
+\end{lemma}
+
+\begin{proof}
+Split $t\le T$ into $\mathrm{Small}=\{|H_t|\le M/2\}$ and
+$\mathrm{Large}=\{|H_t|>M/2\}$. Since $\|Lu\|^2\le\|L\|^2T\le KDT$, two
+deterministic facts hold.
+\begin{itemize}
+ \item For $t\in\mathrm{Small}$, $|\Delta_t|-M\le\frac12|(Lu)_t|-\frac M2$,
+ and $(a-b)_+\le a^2/(4b)$ gives
+ $\min\{|\Delta_t|,M\}\ge|\Delta_t|-(Lu)_t^2/(8M)$. Summed over Small, the
+ loss is at most $KDT/(8M)=T\sqrt{KD}/(8\alpha)$.
+ \item For $t\in\mathrm{Large}$ with $|(Lu)_t|\le M/2$,
+ $|\Delta_t|\ge M/4$. At most $4KDT/M^2=4T/\alpha^2$ indices have
+ $|(Lu)_t|>M/2$.
+\end{itemize}
+So $\sum_t\min\{|\Delta_t|,M\}\ge G(u)-T\sqrt{KD}/(8\alpha)+\frac
+M4(|\mathrm{Large}|-4T/\alpha^2)$ with $G(u)=\sum_{t\in\mathrm{Small}}|\Delta_t|$.
+Each $(Lu)_t$ is a symmetric sum of independent terms with variance $W_t$, so
+$\E|\Delta_t|\ge\E|\frac12(Lu)_t|\ge\frac12\sqrt{W_t/3}$ by symmetry and the
+fourth-moment bound $\E|Z|\ge\sqrt{\operatorname{Var}Z/3}$~\cite{EE}. For
+$t\in\mathrm{Large}$, $\frac M4\ge\frac12\sqrt{W_t/3}$ because
+$W_t\le\|L\|^2\le KD$ and $\alpha\ge2$. With~\eqref{R2},
+\[
+ \E G+\tfrac M4|\mathrm{Large}|\ \ge\ \tfrac12\sum_{t\le T}\sqrt{W_t/3}
+ \ \ge\ 2g\,n\sqrt D ,
+\]
+and the two losses $T\sqrt{KD}/\alpha+T\sqrt{KD}/(8\alpha)$ are at most
+$\frac12g\,n\sqrt D$ by the choice of $\alpha$. The function $G$ is convex in
+$u\in[-1,1]^T$ and Lipschitz with constant
+$\ell=\frac12\sqrt T\|L\|\le\frac12\sqrt{TKD}$. Talagrand's
+inequality~\cite{Tal95} gives $\Prb[G\le\E G-s-8\sqrt\pi\,\ell]\le
+4e^{-s^2/(16\ell^2)}$; the assumption on $n$ makes $8\sqrt\pi\,\ell\le\frac14
+g\,n\sqrt D$. Take $s=\frac12g\,n\sqrt D$.
+\end{proof}
+
+\begin{proposition}[One run]\label{prop:run}
+Under \eqref{R1}--\eqref{R3} and $n\ge256\pi\tau K/g^2$, a uniform $x$
+satisfies~\eqref{eq:summed} for its own prefix with probability at most
+$6e^{-c_*n}$, where $c_*=g^2/(64\tau\alpha^2K)$. The bound does not depend on the
+fields, hence not on the run.
+\end{proposition}
+
+\begin{proof}
+\emph{Shortfall.} Let $Y_t=[t\in I]\min\{|\Delta_t|,M\}\in[0,M]$. Given $u_1,\dots,u_{t-1}$,
+the value $\Delta_t$ is fixed and $t$ is a creator with probability
+$\frac12$. So $\E[Y_t\mid\cdot]=\frac12\min\{|\Delta_t|,M\}$ and
+$\E[Y_t^2\mid\cdot]\le M^2/2$. The lower tail for nonnegative
+increments~\cite{EE,Mau03} gives $\sum Y_t\ge\frac12\sum_t\min\{|\Delta_t|,M\}
+-a$ except with probability $e^{-a^2/(TM^2)}$. Take $a=\frac18g\,n\sqrt D$.
+By Lemma~\ref{lem:profile} and~\eqref{R3},
+$S'\ge\sum Y_t-\sigma T\ge(\frac38-\frac18-\frac18)g\,n\sqrt D$ outside the
+two exceptional events.
+
+\emph{Martingale.} In the order $w=1,\dots,n$, the coefficient
+$\kappa_w=\sum_{t\in I,t<w}u_tN_{tw}$ of $u_w$ in $Q$ is fixed before $u_w$
+is drawn, and $\sum_w\kappa_w^2=\|R^{\mathsf T}v\|^2\le KDT$ with
+$v_t=u_t[t\in I]$. The conditional $\cosh$ bound gives
+$\Prb[Q\le-b]\le e^{-2b^2/(KDT)}$; take $b=\frac18g\,n\sqrt D$.
+
+Outside the three events $S'+Q>0$. The exponents are $g^2n/(64\tau\alpha^2K)$,
+$g^2n/(16\tau K)$ and $g^2n/(32\tau K)$, and the first is the smallest.
+\end{proof}
+
+\begin{theorem}[Aligned blocks plus a pseudo-random remainder]\label{thm:main}
+Let $F$ be a 2-CNF formula on $n$ variables with an aligned decomposition of
+rank $r$ whose remainder is $(K,g)$-pseudo-random, and let
+$n\ge256\pi\tau K/g^2$. Given the decomposition, Max 2-SAT on $F$ is solved
+exactly by a deterministic algorithm in polynomial space and time
+\[
+ \Ostar\Bigl((2n+1)^r\bigl(2^{\tau n}+2^ne^{-c_*n}\bigr)\Bigr),
+ \qquad c_*=\frac{g^2}{64\tau\alpha^2K},\quad
+ \alpha=\max\Bigl\{2,\frac{9\tau\sqrt K}{4g}\Bigr\}.
+\]
+For $r=O(1)$ this is $\Ostar(c^n)$ with $c=2^{\max\{\tau,\,1-c_*/\ln2\}}<2$,
+independent of the density and of the fields.
+\end{theorem}
+
+\begin{proof}
+Lemma~\ref{lem:exact} gives exactness. Each run costs
+$\Ostar(2^T+W_c)$, and $W_c\le2^n\cdot6e^{-c_*n}$ by
+Proposition~\ref{prop:run}.
+\end{proof}
+
+\begin{corollary}[Mean-centred formulas]\label{cor:mean}
+Let $\beta$ be the mean of $J_{uv}$ over all pairs $u\ne v$ and
+$N=J-\beta(\mathbf 1\mathbf 1^{\mathsf T}-I)$. If $N$ satisfies
+\eqref{R1}--\eqref{R3} with $\sigma=|\beta|$, then Max 2-SAT on $F$ is solved
+in polynomial space and time $\Ostar(n(2^{\tau n}+2^ne^{-c_*n}))$. All
+conditions can be verified in polynomial time; there are $n+1$ runs, one for
+each number of true variables.
+\end{corollary}
+
+\begin{remark}[Constants and other decompositions]
+The constants are very small: for the complete parity-biased formulas with
+$\tau=\frac12$, \eqref{R2} holds with $g\approx0.034$
+(Table~\ref{tab:membership}). The measured behaviour is far better
+(Table~\ref{tab:pass}). For a planted bisection $s$ is unknown.
+When $|\beta|n\gg\|N\|$, rounding the top eigenvector of $J$ recovers $s$
+except for $O(\|N\|^2/(\beta^2n))$ coordinates, by the Davis--Kahan theorem.
+The misplaced coordinates change $N$ by a matrix of rank at most two and norm
+$O(\|N\|)$. This recovery is sketched, not proved here.
+\end{remark}
+
+\section{Random formulas}\label{sec:random}
+
+The class of Definition~\ref{def:prr} is deterministic. This section shows that
+random formulas belong to it with probability at least $1-1/n$, with any parity
+bias, at every density $d\ge C\log n$, and with arbitrary unit clauses. Recall
+that $J_{uv}$ is the number of mixed clauses on the pair $\{u,v\}$ minus the
+number of equal clauses on it: $(u\lor v)$ and $(\neg u\lor\neg v)$ contribute
+$-1$, while $(u\lor\neg v)$ and $(\neg u\lor v)$ contribute $+1$.
+
+\begin{definition}[Independent pairs]\label{def:indep}
+A random 2-CNF formula has \emph{independent pairs} if the numbers $J_{uv}$,
+$u<v$, are independent random variables. Nothing else is assumed: the unit
+clauses, and which literals are negated in a clause of a given parity, may be
+arbitrary and may even depend on the $J_{uv}$.
+\end{definition}
+
+\paragraph{Two models.} In both, $\varepsilon\in[-1,1]$ is the parity bias,
+and $d$ is the expected number of binary clauses that contain a given variable.
+\begin{enumerate}
+ \item[(a)] \emph{One clause per pair.} Each pair independently receives no
+ clause with probability $1-p$. Otherwise it receives exactly one clause: its
+ literal on $u$ is positive or negative with probability $\frac12$ each, and
+ its literal on $v$ has the same polarity with probability
+ $\frac{1+\varepsilon}2$ and the opposite polarity otherwise. Here $d=p(n-1)$,
+ $J_{uv}\in\{-1,0,1\}$, $\E J_{uv}=-\varepsilon p$ and
+ $\operatorname{Var}J_{uv}=p(1-\varepsilon^2p)$. For $\varepsilon=0$ these are
+ the usual random formulas on $G(n,p)$; for $p=1$ and $\varepsilon=1$ they
+ form the aligned family of~\cite[Section~4]{RG}.
+ \item[(b)] \emph{Independent clauses.} Each of the four clauses on each pair
+ is present independently: $(u\lor v)$ and $(\neg u\lor\neg v)$ with
+ probability $q(1+\varepsilon)$ each, $(u\lor\neg v)$ and $(\neg u\lor v)$
+ with probability $q(1-\varepsilon)$ each. A pair carries between $0$ and $4$
+ clauses, $d=4q(n-1)$, $|J_{uv}|\le2$ and $\E J_{uv}=-4q\varepsilon$; if
+ $q(1+|\varepsilon|)\le\frac12$, then $\operatorname{Var}J_{uv}\ge2q$. For
+ $\varepsilon=0$ and $q=\frac14$ every clause is present with probability
+ $\frac14$.
+\end{enumerate}
+
+\begin{proposition}[Random formulas are pseudo-random]\label{prop:random}
+Let $0<\tau<1$, $\rho\ge1$, $C=10^9\rho/\tau$ and $n\ge n_0=10^9\rho^2/\tau^2$.
+Let $F$ have independent pairs with $|J_{uv}-\E J_{uv}|\le B$ and
+$\nu\le\operatorname{Var}J_{uv}\le\rho\nu$ for all $u<v$, and take one of the
+following aligned parts.
+\begin{enumerate}
+ \item[(i)] \emph{Mean-centred}: $\E J_{uv}=\mu$ for all pairs, and
+ $A=\beta(\mathbf 1\mathbf 1^{\mathsf T}-I)$ with $\beta$ the mean of the
+ $J_{uv}$, as in Corollary~\ref{cor:mean}; put $\sigma_0=|\mu|$.
+ \item[(ii)] \emph{Expected}: a fixed aligned decomposition with
+ $A_{uv}=\E J_{uv}$ for all $u\ne v$; put $\sigma_0=\sigma$.
+\end{enumerate}
+If $n\nu\ge C(B^2\log n+\rho\sigma_0^2)$, then with probability at least
+$1-1/n$ the remainder $N=J-A$ is $(K,g)$-pseudo-random with $K=9\rho$ and
+$g=\tau^{3/2}/(12\sqrt\rho)$. Moreover $n\ge256\pi\tau K/g^2$.
+\end{proposition}
+
+\begin{proof}
+Let $X_{uv}=J_{uv}-\E J_{uv}$. These are independent and centred, with
+$|X_{uv}|\le B$ and $\nu\le\E X_{uv}^2\le\rho\nu$. Let $\delta=\beta-\mu$ in
+case~(i) and $\delta=0$ in case~(ii); in both cases $N_{uv}=X_{uv}-\delta$ for
+$u\ne v$. Put $\eta=1/100$. The assumption gives $B\sqrt{\log n}\le\sqrt{n\nu/C}$
+and $\sigma_0\le\sqrt{n\nu/(C\rho)}$. Three standard tools are used.
+\begin{itemize}
+ \item \emph{Bernstein's inequality}~\cite{BLM13}: if $Y_1,\dots,Y_m$ are
+ independent, $Y_i-\E Y_i\le\bar c$ and $\sum_i\operatorname{Var}Y_i\le\lambda$,
+ then $\Prb[\sum_i(Y_i-\E Y_i)\ge s]\le\exp(-s^2/(2\lambda+2\bar cs/3))$.
+ \item \emph{Talagrand's inequality}~\cite{Tal95}, as in
+ Lemma~\ref{lem:profile}: if $f$ is convex and $1$-Lipschitz in independent
+ variables with values in $[-B,B]$, then $f\le\E f+8\sqrt\pi\,B+s$ except with
+ probability $4e^{-s^2/(16B^2)}$.
+ \item \emph{The norm bound of Bandeira and van
+ Handel}~\cite[Theorem~3.1 and Corollary~3.2]{BvH16}: for a fixed $T\times n$
+ matrix $(a_{tw})$ and independent random signs $\xi_{tw}$,
+ \[
+  \E\|(\xi_{tw}a_{tw})\|\le(1+\vartheta)\Bigl(\sigma_1+\sigma_2
+  +\frac{5\max_{t,w}|a_{tw}|\sqrt{\log n}}{\sqrt{\log(1+\vartheta)}}\Bigr),
+  \qquad0<\vartheta\le\tfrac12,
+ \]
+ where $\sigma_1$ and $\sigma_2$ are the largest Euclidean norms of a row and
+ of a column of $(a_{tw})$.
+\end{itemize}
+Each event below fails with probability at most $n^{-3}$, and there are at most
+$n+4$ of them, so they all hold with probability at least $1-1/n$.
+
+\emph{The mean and $D$.} In case~(i), $\binom n2\delta=\sum_{u<v}X_{uv}$, and
+Bernstein's inequality for both tails (with $\bar c=B$ and
+$\lambda=\binom n2\rho\nu$) gives $|\delta|\le\delta_0=6\sqrt{\rho\nu\log n}/n$:
+the assumption makes $\bar cs/3\le\lambda$, and the exponent is then at least
+$4.5(1-\frac1n)\log n$. As $n\ge n_0$, $\delta_0\le10^{-3}\sqrt\nu$ and
+$n\delta_0\le10^{-3}\sqrt{n\rho\nu}$. Bernstein's inequality for the sum of the
+$X_{uv}^2$ (with $\bar c=B^2$ and $\lambda=\binom n2B^2\rho\nu$) gives
+$(1-\eta)n(n-1)\nu\le\sum_{u\ne v}X_{uv}^2\le(1+\eta)n(n-1)\rho\nu$. Since
+$\sum_{u\ne v}X_{uv}=n(n-1)\delta$, we have
+$D=\frac1n\sum_{u\ne v}X_{uv}^2-(n-1)\delta^2$, and hence
+\begin{equation}\label{eq:Dbounds}
+ (1-2\eta)(n-1)\nu\le D\le(1+\eta)(n-1)\rho\nu .
+\end{equation}
+
+\emph{Condition~\eqref{R1}.} Let $R_X$ be the $T\times n$ matrix with entries
+$X_{tw}$ for $w>t$ and $0$ otherwise, and $U$ the $0/1$ matrix with the same
+pattern. Then $R=R_X-\delta U$ and $\|U\|\le\|U\|_F\le n$. Let $X'$ be an
+independent copy of $X$ and $\hat X=X-X'$. By Jensen's inequality,
+$\E\|R_X\|\le\E\|R_X-R_{X'}\|=\E\|R_{\hat X}\|$. The entries of $\hat X$ are
+independent and symmetric, so $R_{\hat X}$ has the law of
+$(\xi_{tw}\hat X_{tw})$. The norm bound, applied conditionally on $\hat X$ with
+$\vartheta=\eta$ and $|\hat X_{tw}|\le2B$, gives
+\[
+ \E\|R_X\|\le(1+\eta)\bigl(\E\sigma_1(\hat X)+\E\sigma_2(\hat X)\bigr)
+ +102\,B\sqrt{\log n},
+\]
+where $\sigma_1(\hat X)^2$ and $\sigma_2(\hat X)^2$ are the largest row sum and
+the largest column sum of the $\hat X_{tw}^2$ over the pattern. A row has fewer
+than $n$ entries and a column at most $T\le\tau n$, each with
+$\hat X_{tw}^2\le4B^2$ and $\E\hat X_{tw}^2\le2\rho\nu$. Bernstein's inequality
+(with $\bar c=4B^2$, $\lambda=8nB^2\rho\nu$ and $s=2\eta n\rho\nu$) and a union
+bound over the at most $2n$ rows and columns show that all row sums are at most
+$2(1+\eta)n\rho\nu$ and all column sums at most $2(\tau+\eta)n\rho\nu$, except
+with probability $2n\,e^{-\eta^2n\rho\nu/(5B^2)}\le n^{-3}$. Every such sum is
+at most $4nB^2$, so $\E\sigma_1(\hat X)^2\le2(1+2\eta)n\rho\nu$ and
+$\E\sigma_2(\hat X)^2\le2(\tau+2\eta)n\rho\nu$. With $102/\sqrt C\le0.004$,
+\[
+ \E\|R_X\|\le\Bigl(1.01\sqrt2\bigl(\sqrt{1.02}+\sqrt{\tau+0.02}\bigr)
+ +0.004\Bigr)\sqrt{n\rho\nu}\le2.89\sqrt{n\rho\nu}.
+\]
+The norm $\|R_X\|$ is a convex function of the entries $X_{tw}$ and is
+$1$-Lipschitz for the Euclidean norm. Talagrand's inequality with
+$s=\eta\sqrt{n\rho\nu}$ gives
+$\|R_X\|\le\E\|R_X\|+8\sqrt\pi\,B+\eta\sqrt{n\rho\nu}$ except with probability
+$4n^{-\eta^2C/16}\le n^{-3}$. As $8\sqrt\pi\,B\le10^{-3}\sqrt{n\rho\nu}$,
+\[
+ \|R\|\le\|R_X\|+n|\delta|\le2.902\sqrt{n\rho\nu},\qquad
+ \|R\|^2\le8.43\,n\rho\nu\le9\rho(1-2\eta)(n-1)\nu\le KD .
+\]
+
+\emph{Condition~\eqref{R2}.} Let $t_0=\lceil\tau n/10\rceil$. For $t>t_0$ the
+sum $V_t=\sum_{j<t}X_{tj}^2$ has mean at least $(t-1)\nu$, and Bernstein's
+inequality for its lower tail (with $\bar c=B^2$, $\lambda=(t-1)B^2\rho\nu$ and
+$s=\eta(t-1)\nu$) gives $V_t\ge(1-\eta)(t-1)\nu$ except with probability
+$e^{-\eta^2\tau n\nu/(30B^2\rho)}\le n^{-3}$. Then
+$\sqrt{W_t}\ge\sqrt{V_t}-|\delta|\sqrt{t-1}\ge0.993\sqrt{(t-1)\nu}$. Using
+$\sum_{s=t_0}^{T-1}\sqrt s\ge\frac23\bigl((T-1)^{3/2}-t_0^{3/2}\bigr)$,
+$T-1\ge\tau n-2$ and $\tau n\ge10^3$,
+\[
+ \sum_{t\le T}\sqrt{W_t}\ge0.993\sqrt\nu\cdot\tfrac23\bigl((T-1)^{3/2}
+ -t_0^{3/2}\bigr)\ge0.635\,\tau^{3/2}n^{3/2}\sqrt\nu .
+\]
+By~\eqref{eq:Dbounds},
+$4\sqrt3\,g\,n\sqrt D\le\frac{\sqrt3}3\sqrt{1.01}\,\tau^{3/2}n^{3/2}\sqrt\nu
+\le0.581\,\tau^{3/2}n^{3/2}\sqrt\nu$.
+
+\emph{Condition~\eqref{R3}.} By~\eqref{eq:Dbounds},
+$g\sqrt D/(8\tau)\ge\sqrt\tau\sqrt{0.98(n-1)\nu}/(96\sqrt\rho)
+\ge0.0102\sqrt{\tau n\nu/\rho}$. In case~(ii),
+$\sigma=\sigma_0\le\sqrt{n\nu/(C\rho)}\le10^{-4}\sqrt{\tau n\nu/\rho}$. In
+case~(i), $\sigma=|\beta|\le\sigma_0+\delta_0\le0.002\sqrt{\tau n\nu/\rho}$.
+
+Finally, $256\pi\tau K/g^2=256\pi\cdot1296\,\rho^2/\tau^2<1.1\cdot10^6\rho^2/\tau^2
+\le n$.
+\end{proof}
+
+\begin{corollary}[Random formulas]\label{cor:random}
+Let $0<\tau<1$, $C=10^9/\tau$ and $n\ge10^9/\tau^2$. In each of the following
+cases the formula satisfies, with probability at least $1-1/n$, the conditions
+of Corollary~\ref{cor:mean} with $K=9$ and $g=\tau^{3/2}/12$, whatever its unit
+clauses are.
+\begin{enumerate}
+ \item[(a)] Model~(a) with $p\le\frac12$ and $d\ge9C\log n$, for every
+ $\varepsilon\in[-1,1]$; and model~(a) with $p=1$ if
+ $n(1-\varepsilon^2)\ge5C\log n$.
+ \item[(b)] Model~(b) with $q(1+|\varepsilon|)\le\frac12$ and
+ $d\ge34C\log n$, for every $\varepsilon\in[-1,1]$.
+\end{enumerate}
+On such a formula the algorithm of Corollary~\ref{cor:mean} solves Max 2-SAT
+in polynomial space and time $\Ostar(c^n)$, with
+$c=2^{\max\{\tau,\,1-c_*/\ln2\}}<2$ and $c_*\ge\tau^3/(5.5\cdot10^8)$. The
+algorithm is exact on every input; only its running time uses the
+probability.
+\end{corollary}
+
+\begin{proof}
+All pairs have the same distribution, so Proposition~\ref{prop:random}(i)
+applies with $\rho=1$ and $\nu=\operatorname{Var}J_{uv}$. In model~(a),
+$B=2$ and $\sigma_0=|\varepsilon|p\le p$. If $p\le\frac12$, then $\nu\ge p/2$
+and $n\nu\ge d/2\ge C(4\log n+1)$. If $p=1$, then $\nu=1-\varepsilon^2$ and
+$\sigma_0\le1$. In model~(b), $B=4$, $\sigma_0=4q|\varepsilon|\le2$ and
+$n\nu\ge2qn\ge d/2\ge C(16\log n+4)$. The running time is
+Theorem~\ref{thm:main} with $\alpha=81/\sqrt\tau$ and
+$c_*=\tau^3/(144\cdot64\cdot81^2\cdot9)$.
+\end{proof}
+
+\begin{remark}[Constants and density]\label{rem:random}
+No attempt was made to optimize $C$ and $n_0$, and $c_*$ is tiny. The proved
+values $K=9$ and $g=\tau^{3/2}/12\approx0.029$ (for $\tau=\frac12$) are not far
+from the measured ones in Table~\ref{tab:membership}, which
+\texttt{explore\_count\_guessing.py membership} produces. The condition
+$d\ge C\log n$ is needed for~\eqref{R1}: $\|R\|$ is at least the largest norm
+of a row or a column of $R$, which is of the order of the square root of the
+largest number of neighbours of a variable. For $d=o(\log n)$ some variables
+have far more than $d$ neighbours, so $K$ is unbounded. Densities between
+$\omega(1)$ and $C\log n$ would need a separate treatment of these few
+variables, for instance branching on them first.
+\end{remark}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+model & $n$ & $\varepsilon$ & $K$ & $g$ & \eqref{R3} ratio\\
+\midrule
+(a), $p=1$ & 2000 & 0 & 2.42 & 0.034 & 3450\\
+(a), $p=1$ & 2000 & 0.5 & 2.44 & 0.034 & 0.66\\
+(a), $p=1$ & 2000 & 0.9 & 2.46 & 0.034 & 0.18\\
+(a), $d=5$ & 4000 & 1 & 3.45 & 0.028 & 12.5\\
+(a), $d=20$ & 4000 & 0.5 & 2.62 & 0.033 & 14.7\\
+(a), $d=80$ & 4000 & 1 & 2.47 & 0.034 & 3.74\\
+(b), $q=\frac14$ & 2000 & 0 & 2.39 & 0.034 & 1380\\
+(b), $q=\frac14$ & 2000 & 0.5 & 2.42 & 0.034 & 0.63\\
+(b), $d=20$ & 4000 & 0 & 2.68 & 0.032 & 3360\\
+(b), $d=20$ & 4000 & 1 & 2.61 & 0.033 & 7.26\\
+\bottomrule
+\end{tabular}
+\caption{Measured constants of random formulas for the mean-centred
+decomposition, $\tau=\frac12$, one formula per row: $K=\|R\|^2/D$, the largest
+$g$ allowed by~\eqref{R2}, and the ratio of the right side of~\eqref{R3} to
+$\sigma$ (at least $1$ is needed). Proposition~\ref{prop:random} proves $K=9$
+and $g\approx0.029$. For a dense, strongly biased formula~\eqref{R3} needs a
+larger $n$; the ratio grows like $\sqrt{n(1-\varepsilon^2)}/|\varepsilon|$.}
+\label{tab:membership}
+\end{table}
+
+\section{Experiments}\label{sec:experiments}
+
+\texttt{explore\_count\_guessing.py exact} runs the algorithm on 60 formulas
+with $6\le n\le11$. They are complete parity-biased formulas, planted
+bisections, and random formulas with an arbitrary two-group decomposition. In
+every case the algorithm found the optimum, with $T=n/2$, and it evaluated
+$12{,}375$ of the $46{,}400$ assignments. \texttt{scaling} estimates the
+fraction of all assignments that early enumeration evaluates at $T=n/2$, by
+sampling (Table~\ref{tab:pass}).
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+ & $n=60$ & $120$ & $240$ & $480$\\
+\midrule
+parity bias $\varepsilon=0.9$, plain & $6.3\cdot10^{-4}$ & $1.1\cdot10^{-3}$ &
+ $6\cdot10^{-5}$ & $3.3\cdot10^{-4}$\\
+\quad with count guessing & $1.3\cdot10^{-4}$ & $0$ & $0$ & $0$\\
+parity bias $\varepsilon=1$, plain & $6.3\cdot10^{-4}$ & $1.4\cdot10^{-3}$ &
+ $2.5\cdot10^{-4}$ & $8.3\cdot10^{-4}$\\
+\quad with count guessing & $0$ & $0$ & $0$ & $0$\\
+planted bisection, $\beta=0.9$, plain & $5.6\cdot10^{-3}$ & $9.4\cdot10^{-4}$
+ & $2.5\cdot10^{-4}$ & $0$\\
+\quad with count guessing & $7.5\cdot10^{-4}$ & $0$ & $0$ & $0$\\
+\bottomrule
+\end{tabular}
+\caption{Fraction of the $2^n$ assignments evaluated by early enumeration at
+$T=n/2$; $16{,}000$ samples ($6{,}000$ for $n=480$), so $0$ means below about
+$10^{-4}$. One formula per entry.}\label{tab:pass}
+\end{table}
+
+With bias $\varepsilon\le0.8$ plain early enumeration also falls below the
+sampling resolution from $n=240$ on, consistent with a floor of size
+$e^{-\Theta(1/\varepsilon^2)}$. A heuristic for this floor: on a constant
+fraction of prefixes, the creators favour one value by $\Theta(\varepsilon n)$.
+The count term then adds to $Q$ a product of this imbalance and the imbalance
+of the completion, which is as large as the shortfall with constant
+probability. The bound of~\cite{CC} for plain early enumeration
+degenerates on these formulas, because the aligned part has norm
+$|\beta|n\gg\sqrt D$. Count guessing removes the count term from $Q$
+altogether.
+
+\section{Relation to the note on group counts}\label{sec:relation}
+
+\begin{itemize}
+ \item \emph{Group counts.} The solver of~\cite[Section~5]{RG} exploits exact
+ repetition across one cut, with arbitrary structure on both sides, by
+ enumerating the sides separately. Count guessing exploits aligned terms that
+ are global but noisy, and hands the rest to pruning. The two combine: a
+ run of Theorem~\ref{thm:main} may end in the group-count solver instead of
+ enumeration whenever its remaining formula has repeated profiles.
+ \item \emph{Useful constraints.} In a run, the learned constraints are those
+ of $F'_c$. They differ from those of $F$ exactly by the count term, which is
+ what made them redundant. Guessing the counts is therefore a way of
+ \emph{making} constraints useful, not only of choosing among them.
+ \item \emph{One-literal-neighbourhood constraints.} The constraint
+ $A_\ell\ge G_\ell+1$ of~\cite[Section~2]{RG} excludes a fraction
+ $\Prb[\mathrm{Bin}(d_2(\ell),\frac12)\le G_\ell]$ of the completions of its
+ support. This fraction is non-negligible only when $G_\ell\ge
+ d_2(\ell)/2-O(\sqrt{d_2(\ell)})$, that is, for strongly biased variables. In
+ the regime of Theorem~\ref{thm:main} the combined constraint is the one that
+ carries the shortfall.
+ \item \emph{A by-product for near twins.} If every variable has an
+ $r$-near-twin in the sense of~\cite{NT}, then a spanning star forest of the
+ near-twin graph yields at least $n/3$ disjoint $(2r+1)$-near-twin pairs:
+ two leaves of a star differ at most at the centre and at their own
+ discrepancies. So~\cite[Theorem~3]{NT} gives time
+ $\Ostar((2(3/4)^{1/(6r+6)})^n)$ for this natural class, at every density.
+\end{itemize}
+
+\paragraph{What is not covered.} Aligned structure of high rank: a blow-up
+with groups of size $L$ needs $n/L$ group counts. The resulting
+$(L+1)^{n/L}=2^{n\log_2(L+1)/L}$ runs are affordable only when
+$\log_2(L+1)/L$ is below the saving of a run, while for bounded $L$ the plain
+criterion of~\cite{CC} applies with $K$ of order $L$. Between the two, and for aligned parts that are not
+low-rank at all, a different exit is needed. The decomposition must also be
+known, except in the mean-centred case. Random formulas are covered only at
+density $d\ge C\log n$ (Remark~\ref{rem:random}). Finally, an adaptive version would
+measure the runs with the soft count~\cite{SC} rather than
+enumerate them.
+
+\begin{thebibliography}{10}
+\small\raggedright
+\bibitem{BvH16} A.~S.~Bandeira and R.~van Handel. Sharp nonasymptotic bounds on
+ the norm of random matrices with independent entries. \emph{Ann. Probab.}
+ 44(4):2479--2506, 2016.
+\bibitem{BLM13} S.~Boucheron, G.~Lugosi and P.~Massart. \emph{Concentration
+ Inequalities: A Nonasymptotic Theory of Independence}. Oxford University
+ Press, 2013.
+\bibitem{CA} \emph{A checkable replacement for the gap-profile condition},
+ addendum, 8 October 2026 (\texttt{max2sat\_counting\_addendum.tex}).
+\bibitem{CC} \emph{Replacing random signs by neighborhood counts}, working note,
+ 8 October 2026 (\texttt{max2sat\_counting\_conditions.tex}).
+\bibitem{EE} \emph{Max 2-SAT by early constraint-guided enumeration}, working
+ note, 8 October 2026 (\texttt{max2sat\_early\_enumeration.tex}).
+\bibitem{Mau03} A.~Maurer. A bound on the deviation probability for sums of
+ non-negative random variables. \emph{J. Inequal. Pure Appl. Math.} 4(1),
+ Article~15, 2003.
+\bibitem{NT} \emph{Near-twin neighborhoods as a structural exit}, working note,
+ 8 October 2026 (\texttt{max2sat\_near\_twin\_pairs.tex}).
+\bibitem{RG} \emph{Useful constraints or compression by group counts}, working
+ note, 10 October 2026 (\texttt{max2sat\_redundancy\_and\_group\_counts.tex}).
+\bibitem{SC} \emph{The soft-count measure for adaptive branching}, working
+ note, 8 October 2026 (\texttt{max2sat\_soft\_count.tex}).
+\bibitem{Tal95} M.~Talagrand. Concentration of measure and isoperimetric
+ inequalities in product spaces. \emph{Publ. Math. IH\'ES} 81:73--205, 1995.
+\end{thebibliography}
+\end{document}

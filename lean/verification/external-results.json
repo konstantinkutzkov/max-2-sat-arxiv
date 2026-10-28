@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "policy": "Established published results may be explicit hypotheses. Verify their precise quotation and our application; do not require formal proofs of the cited results. Internal unproved lemmas are not external results. Conditional deductions must be labelled as such.",
+  "statement_module": "Max2SAT/IndependentPairs/ExternalResults.lean",
+  "statement_module_sha256": "a6433b056332feb85a0ac3a7b72ba1f8730ef46ed0802d2256c6987409fb97a1",
+  "results": [
+    {
+      "id": "bvh_rademacher",
+      "lean_statement": "Max2SAT.IndependentPairs.External.BandeiraVanHandel",
+      "source": "Bandeira and van Handel, Annals of Probability 44(4), 2479--2506 (2016)",
+      "doi": "10.1214/15-AOP1025",
+      "url": "https://arxiv.org/pdf/1408.6185",
+      "locator": "Theorem 3.1, Corollary 3.2 and following Rademacher paragraph; electronic reprint pp. 11--13",
+      "specialization": "Square n-by-n fixed coefficient array, independent fair signs, Euclidean operator norm; row/column/entry maxima replaced by arbitrary nonnegative upper bounds; n>0 and 0<theta<=1/2.",
+      "citation_review": "Published electronic reprint inspected; Gaussian-to-Rademacher extension explicitly checked; no direct assumption for arbitrary centered inputs.",
+      "formal_status": "Explicit proposition supplied as theorem hypothesis; no proof or new axiom is declared."
+    },
+    {
+      "id": "ledoux_upper_tail",
+      "lean_statement": "Max2SAT.IndependentPairs.External.LedouxUpperTail",
+      "source": "Ledoux, Seminaire de Probabilites XXXIII, LNM 1709, 120--216, Springer (1999)",
+      "url": "https://www.numdam.org/article/SPS_1999__33__120_0.pdf",
+      "locator": "Corollary 3.3, p. 165, and interval rescaling, p. 166",
+      "specialization": "Convex (hence separately convex) Euclidean 1-Lipschitz function; product finite laws supported on [-B,B], B>0; r>0; upper tail exp(-r^2/(8B^2)) around the expectation.",
+      "citation_review": "Published text inspected; interval diameter 2B, upper-tail direction, mean rather than median, and independence checked. Empty coordinate case is trivial.",
+      "formal_status": "Explicit proposition supplied as theorem hypothesis; no proof or new axiom is declared."
+    }
+  ],
+  "conditional_declarations": {
+    "Max2SAT.IndependentPairs.upper_rademacher_bound": [
+      "bvh_rademacher"
+    ],
+    "Max2SAT.IndependentPairs.upper_expect_from_row_moments": [
+      "bvh_rademacher"
+    ],
+    "Max2SAT.IndependentPairs.upper_expect_289": [
+      "bvh_rademacher"
+    ],
+    "Max2SAT.IndependentPairs.upper_norm_tail": [
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.shifted_upper_norm_tail": [
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.independent_pair_norm_tail": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.independent_pair_norm_from_paper": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.scalar_operator_event": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.empirical_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.raw_operator_event": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.supplied_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.empirical_input_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.supplied_input_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.bernoulli_supplied_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.bernoulli_empirical_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.symmetric_noise_tail": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.discovery_noise_probability": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.discovered_search_probability": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.diagonalized_search_probability": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.discovery_probability_from_density": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.discovery_family": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.sbm_probability_from_density": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.sbm_family": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.empirical_integer_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.IndependentPairs.supplied_integer_membership": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.integer_noise_probability": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.integer_discovery_event_from_density": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ],
+    "Max2SAT.Community.integer_discovery_family": [
+      "bvh_rademacher",
+      "ledoux_upper_tail"
+    ]
+  },
+  "review_note": "The register and source hashes document the boundary. They do not themselves prove that the published theorem and its formal statement are semantically equivalent."
+}

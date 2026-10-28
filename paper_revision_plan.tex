@@ -1,0 +1,539 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlist{itemsep=4pt,topsep=5pt}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\draftlabel}[1]{\texttt{\detokenize{#1}}}
+\title{Dense Max 2-SAT\\Revision Plan and Exposition Standards}
+\author{}
+\date{20 October 2026}
+
+\begin{document}
+\maketitle
+
+This note records the agreed organization and writing standards for our
+dense Max 2-SAT paper. The immediate objective is a readable theoretical
+arXiv version centered on the technique and four principal results,
+arranged by increasing complexity of the method. Practical extensions
+and application studies belong to a later stage directed toward a JAIR
+submission. Additional theoretical material remains available in the
+working notes and appendices while the main exposition stabilizes.
+This is an editorial plan; the
+proposals explicitly marked for verification below are not new proved
+claims. The standards apply to subsequent revisions as well as the next pass.
+
+\section{Scope and organizing principle}
+
+Organize the paper around the techniques that make accumulated pruning
+constraints useful. Whether an input is random is a property of an
+application, rather than the main organizing principle. In particular,
+deterministic graph families and random graph families can verify similar
+structural conditions and should be explained together when they use the
+same method.
+
+Keep the principal objective visible: a deterministic exact algorithm with
+a fixed exponential saving over $2^n$, using polynomial space, on the
+specified families. State which fixed class parameters determine the saving.
+Do not confuse this objective with an unrestricted-space upper bound, or
+with an improvement whose saving tends to zero as density grows.
+
+The four principal results should concern natural input families. General
+distributional or matrix conditions belong in supporting results when they
+are needed to prove those family statements. Do not promote every useful
+technical lemma or specialization to another headline theorem.
+
+\section{Publication stages and the first release}
+
+\subsection{First objective is a focused theoretical arXiv paper}
+
+Disseminate the technique and selected theoretical results promptly.
+The four-part plan and the exposition standards remain unchanged.
+Limit the first release to a coherent theoretical contribution with
+precise statements, executable algorithm descriptions, complete proofs,
+and the related work needed to place the results accurately.
+
+Natural graph families such as Paley graphs, qualifying Ramanujan graphs,
+and SBM are theoretical applications of the method. They remain in scope
+without requiring an empirical demonstration of practical relevance.
+A short motivation and a short concluding outlook are sufficient for
+the broader application ambitions.
+
+The first release does not depend on a practical solver implementation,
+benchmark experiments, a survey of application domains, new application
+classes, or Lean formalization. Optional improvements, including
+unification of the sequential and two-round proofs, should not become
+prerequisites for dissemination. If such a change remains unresolved,
+retain the existing proof route, check it for the selected statement,
+and present its dependencies clearly.
+
+The release milestone is a self-contained account of the selected
+results: the algorithms use exactly the information stated, the proofs
+establish the claimed bounds and polynomial space, and the introduction,
+abstract, and result table accurately describe those claims. Reducing
+scope should make this milestone attainable sooner.
+
+\subsection{Later objective is a theory and applications paper}
+
+The longer-term aim is a JAIR submission combining the theoretical
+foundation with useful practical extensions and input classes arising
+in real applications. Identify concrete encodings, determine whether
+their instances satisfy the relevant assumptions or suggest useful
+relaxations, and evaluate the resulting algorithms where appropriate.
+These are later research tasks. They should not appear as established
+practical contributions in the first version.
+
+Keep application ideas and solver extensions in working notes so that
+they remain available for this stage. Their eventual inclusion should
+follow the evidence and the coherence of the extended paper.
+
+\subsection{Material to defer from the current draft}
+
+Use three destinations: the main theoretical account, appendices needed
+to support it, and separate working material for later development.
+An appendix is not automatically a destination for every existing result.
+The following are initial scope decisions, rather than instructions to
+delete research material.
+
+\begin{itemize}
+\item Defer the extended modeling and practical-application discussion
+in \draftlabel{sec:applications}. Preserve it in working notes; retain
+only concise motivation in the first paper.
+\item Defer region comparisons, caching, and the proposed unified solver
+in \draftlabel{sec:cache} and \draftlabel{sec:unified}. They add mechanisms
+outside the four selected results.
+\item Reduce the extended redundancy and randomized-exploration agenda
+to a short outlook. Preserve the full discussion as future research
+material.
+\item Keep repeated interaction profiles, bicliques, and bounded-block
+compression in the working inventory initially. Include an additional
+theoretical result only if it materially clarifies the selected technique
+without creating another substantial line of exposition.
+\item Keep general random models, alternative analyses, and sharper
+constants only where they support or briefly clarify a selected result.
+They need not all appear in the first arXiv version.
+\item Keep the development record, exploratory finite checks, and formal
+verification priorities in author working notes. Distinguish such records
+from proof details required by the published statements.
+\end{itemize}
+
+All proof machinery needed by a selected theorem remains in the paper or
+its supporting appendices, with standard external results cited precisely.
+In particular, the hidden-community algorithm's spectral preprocessing
+and its required computational guarantees remain part of the theoretical
+contribution.
+
+\section{The four parts of the main presentation}
+
+\subsection{Pruning constraints and relative literal bias}
+
+Present the common comparison rule, correctness, propagation, simplification,
+and summation. Establish the relevant enumeration fact before its first use.
+Use the relative literal-bias theorem as the first principal application:
+substantial local preferences create useful requirements in the opposite
+branches.
+
+This foundation is substantially in place. Preserve it during the next
+revision except for necessary corrections and notation alignment. A later
+consistency pass should reconcile it with the reorganized sections.
+
+Keep the actual degree and bias assumptions visible. A relative gap is
+proportional to a variable's degree; it need not be proportional to $n$.
+Do not describe the theorem as requiring only literal gaps if its statement
+also requires control of the degree spread.
+
+\subsection{Normalization and symmetric random signs}
+
+The second principal result is a fixed exponential saving for familiar
+random clause models on an arbitrary prescribed set of variable pairs.
+Lead with one uniformly signed clause per selected pair and independent
+inclusion of the four possible clauses with probability $1/4$. Emphasize
+the absence of a density or regularity requirement for these models.
+Keep the assumption that any additional units are fixed independently of
+the binary draw.
+
+Revise the intuition around two separate tasks. Normalization puts
+constraints of different sizes on comparable scales before addition.
+Random signs prevent the effects of shared variables from remaining
+coordinated across all the constraints. Explain these tasks before
+presenting degree-dependent estimates.
+
+Use one running example. A larger numerical gap need not mean stronger
+pruning when the range of typical fluctuations is also larger. Explain
+that the algorithm weights a constraint using the degree in the original
+observed graph, rather than estimating its current strength exactly.
+
+An independently sampled support, including an SBM support subsequently
+decorated with independent random literal signs, is an immediate
+application by conditioning on that support. It does not need another
+algorithm or a separate extended discussion.
+
+Place the general complementation-invariant pair law, further sampling
+parameters, and sharper constants in an appendix. The proof supporting
+the familiar main-text cases must remain complete.
+
+\subsection{Assignment counts and a common systematic interaction}
+
+Explain why some pair interactions have a common systematic contribution,
+and how guessing the total number of ones accounts for it. Introduce the
+comparison allowance needed for correctness. Then explain the structural
+conditions controlling the remaining correlations.
+
+The principal application is Max-Cut on regular graphs satisfying the
+stated spectral and density conditions. Present Paley graphs and qualifying
+nonbipartite Ramanujan graphs immediately as examples of that result,
+retaining their qualifications. They need not receive separate theorems.
+
+Use a supporting deterministic accumulation result to connect this
+application with independent random interactions having a common mean.
+Max-Cut on $G(n,p)$ is a useful bridge to the next part: there is one
+expected pair interaction, and hence one total count to consider.
+Include its supporting verification before treating it as an established
+corollary of the reorganized argument.
+
+\paragraph{Proposal requiring verification.}
+Prefer one fixed-round analysis in the main presentation if it supports
+all the selected applications. In particular, investigate using two prefix
+rounds for the independent common-mean models as well as regular-graph
+Max-Cut. Check the full-matrix bound, the interaction between rounds, the
+comparison allowance, and the resulting constants. The existing sequential
+proof and the round proof have different hypotheses; do not silently
+identify them or promise unchanged numerical bounds.
+
+Do not force the arbitrary-support random-sign theorem through this
+matrix framework. Its direct exposure argument handles irregular supports
+and has an independent role.
+
+\subsection{Several systematic interactions and hidden communities}
+
+The fourth principal result is Max-Cut on SBM graphs with hidden
+communities, under the existing fixed-community and variance assumptions.
+The theorem's algorithm receives the graph and the stated fixed class
+parameters, without the generating partition or edge probabilities.
+
+First explain the supplied-community case: guessing the number of ones
+in each group extends the preceding total-count idea. Use it as an
+intermediate explanation. Then explain how approximate spectral
+directions and projection guesses replace the unavailable information
+in the current hidden-community algorithm. Recovering the community
+labels is not required.
+
+Keep the distinction between two uses of SBM explicit. Random signed
+clauses on an SBM support belong to the arbitrary-support result.
+The fixed complementary clauses encoding Max-Cut on an SBM graph belong
+to this fourth part. Supplied and hidden communities are different
+information settings for the latter distribution.
+
+\section{A consistent pattern within each part}
+
+Use the following sequence, allowing short definitions immediately before
+their first necessary use.
+
+\begin{enumerate}
+\item \textbf{Intuition for why the result is possible.}
+Identify the useful feature of the input, the obstacle it resolves, and
+the source of the search-space saving. Use a concrete example or a path
+in the branching tree. Do not begin with the full technical apparatus.
+
+\item \textbf{Definitions needed by the algorithm.}
+Introduce only the new notation required here. Refer to the common
+framework for established definitions. Keep notation used only by a
+later extension in the section that needs it.
+
+\item \textbf{The algorithm.}
+Give a short operational description followed by compact but specific
+pseudocode. Refer to previously stated procedures and lemmas rather
+than repeating their implementation.
+
+\item \textbf{Correctness.}
+Explain why an optimum remains represented, including the treatment of
+ties, comparison allowances, simplification, and the interaction with
+previously added constraints. Separate this argument from the time bound.
+
+\item \textbf{The computational result.}
+State a self-contained complexity theorem for the input family. Define
+its parameters, assumptions, probability guarantee, and space requirement.
+The theorem states what can be computed and at what cost; the algorithm
+is the tool used in its proof.
+
+\item \textbf{A roadmap for proving the running-time bound.}
+Explain what must be counted and which estimates give the saving.
+Distinguish this roadmap from the earlier intuition about why the
+phenomenon occurs.
+
+\item \textbf{The main proof.}
+Organize it into meaningful steps and show how they establish the stated
+bound. Keep the principal argument readable without repeatedly leaving
+it for technical derivations.
+
+\item \textbf{Supporting lemmas and applications.}
+Place technical estimates after the main proof or in an appendix when
+that improves its flow. Introduce every lemma and theorem with a short
+explanation of its role, naming the argument that uses it. Facts needed
+to define the algorithm must already have been stated.
+\end{enumerate}
+
+The section should remain coherent if the reader first follows only the
+intuition, algorithm, theorem, and proof roadmap. The full proof must
+then supply every dependency needed to justify that account.
+
+\section{Writing and notation standards}
+
+\subsection{Clarity takes priority over brevity}
+
+Longer proofs are welcome when the extra explanation helps the reader.
+Use connected prose, meaningful intermediate steps, and consistent
+notation. Avoid compressing several ideas into a sentence merely to
+shorten a proof. Preserve the author's intended style and message when
+editing prose.
+
+Use familiar mathematical language whenever it is sufficient. Say
+``sum of Boolean literals'' when that describes the expression. Introduce
+general coefficients, affine forms, or matrix notation when they perform
+a necessary role, and explain that role at introduction.
+
+Define every symbol, operator, and term before use. In particular, explain
+``unassigned variable,'' ``preferred value,'' ``prefix,'' ``suffix,'' and
+any order on assignments. Do not use ``free variable'' or ``bad value''
+without a definition. Prefer descriptive terms that remain meaningful
+from the algorithm's point of view.
+
+Use $C$ for one pruning constraint and $\mathcal C$ for the collection.
+Define the summed constraint $C_\Sigma$ in a displayed equation and
+refer to that equation consistently. Distinguish coefficients arising
+from repeated literal occurrences from weights assigned to entire
+constraints. Explain multiplicity as counting appearances.
+
+Write ``by the Cauchy--Schwarz inequality'' and display the particular
+inequality being applied. Apply the same principle to other standard
+tools: give the reader enough information to check the step.
+
+\subsection{Statements must describe their actual scope}
+
+Define the input model positively and precisely: simple formulas,
+bounded multisets, units, or graphs, as appropriate. State assumptions
+where they are used rather than relying on an earlier informal
+description. Theorem statements should define parameters such as
+$\varepsilon,\eta,R,k,\chi$ and explain which are fixed.
+
+State substantive hypotheses in the theorem itself instead of making
+the reader reconstruct them from an equation reference. Keep technical
+conditions out of headline family descriptions where possible, while
+retaining all conditions in the formal result.
+
+Distinguish a linear lower bound from an $O(n)$ upper bound. Distinguish
+degree, clause density, and the number of clauses. Define the population
+over which an average is taken and whether clauses or distinct neighbors
+are counted.
+
+For a random-input result, specify the sampling process, the independent
+choices, and what is fixed first. State whether units may depend on the
+sample. Separate correctness on every input from an expected or
+high-probability running-time guarantee. Do not convert a high-probability
+bound into an expected bound without an argument.
+
+Keep proved statements, proposed refinements, and open directions
+distinct. Do not claim novelty or completion of an independent proof
+audit on the basis of an exposition revision.
+
+\subsection{Intuition should explain a mechanism}
+
+A statement such as ``typical assignments cannot compensate for all
+requirements'' needs an explanation: bounded influence, opposing signs,
+a structural correlation bound, or another identified mechanism. Use a
+small example to make the mechanism visible.
+
+When using a uniform random path, say that this is an analysis of a
+deterministic search tree. A literal contributes zero or one; one half is
+its expectation under the specified uniform assignment. Do not confuse
+randomness of the path with randomness of the input.
+
+Do not assume that generated constraints are independent. Do not imply
+that fresh variables or disjoint neighborhoods are necessary when the
+argument actually controls the signs or total influence of overlaps.
+Explain how the proof handles exceptional paths and sums work over all
+prefixes.
+
+Introduce normalization before repeated comparisons involving
+$\sqrt d$. Explain that positive scaling preserves an individual
+constraint but changes its contribution to the sum. Treat normalization
+and removal of a systematic interaction as separate operations.
+Avoid calling useful pruning a ``disadvantage''; describe the requirement
+imposed on the branch or the resulting saving explicitly.
+
+\section{Algorithm presentation standards}
+
+Pseudocode should be high-level enough to follow and precise enough to
+execute in principle. Use the \texttt{algorithm} and \texttt{algorithmic}
+packages. Comments should be short explanations in a smaller font,
+introduced by \texttt{//}; the current convention is
+\begin{verbatim}
+\renewcommand{\algorithmiccomment}[1]{{\footnotesize\itshape // #1}}
+\end{verbatim}
+
+\begin{enumerate}
+\item \textbf{Follow execution order in the description.}
+The reader should encounter the substantive steps in the order in which
+the algorithm performs them. Introduce the input, fixed variable order,
+preprocessing, and other setup before describing the search. Explain
+rejection and stopping conditions before the operations they may prevent.
+For nested loops, introduce the outer guess and current assignment before
+explaining computations inside them. Define each quantity before its
+first use, and align the prose with the pseudocode. Omit routine details
+that an algorithms reader can infer.
+
+\item \textbf{Identify the input and all state.}
+State parameters explicitly or define a shared-data block before the
+procedures. Distinguish fixed data, shared updates, and values local to a
+recursive call. Explain $T$, $M$, and $\alpha^\star$, where they are
+initialized, and which calls can change them. Define score offsets and
+how the returned assignment and score include them.
+
+\item \textbf{Specify branching choices concretely.}
+State the variable order and how the preferred value is computed.
+``Increasing labels'' means the original input indices if that is the
+intended order. Distinguish original graph degrees from residual degrees.
+If a theorem permits any fixed order independent of the sample, say so;
+do not infer adaptive-order guarantees without the appropriate proof.
+In round algorithms, state which earlier assignments the preferences use.
+
+\item \textbf{Separate initial preprocessing from node operations.}
+Use \textsc{Preprocess} for the initial pair reductions and
+\textsc{Simplify} for the justified local rules and constraint propagation
+at search nodes. Do not repeat a reduction lemma already provided by
+the common framework. Apply these procedures only as permitted by the
+particular algorithm and its analysis: adding forced assignments to a
+fixed-prefix random-search analysis requires justification.
+
+\item \textbf{Respect constraints and comparison scope.}
+Explain how simplification and learned constraints jointly preserve an
+optimum. Individual correctness of two rules does not by itself establish
+their compatibility. Branch exploration order is separate from the
+mathematical preference and tie convention; do not impose a first-branch
+requirement when the correctness invariant does not need one.
+
+\item \textbf{Use only information supplied or computed.}
+For the random-formula algorithm, construct the observed support from
+the input formula before preprocessing. The latent generating graph is
+not an input. For SBM, distinguish supplied structural data from hidden
+data and account for discovering the information actually used.
+
+\item \textbf{Explain what a test guarantees.}
+Failure of the summed-constraint test certifies infeasibility, but passing
+it need not imply joint feasibility. Likewise, satisfying $C_\Sigma$
+need not satisfy every member of $\mathcal C$. Explain why enumerating
+these extra candidates preserves correctness and how their number is
+bounded.
+\end{enumerate}
+
+Do not introduce caching as an implicit part of the core algorithm.
+Make the polynomial-space implementation explicit: depth-first traversal
+and sequential processing of guesses and candidates, rather than storing
+the whole search space.
+
+\section{Proof and linear algebra standards}
+
+Separate preservation of an optimum, the count of surviving assignments,
+enumeration time, arithmetic cost, and space. A small number of solutions
+to an arbitrary constraint system does not by itself yield an efficient
+enumerator. Invoke the proved enumeration property of the particular
+summed inequality when that is the argument.
+
+For probabilistic proofs, specify what is exposed or conditioned on,
+why the remaining random choices have the required distribution, and
+which dependencies remain. When introducing a martingale, define the
+available information, verify conditional mean-zero increments, and
+justify the increment or variance bounds used by the concentration
+inequality. Explain transitions from probability over assignments to
+counts, and from joint input--assignment estimates to guarantees for
+most inputs.
+
+Use supporting lemmas for technical estimates that would interrupt the
+main proof. Keep comments on stronger variants, adaptive choices, or
+possible extensions in a separate discussion unless they are needed
+for the stated conclusion.
+
+Introduce linear algebra when its role becomes necessary to the
+presented argument. Keep the following distinctions explicit:
+\begin{itemize}
+\item Symmetric random signs on arbitrary supports use scalar moment
+and concentration arguments in the current proof.
+\item Count-adjusted independent interactions have a combinatorial
+algorithm but currently use matrix bounds in the analysis.
+\item Regular-graph Max-Cut uses its spectral hypothesis in the proof;
+the algorithm does not calculate eigenvectors.
+\item Supplied-community SBM uses counts and gains algorithmically,
+with matrix estimates in the proof.
+\item Hidden-community SBM currently performs spectral preprocessing
+as part of the algorithm.
+\end{itemize}
+Moving a proof to an appendix does not remove its mathematical
+dependencies. A proposed elementary replacement must be proved before
+claiming that the relevant technique has been eliminated.
+
+\section{Appendices and revision sequence}
+
+The first arXiv version's appendices primarily contain the complete
+supporting proofs for the four principal results. Include a general
+distributional statement, parameter refinement, or alternative analysis
+when it supports those results or gives a short useful clarification.
+The broader inventory of proved results and exploratory ideas remains
+available in separate working material; it need not all accompany the
+submission. Keep proposed extensions visibly separate from established
+results wherever they are retained.
+
+The next passes should proceed as follows.
+\begin{enumerate}
+\item Revise Part 2 around normalization and the effect of random signs,
+using the agreed section pattern and the familiar sampling models.
+\item Rebuild Part 3 around counts and the selected deterministic
+Max-Cut result. Verify any change of analysis before replacing an
+existing proof; place additional random interaction results appropriately.
+\item Rebuild Part 4 from supplied community counts to the actual
+hidden-community algorithm, retaining its assumptions and computational
+steps.
+\item Align the introduction, abstract, result table, transitions, and
+cross-references with the four-result scope. Remove superseded family
+descriptions and separate the deferred application and research material.
+Preserve author-written prose through careful, local edits.
+\item Check every retained statement against its proof, algorithm,
+input information, and space bound; compile and inspect the manuscript.
+Complete the focused arXiv version before expanding the scope toward
+practical extensions and the later journal submission.
+\end{enumerate}
+
+The existing Lean verification plan remains a separate resource. Reconcile
+its theorem priorities with the stable manuscript before beginning
+formalization, as previously agreed.
+
+\subsection{Map to the current draft}
+
+The source is \nolinkurl{dense_max2sat_paper.tex}. Use labels rather than
+theorem numbers while reorganizing:
+\begin{description}[style=nextline]
+\item[Part 1]
+\draftlabel{sec:framework}, \draftlabel{sec:bias},
+\draftlabel{lem:pruning}, \draftlabel{lem:constraint_sum}.
+\item[Part 2]
+\draftlabel{sec:random}, \draftlabel{thm:weighted},
+\draftlabel{cor:support}, \draftlabel{lem:observed_pairs},
+\draftlabel{lem:enumeration}, \draftlabel{eq:weighted}.
+\item[Part 3]
+\draftlabel{sec:countalgorithm}, \draftlabel{cor:maxcut},
+\draftlabel{thm:randomclauses},\\
+\draftlabel{res:counts},
+\draftlabel{prop:pairmembership}.
+\item[Part 4]
+\draftlabel{sec:sbm}, \draftlabel{thm:sbm},
+\draftlabel{cor:planted}, \draftlabel{app:discovery}.
+\end{description}
+This map identifies source material for the revision; it does not freeze
+the final labels or require the present section boundaries to survive.
+
+\end{document}

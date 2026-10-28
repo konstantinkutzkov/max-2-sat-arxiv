@@ -1,0 +1,142 @@
+Random-input verification: the complete exposure lemma
+====================================================
+
+This milestone formalizes lem:random_exposure and the gain definitions
+immediately preceding it. It does not verify the concentration estimates
+or the exponential running-time guarantee for random inputs. No algorithm,
+branching rule, theorem assumption, or claimed exponent has been changed.
+
+THE AUXILIARY EXPERIMENT
+
+The fixed edge set E represents the observed support, with each edge stored
+once in increasing original-label order. Its base patterns K_e have the
+independent PairLaw laws. ExposureBit E has a separate Boolean coordinate
+for every assignment bit and every endpoint of every edge. The whole bit
+vector has the independent fair product law and is independent of K.
+
+exposure_joint_law proves equality of full joint laws: multiplying each
+base literal sign by its auxiliary endpoint sign produces the original
+pair-pattern product law, independently of the uniform assignment. This
+works for patterns with stabilizing symmetries, including antipodal pairs.
+The correspondence does not assume that different flips yield different
+patterns. The already checked observed-support conditioning theorem supplies
+the retained pair laws. retained_base_present proves that positive-mass
+base outcomes under those retained laws have every edge nonempty.
+base_pattern_bound obtains the clause bound from the actual law's support.
+
+GAINS, AVERAGES, AND THE ALGORITHM
+
+gain F i x is the real cast of the integer score difference obtained by
+setting x_i to true versus false, holding every other value fixed.
+generated_gain proves the exact sum of the fixed unit bias and pairGain
+contributions. Multiple clauses per pair and repeated fixed units are
+allowed. generate is the actual Formula representation used by the algorithm.
+
+delta F free x i is half the effective literal gap of the residual formula
+after fixing variables outside free. generated_delta proves the paper's
+earlier/later contribution formula. suffix_average_gain additionally proves
+that it equals the expected full score difference under uniform assignments
+conditioned on the earlier values. The comparison does not depend on x_i;
+including x_i among the averaged unassigned bits therefore does not alter
+the paper's average over later values.
+
+delta_preprocess proves this residual quantity is preserved by preprocessing
+on the original formula, even when further assignments are then substituted.
+delta_core proves that optimizing unit-only variables before preprocessing
+does not change the gap at an active variable. algorithm_exposure connects
+the exposed signed sum to Random.branchLiteral after exactly these two
+initialization steps. Its preferred value is true iff that sum is nonnegative,
+including the paper's tie convention. The proof does not postulate a
+comparison oracle or replace the implemented branching preference.
+
+WHAT EACH HISTORY REVEALS
+
+knownBefore E free contains the assignment bits and endpoint signs of all
+variables outside free. All base patterns are already revealed. Before
+processing an unassigned i, current i indexes exactly one distinct fresh
+endpoint bit for every incident edge. knownAfterSigns adds this row of
+endpoint bits but not the assignment bit of i. list_history_step proves
+that revealing that last bit gives precisely the history for the remaining
+tail of the algorithm's fixed list. Original labels can have gaps: isolated
+variables need not be relabeled or supplied as extra algorithm input.
+
+condition_exposure_history gives the exact conditional law of the whole
+experiment after observing K and any specified earlier bit values. It is
+the point law at K times the conditioned fair-bit law. Every such event has
+positive probability when K has positive probability; no division by a
+zero-probability history is used. After conditioning, the new endpoint row
+has its full fair product law (current_signs_law). The assignment bit is
+still fair even after the row is known (assignment_after_signs_law).
+
+coefficient is the paper's a_tv: an earlier neighbor contributes its base
+signed sum over false partner literals, while an unassigned neighbor
+contributes half its base signed count. coefficient_known proves equality
+on every history event, so these coefficients really use only previously
+revealed information. delta_exposure proves the exact representation
+
+    Delta_i = b_i + sum_e rho_(i,e) * a_(i,e).
+
+delta_known_after_signs shows that the row makes Delta_i determined before
+the assignment bit is revealed. Together with its fair conditional law,
+this proves the asserted independence of that assignment bit from Delta_i.
+
+CONDITIONAL MOMENTS AND THE OBSERVED DEGREE
+
+signed_sum_mean and signed_sum_second prove the finite-product identities
+for a weighted sum of independent fair signs. conditional_exposure_moments
+applies them to the full experiment conditioned on K and the earlier history:
+
+    E[Delta_i | history] = b_i,
+    E[(Delta_i-b_i)^2 | history] = sum_e a_(i,e)^2 = Y_i.
+
+The individual coefficient bound follows from the actual size of its base
+pattern. observed_degree proves that the number of incident edges equals
+the cardinality of Random.neighbors on the generated formula when all edges
+are present. exposure_variance_bound consequently gives Y_i <= m^2*d_i
+with precisely the degree extracted by the algorithm, rather than a newly
+assumed upper bound or the degree of a different graph.
+
+LATER DEVIATIONS
+
+edge_deviation_exposure proves the paper's identity with eta and the later
+theta sign, including both choices of endpoint. eta is a function only of
+the base pattern, hence is known initially. deviation_coefficient_bound
+proves |eta| <= m/2 from the pattern size bound.
+
+current_theta_law proves that the entire row rho_(i,e)*(2*x_i-1) has the
+independent fair law conditional on the preceding history. The common bit
+x_i multiplies every sign in the row; joint law preservation, rather than
+individual fairness or pairwise independence, justifies this step. opposite_current identifies the deviation coordinate with the current row
+at the opposite endpoint. theta_subrow_law proves that selecting the
+coordinates belonging to earlier neighbors preserves the full independent
+fair law, giving precisely the later-deviation signs in the lemma. No independence of the pruning constraints is assumed.
+
+FILES, STATUS, AND TRUST
+
+FormulaGains and GainAverage connect scores, residuals, and averages.
+ProductTools, BlockLaws, and SignMoments provide the finite-law facts.
+ExposureGraph defines coefficients and bit coordinates; ExposureSupport
+checks the history transition and observed degree. ExposureLaw checks the
+full sampling experiment, SequentialExposure checks its conditional facts,
+and Exposure assembles the statements and the algorithm connection.
+
+paper-correspondence.json marks lem:random_exposure checked, with the above
+declarations and explicit scope. thm:random_main remains partial. Subsequent
+work completes lem:random_moments and the finite-space lem:random_ranges;
+see RANDOM_MOMENTS.txt and RANDOM_CONCENTRATION.txt. The requirement and
+compensation estimates, joint feasibility, and fixed-support candidate bounds
+are now checked in RANDOM_ACCUMULATION.txt. Executable-node and observed-support
+runtime assembly remain obligations.
+Expected and high-probability running times must be established separately.
+Graph-family and SBM results retain their prior unverified status.
+
+The build and transitive axiom audit reject proof placeholders, custom
+axioms, and native-evaluation proofs. Only propext, Classical.choice, and
+Quot.sound are allowed. The probability examples also instantiate a row
+with both an earlier antipodal-pair neighbor and a later single-clause
+neighbor. These regressions supplement the arbitrary-size proofs.
+
+The correspondence is a mathematical translation reviewed during this
+development, not a kernel-certified equivalence between prose and Lean.
+The source hashes and statement fingerprints track that translation; they
+do not replace independent third-party review.

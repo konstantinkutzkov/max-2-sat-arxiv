@@ -1,0 +1,113 @@
+Hidden-community assembly: zero coefficients, probability and search
+===================================================================
+
+Later batch: SPECTRAL_TRUNCATION.txt proves the rank and truncation bounds,
+computes the rational largest-entry selection, and derives the four output
+guarantees from orthogonality and a small diagonalization residual. The
+remaining-work list below records the boundary of this earlier batch.
+
+This batch continues COMMUNITY_PREPROCESSING.txt. It adds 18 public
+mathematical declarations. The hidden-mean discovery lemma cor:planted
+remains PARTIAL, and thm:sbm remains unverified. The new final statement
+is conditional on precise INTERNAL guarantees of the numerical routine;
+it does not prove that a routine satisfying them has been constructed.
+
+1. All coefficient cases of the useful search
+--------------------------------------------
+FullSearch.lean proves zero_count_nodes for the original formula without
+preprocessing: beta=0 means exactly one guess, zero allowance and the
+original gain. The bound is (2+14*n)*c^n. computed_nodes_of_quality combines
+this with the positive-mass branch, giving
+  computedNodes <= (4*n+3)^r*(2+14*n)*c^n, c<2,
+without assuming positive coefficient mass. It requires n>=4 and positive
+remainder energy; thus the exhaustive fallbacks are absent on this event.
+Their correctness was already checked. This is not a runtime bound on bad
+inputs for which the algorithm takes an exhaustive fallback.
+
+RepresentationMatrix.lean defines the actual sum of rational rank-one
+terms (cast to real entries) and identifies the matrix in the search gains
+with offdiag(J-P), where J is the original formula's gain-coefficient matrix.
+No independent matrix is silently substituted for the implemented one.
+
+2. Coefficient budget without eigenvector accuracy
+--------------------------------------------------
+CoefficientBudget.lean proves |v^T J v|<=||J|| for ||v||_2<=1 using the
+Cauchy--Schwarz inequality and the Euclidean operator bound. Therefore
+Lambda<=r*||J|| when the retained coefficients are the diagonal Rayleigh
+quotients. This needs no eigenvector separation or eigenvector approximation.
+The matrix model and ||A||<=mu*n imply
+  Lambda <= r*(mu*n+7*sqrt(n*chi*nu)).
+Under D>=.9*n*nu, sufficient explicit budgets are
+  (256*r*mu)^2 <= g^2*n*nu,
+  1792*r*sqrt(chi) <= g*n.
+Lean derives Lambda<=g*n*sqrt(D)/64. The paper states these intermediate
+budgets and explains their absorption into C(r,chi) and a fixed size cutoff.
+The final substitution from the paper's asymptotic parameter statement
+is not yet formalized.
+
+3. The raw noise event is now proved
+------------------------------------
+CrossRows.lean selects distinct unordered-pair coordinates for any row and
+any set of earlier columns. The induced law is exactly the corresponding
+product law. The variance-sensitive square-sum lower tail applies directly.
+For the two prefix rounds it uses exactly B1=floor(n/4), not all earlier
+variables in the second round. No assumption of independent row events is
+made or required.
+
+RandomEvent.lean proves discovery_scalar_probability and
+ discovery_noise_probability for the original finite product input laws.
+For n>=20, centered coordinates bounded by B>0, second moments in
+[nu,chi*nu], nu>0, chi>=1, and
+  10^9*chi*B^2*log(n) <= n*nu,
+the event rawGood has probability at least 1-1/n. It comprises:
+- raw total energy in [.99*n*(n-1)*nu, 1.01*chi*n*(n-1)*nu];
+- each row in B2 has squared mass at least .99*|B1|*nu in B1;
+- symmetric matrix norm <=5.8*sqrt(n*chi*nu).
+Two energy tails, |B2| row tails and one matrix tail cost at most
+(|B2|+3)/n^3<=1/n. The scalar parts are proved internally. The matrix part
+has only the two already recorded published-result hypotheses. The energy
+normalization is translated explicitly to the Frobenius norm, counting
+both matrix orientations of every unordered pair.
+
+4. Conditional end-to-end connection
+------------------------------------
+DiscoveryBridge.lean defines ApproximationGuarantees, a proposition about
+one actual output of a total representation routine. Its four fields are:
+- retained direction vectors have norm at most one;
+- their coefficients equal the diagonal Rayleigh quotients;
+- ||J-P|| <= ||X||+B0+2*zeta;
+- ||A-P||_F <= .01*n*sqrt(nu).
+These are INTERNAL obligations. They are not declared true, not registered
+as published theorems, and not hidden in a custom axiom or an oracle.
+The structure does not construct a numerical algorithm or prove existence.
+
+computed_nodes_on_event derives positive remainder energy, normalized
+operator bound K=400*chi, corrected row profile, coefficient budget and
+then the actual computed-search node bound. Its inputs are the raw event,
+these numerical guarantees, the original matrix model/mean bound, n>=100,
+0<g<=1/(256*sqrt(chi)), the two explicit mean/size budgets, and
+B0,zeta<=sqrt(n*chi*nu). It assumes no row-profile, allowance or final
+search-quality conclusion.
+
+discovered_search_probability draws the formula from the original product
+law and transfers rawGood to the actual node event, obtaining probability
+at least 1-1/n and a base strictly below two. Numerical guarantees need only
+hold on positive-mass samples in rawGood. This theorem explicitly retains
+those internal guarantees and the two named external matrix estimates.
+It is the checked assembly conditional on numerical preprocessing, not a
+completed proof of cor:planted or thm:sbm.
+
+5. Remaining work and trust
+----------------------------
+Construct the rational approximate diagonalization and prove termination,
+unit directions and diagonal entries; derive truncation and Frobenius error
+using the rank bound. Then discharge the asymptotic parameter substitutions,
+bounded-size runtime cases, and original hidden-SBM input instantiation.
+Rational bit complexity and streamed space remain conventional paper
+arguments, not compiler-level cost proofs. The non-finite-law gap of the
+general independent-pair proposition and unproved biased-subset target
+are unchanged. Independent review of paper-to-Lean translation remains
+valuable. See external-results.json for published-result dependencies and
+paper-correspondence.json for every numbered result.
+
+Reproduce the complete build and audit with python3 verify.py.

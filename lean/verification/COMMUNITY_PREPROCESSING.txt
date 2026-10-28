@@ -1,0 +1,112 @@
+Hidden-community preprocessing: checked components and remaining obligations
+==========================================================================
+
+Later batch: COMMUNITY_ASSEMBLY.txt completes the zero-mass runtime,
+coefficient budget, raw noise event and conditional search assembly. The
+outstanding-work list below records the boundary of this earlier batch.
+
+Paper targets: Lemma lem:community_correctness, Appendix app:discovery,
+and Lemma cor:planted. Both lemmas remain PARTIAL. The complete thm:sbm
+runtime result remains unverified. This batch verifies the deterministic
+steps downstream of a representation and the symmetric-noise reduction;
+it does not yet prove the quality of the discovered representation.
+
+1. Exact search, grid spacing, and fallbacks
+------------------------------------------
+Algorithm.lean defines communitySearch, communityResult, and communityNodes.
+The search takes the original formula and a total callback returning rational
+coefficients and directions. It runs exhaustive search for n<4 or zero
+remainder energy, one zero-adjustment count search for zero coefficient
+mass, and the capped projection search otherwise. community_result_correct
+proves optimal score and assignment for every well-formed formula and every
+such total callback. Approximation quality is not a correctness assumption.
+
+The formal node counter mirrors these branches and counts recursive calls,
+including all grid runs, using the earlier proved enumerators. It does not
+charge the callback's computation or polynomial arithmetic overhead.
+The callback is an explicit interface, not a constructed diagonalization
+algorithm. In particular, its totality does not prove that a proposed
+numerical implementation terminates or returns an accurate approximation.
+
+RationalRoot.lean implements rootBelow(q) for q>0: if q=u/v, compute
+floor(sqrt(u*v))/v using the integer square root. Lean proves positivity
+and sqrt(q)/2 <= rootBelow(q) <= sqrt(q). Applying this to
+q=g^2*n*D/(64*Lambda)^2 gives exactly the paper spacing interval.
+Computed.lean plugs this actual rational computation into the search.
+Thus it assumes no exact-real spacing oracle or unspecified dyadic search.
+
+Spacing.lean proves positivity and coverage after replacing delta by
+max(delta,n^-2), with at most (2*n^3+3)^r grid tuples on arbitrary n>=1
+inputs whose directions have norm at most one. Under the positive budget
+Lambda<=g*n*sqrt(D)/64, the computed spacing is at least 1/(2*sqrt(n));
+the cap is inactive for n>=2 and there are at most (4*n+3)^r tuples.
+The total allowance is <=g*n*sqrt(D)/32.
+
+2. Deterministic quality bounds
+------------------------------
+Perturbation.lean uses an explicitly defined Frobenius norm and the
+Euclidean matrix operator norm. Deleting the diagonal does not increase
+the Frobenius norm and increases operator norm by at most a factor two.
+For N=X+offdiag(H), the change in Frobenius norm is at most ||H||_F.
+The loss of the cross-round row-profile sum is at most sqrt(|B2|)*||H||_F,
+by a rowwise triangle inequality and Cauchy--Schwarz. These estimates
+require no independence or disjointness of the rows/columns.
+
+Energy.lean proves that raw energy in [.99*n*(n-1)*nu,
+1.01*chi*n*(n-1)*nu] and ||H||_F<=.01*n*sqrt(nu) imply
+.9*n*nu<=D_N<=1.1*chi*n*nu, for n>=100 and chi>=1.
+If each raw cross-round row mass is >=.99*|B1|*nu and each round has
+at least n/5 vertices, the corrected profile is >=.07*n*sqrt(n*nu).
+This implies the required 4*sqrt(3)*g*n*sqrt(D_N) for
+0<g<=1/(256*sqrt(chi)). Rounds.lean proves all floor/cardinality facts
+and identifies this profile with the actual twoRound search profile.
+
+Runtime.lean combines these estimates. A bound
+||N||<=18*sqrt(n*chi*nu) gives ||N||^2<=400*chi*D_N.
+projection_phase_nodes and computed_positive_nodes connect the actual
+computed/capped grid, allowance and recursion count to the previously
+verified accumulation theorem. Under their explicit quality hypotheses,
+they give <=(4*n+3)^r*(2+14*n)*c^n nodes and c<2, with the same two
+rounds as the paper. They contain no probability assumption, but they do
+assume the deterministic quality conditions that discovery must supply.
+The final zero-mass runtime branch and whole-input probability assembly
+are not included in this node-bound theorem. Their exactness is checked.
+
+3. Symmetric noise and external results
+---------------------------------------
+Noise.lean proves X=U+transpose(U) for the actual pair-matrix construction,
+hence ||X||<=2*||U||. symmetric_noise_tail applies the earlier checked
+upper-triangle threshold 2.90*sqrt(n*chi*nu) to obtain threshold 5.8 and
+failure probability <=n^-3, under exactly its finite-law assumptions.
+Its only external hypotheses are the already registered Bandeira--van
+Handel expectation estimate and Ledoux convex upper tail. No additional
+published symmetric-matrix estimate is needed. The paper now follows
+this simpler deduction, using the sufficient constant K=400*chi.
+The input family and the qualitative fixed-c<2 conclusion are unchanged.
+
+The deterministic remainder_operator_bound checks the operator estimates
+from J=A+X-diag(A), a diagonal bound, and the spectral-truncation bound
+||J-P||<=||X||+B0+2*zeta. The last bound remains an explicit INTERNAL
+obligation here. It is not an external published-result hypothesis.
+
+4. Outstanding work
+-------------------
+- Construct and verify the rational approximate diagonalization, including
+  termination and the required error; its bit complexity remains a paper
+  implementation argument unless an explicit cost model is later added.
+- Derive the spectral-truncation, rank-to-Frobenius, and coefficient-mass
+  estimates for that actual representation from the original assumptions.
+- Prove the cross-round scalar events and final hidden-mean probability
+  budget from the original independent-pair law and density condition.
+- Integrate zero-mass runtime and all fallback cases into one family-wide
+  c<2 bound, then instantiate the unknown-community SBM input law.
+
+The general independent-pair membership proposition also retains its
+non-finite-law formalization gap. The biased-subset appendix is still an
+unproved research target. Standard-axiom auditing is not a certificate of
+semantic equivalence with the manuscript; independent translation review
+remains useful. External theorem statements remain explicit hypotheses.
+
+Reproduce with python3 verify.py. The Community/Examples.lean regressions
+cover rational roots, caps, uneven rounds, both exhaustive fallbacks, the
+zero-mass branch, an inaccurate representation, and the norm convention.

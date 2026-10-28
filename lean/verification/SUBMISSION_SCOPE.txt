@@ -1,0 +1,124 @@
+Submission verification: scope and final probability-space translation
+======================================================================
+
+This is the current scope record. Earlier milestone notes and archives are
+historical; their remaining-work lists do not describe the current artifact.
+The machine-readable outcome is result.json, produced by python3 verify.py.
+
+1. Coverage and mathematical boundary
+-------------------------------------
+The correspondence register contains 35 numbered manuscript statements:
+23 checked mathematical statements, 11 checked_core complexity statements,
+and one explicitly unproved research target. There are no partial entries.
+All four main families have checked algorithm correctness and exponential
+bounds on actual recursion-node counts, with their original parameter and
+input-law substitutions. The shared reduction, constraint, enumeration,
+count-guessing and numerical-construction arguments are included.
+
+Checked_core does not mean a machine-level runtime theorem. Polynomial
+bit-operation overhead and polynomial space still use the manuscript's
+ordinary implementation arguments. The compiler and operating system are
+not formally verified. Two precisely registered published probability
+estimates remain theorem hypotheses; no internal gap is hidden as an
+external result. The proposed biased-subset extension remains unproved.
+
+2. An explicit change to an auxiliary statement
+-----------------------------------------------
+Proposition prop:pairmembership now explicitly assumes INTEGER interaction
+coefficients. Its earlier wording additionally allowed continuously
+distributed real coefficients. That additional generalization is not
+claimed as verified, and is not part of this submission's proposition.
+
+Every Max 2-SAT and Max Cut input family studied here already has integer
+interaction coefficients. Thus this change narrows the auxiliary analytic
+statement, but changes no computational input family, algorithm, constant,
+density condition, or main theorem. The existing finite-law Lean results
+still allow arbitrary real-valued finite-alphabet coefficients. The new
+original-space theorem addresses the actual integer input model without
+requiring the sample space, probabilities, or means to be finite/rational.
+This scope decision is stated in the paper and correspondence record.
+
+3. Arbitrary probability spaces, with exact transport
+-----------------------------------------------------
+Random/MeasureInput relates finite Law values to ordinary mathlib measures:
+- every probability measure on a finite alphabet defines a Law;
+- converting it back gives the same measure;
+- finite event sums equal the measure of the event;
+- product Laws convert to product measures;
+- measurable independent coordinates on any probability space have the
+  corresponding product Law, with identical events and expectations;
+- almost-sure properties hold at every positive-mass encoded value.
+
+Random/FiniteSupport proves that almost-sure boundedness of finitely many
+integer observations yields one finite integer interval containing them
+almost surely. A measurable coordinate encoding into that interval agrees
+with each original coordinate almost surely and preserves independence.
+It transports arbitrary events and expectations exactly. No approximation,
+limit argument, rounding error, or assumption about rational probabilities
+is used. All events determined by the integer coordinates are measurable.
+Random/IntegerMoments identifies encoded centered second moments with
+ProbabilityTheory.variance of the original real-cast integer observations.
+
+IndependentPairs/MeasureMembership applies these facts to both alternatives
+of prop:pairmembership. The statements use the original expectations,
+almost-sure centered bounds, standard variances and density/size conditions.
+The empirical event uses the ACTUAL empirical mean, including its absolute
+value in the allowance. The supplied-mean case uses the fixed entrywise
+expectation and supplied coefficient allowance. The probability is measured
+on the original space, and is at least 1-1/n. Existing deterministic lemmas
+identify g=tau^(3/2)/(12*sqrt(chi)) and the extra count-accumulation size bound.
+
+4. Full discovery statement on the original space
+-------------------------------------------------
+Community/MeasureNoise transports the already checked joint energy,
+cross-round row and symmetric-norm event to the original integer inputs.
+Community/MeasureRuntime proves the mean/noise/diagonal decomposition from
+the original formula matrix and symmetric mean, then supplies all numerical
+and runtime conditions from the single paper density hypothesis.
+
+integer_discovery_family chooses one positive rational g and constants
+C,K,c with C,K>0 and 1<=c<2 BEFORE the input size, probability space,
+distribution, hidden mean or added unit clauses. Under the original bounds
+and density condition it constructs a MEASURABLE event E with
+  Pr(E) >= 1-1/n,
+and on E the actual formula-only algorithm satisfies
+  nodes <= K*p_r(n)*c^n,
+  p_r(n) = (2*n^3+4*n+3)^r*(2+14*n).
+The small-size case uses E=the whole sample space. In the other case E is
+the original binary-coefficient noise event. For fixed binary coefficients,
+the deterministic bound holds for every formula with those interactions.
+Units can therefore be chosen after the draw and may use extra randomness.
+The theorem supplies a measurable witness rather than relying only on an
+outer-measure bound for a potentially nonmeasurable choice of units.
+
+The algorithm receives the formula and fixed class parameters only.
+No mean, sampling law, probability space, hidden partition, good event or
+finite encoding is an algorithm input. These are proof representations.
+Unconditional exactness is diagonalized_result_correct. The numerical
+routine is the previously checked finite rational Jacobi construction;
+there is no callback or unproved approximation-quality premise.
+
+5. Published results and review
+--------------------------------
+The same two published estimates are used: the Bandeira--van Handel
+Rademacher expectation bound and Ledoux's convex upper-tail inequality.
+Their exact statements, source locators, specializations, and all dependent
+public declarations are recorded in external-results.json. The new finite
+alphabet merely instantiates the existing finite-law Ledoux proposition;
+no third external theorem or generalized external signature is introduced.
+All new probability-space steps are proved using mathlib and project lemmas.
+
+The paper-to-Lean correspondence is reviewed and fingerprinted, not itself
+proved by the kernel. An independent mathematical review of the translation
+remains distinct from formal proof checking. No automatic audit establishes
+that the natural-language statements express exactly the intended problem.
+
+6. Reproducibility
+-------------------
+The final audit covers 1,110 public mathematical declarations and fifteen
+example modules. Run python3 verify.py with the pinned toolchain and mathlib
+revision. The script builds the artifact, checks proof dependencies, audits
+the two external-result signatures, checks package revisions, validates all
+statement labels/fingerprints, and records source/manuscript hashes. Only
+the standard propext, Classical.choice and Quot.sound are permitted in the
+proof dependency audit. See result.json and RESULTS.txt for the actual run.

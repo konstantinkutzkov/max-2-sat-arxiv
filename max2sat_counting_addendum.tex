@@ -1,0 +1,225 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype,booktabs}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\hypersetup{pdftitle={A Checkable Replacement for the Gap-Profile Condition}}
+\title{A Checkable Replacement for the Gap-Profile Condition\\
+\large Addendum to \emph{Replacing Random Signs by Neighborhood Counts}}
+\author{}
+\date{8 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The full deterministic counting criterion of~\cite{CC} assumes three
+conditions: an aggregate bound on ordered pair counts, a bound on the energy
+of the initial gaps, and a bound on the number of exceptional gap profiles.
+The last condition has no evident polynomial-time membership test. We show
+that the first condition, together with a lower bound on initial gaps and
+earlier-neighbor counts that can be checked in linear time, implies the third.
+The criterion of~\cite{CC} therefore holds for a class of formulas whose
+membership can be verified in polynomial time. The proof uses the observation
+of~\cite{CC} that the pair-count condition bounds the map from prefixes to gap
+changes, together with Talagrand's concentration inequality for convex
+Lipschitz functions.
+\end{abstract}
+
+\section{Setting}
+
+We use the notation of~\cite[Section~3]{CC}. The input is a simple signed
+interaction graph on $n$ vertices, with one clause per edge and no initial unit
+clauses, a fixed order of the vertices, and a depth $T=\lfloor\tau n\rfloor$
+with $0<\tau<1$. Let $d\ge1$ be a reference degree scale, $h_i$ the initial
+literal-degree gap of $x_i$, and $J_{iw}$ the product of the two literal signs
+on the edge $iw$, with $J_{iw}=0$ off edges.
+
+Let $R$ be the $T\times n$ matrix with $R_{iw}=J_{iw}$ for $w>i$ and
+$R_{iw}=0$ otherwise, so that $M=RR^{\mathsf T}$ is the matrix of ordered pair
+counts $M_{ij}=\sum_{w>\max(i,j)}J_{iw}J_{jw}$. Let $L_T$ be the $T\times T$
+matrix with $(L_T)_{ij}=J_{ij}$ for $j<i$ and $0$ otherwise. For a prefix
+$u\in\{-1,+1\}^T$ the gap of $x_i$ is $h_i-(L_Tu)_i$, and the total gap is
+\[
+ G(u)=\sum_{i\le T}\bigl|h_i-(L_Tu)_i\bigr| .
+\]
+Finally, $D_i^-$ is the number of neighbors $j<i$ of $i$. The three conditions
+of~\cite{CC} are
+\begin{align}
+ z^{\mathsf T}Mz&\le Kd\,\|z\|^2\qquad\text{for all }z\in\mathbb R^T,
+ \tag{C1}\label{C1}\\
+ \sum_{i\le T}h_i^2&\le Hnd,\tag{C2}\label{C2}\\
+ \#\{u\in\{-1,+1\}^T:G(u)<gn\sqrt d\}&\le2^Te^{-\eta n}.
+ \tag{C3}\label{C3}
+\end{align}
+We replace \eqref{C3} by
+\begin{equation}
+ \sum_{i\le T}\max\Bigl\{|h_i|,\sqrt{D_i^-/3}\Bigr\}\ \ge\ 2g\,n\sqrt d .
+ \tag{C3$'$}\label{C3p}
+\end{equation}
+Condition~\eqref{C1} can be checked by computing the largest eigenvalue of
+$M$; conditions~\eqref{C2} and~\eqref{C3p} can be checked in linear time.
+
+\section{The result}
+
+\begin{proposition}\label{prop:main}
+Assume~\eqref{C1} and~\eqref{C3p}, and $n\ge256\pi\tau K/g^2$. Then~\eqref{C3}
+holds with $\eta=g^2/(128\tau K)$.
+\end{proposition}
+
+\begin{proof}
+\emph{Lipschitz constant.} As observed in~\cite{CC}, $L_T^{\mathsf T}$ is the
+leading $T\times T$ block of $R$. A submatrix has norm at most that of the
+matrix, and~\eqref{C1} says $\|R\|^2=\|M\|\le Kd$. Hence $\|L_T\|\le\sqrt{Kd}$.
+The function $G$ is convex on $\mathbb R^T$, as a sum of absolute values of
+affine functions, and
+\[
+ |G(u)-G(u')|\le\sum_{i\le T}\bigl|(L_T(u-u'))_i\bigr|
+ \le\sqrt T\,\|L_T\|\,\|u-u'\|_2 .
+\]
+So $G$ is $\ell$-Lipschitz with $\ell=\sqrt{TKd}$.
+
+\emph{Mean.} Let $u$ be uniform. For $i\le T$, the sum
+$X_i=(L_Tu)_i=\sum_{j<i}J_{ij}u_j$ has $D_i^-$ terms, each an independent
+uniform sign, so it is symmetric. By Jensen's inequality,
+$\E|h_i-X_i|\ge|h_i|$. By symmetry,
+$\E|h_i-X_i|=\frac12\E\bigl(|h_i-X_i|+|h_i+X_i|\bigr)\ge\E|X_i|$. Since
+$\E X_i^4\le3(D_i^-)^2$, H\"older's inequality
+$\E X_i^2\le(\E|X_i|)^{2/3}(\E X_i^4)^{1/3}$ gives
+$\E|X_i|\ge\sqrt{D_i^-/3}$, as in~\cite{EE}. By~\eqref{C3p},
+\[
+ \E G\ \ge\ \sum_{i\le T}\max\Bigl\{|h_i|,\sqrt{D_i^-/3}\Bigr\}\ \ge\
+ 2g\,n\sqrt d .
+\]
+
+\emph{Concentration.} Let $f$ be convex and $\ell$-Lipschitz on $\mathbb R^T$,
+and let the coordinates of $u$ be independent with values in $[-1,1]$. Then
+Talagrand's inequality gives
+$\Prb(|f(u)-m|\ge s)\le4e^{-s^2/(16\ell^2)}$ for every $s\ge0$, where $m$ is a
+median of $f(u)$~\cite{Tal88}. The inequality is usually stated for $[0,1]$
+with exponent $-s^2/4$ for $\ell=1$~\cite[Chapter~4]{Led01}; the factor $16$
+comes from rescaling to $[-1,1]$. Integrating the tail gives
+$|\E f-m|\le8\sqrt\pi\,\ell$. Now $\ell^2=TKd\le\tau nKd$, and the assumption
+on $n$ gives $8\sqrt\pi\,\ell\le\frac12gn\sqrt d$. Therefore
+\[
+ \Prb\bigl(G(u)<gn\sqrt d\bigr)\le
+ \Prb\bigl(G(u)\le m-\tfrac12gn\sqrt d\bigr)\le
+ 4\exp\Bigl(-\frac{g^2n}{64\tau K}\Bigr)\le
+ \exp\Bigl(-\frac{g^2n}{128\tau K}\Bigr).
+\]
+The last step uses $g^2n/(128\tau K)\ge2\pi>\ln4$, which also follows from
+the assumption on $n$. Multiplying by $2^T$ gives~\eqref{C3}.
+\end{proof}
+
+\begin{corollary}[A criterion checkable in polynomial time]\label{cor:main}
+Every fixed formula that satisfies~\eqref{C1}, \eqref{C2} and~\eqref{C3p}, with
+$n\ge256\pi\tau K/g^2$, is solved exactly by the algorithm
+of~\cite[Theorem~2]{CC}. That algorithm branches in the fixed order through
+depth $T$ and then enumerates the summed learned inequality. It uses
+polynomial space and time
+\[
+ \Ostar\bigl(2^T+2^ne^{-cn}\bigr),\qquad
+ c=\min\Bigl\{\frac{g^2}{128\tau K},\ \frac{g^2}{32(H+K)}\Bigr\}.
+\]
+Membership in the class defined by~\eqref{C1}, \eqref{C2} and~\eqref{C3p} can
+be verified in polynomial time.
+\end{corollary}
+
+\begin{proof}
+Proposition~\ref{prop:main} gives~\eqref{C3} with $\eta=g^2/(128\tau K)$;
+then apply~\cite[Theorem~2]{CC}.
+\end{proof}
+
+\section{Remarks}
+
+\begin{remark}[The two sources of gap]
+The two terms in~\eqref{C3p} are the two sources of shortfall seen so far:
+initial gaps, used in the bipartite theorem of~\cite{CC}, and earlier
+neighbors, used in the random-sign proofs~\cite{EE}. The zero-gap formulas
+of~\cite[Section~6]{CC}, with the left side first, have $h_i=0$ and $D_i^-=0$
+for every $i\le T$. So~\eqref{C3p} fails there, as it must.
+\end{remark}
+
+\begin{remark}[The examples of~\cite{CC}]
+For the Hadamard example of~\cite[Section~5]{CC}, with the left side first
+and $T=n/2$, the conditions hold with $K=1$, $H=\frac12$ and $g=\frac14$. Here
+$G$ is constant, equal to $\frac12n\sqrt d$. The corollary then gives
+$c=1/1024$, which is far weaker than the bound $\Ostar(1.793^n)$ of the
+bipartite theorem; the general criterion is not tuned. On random signed graphs
+in the natural order with $T=n/2$, the conditions hold with $K\approx2.4$,
+$H\approx0.5$ and $g\approx0.21$, independently of the density
+(Table~\ref{tab:random}). The constants of Proposition~\ref{prop:main} are
+conservative: at these sizes its bound is still above one, while the observed
+standard deviation of $G$ is about $0.01\,n\sqrt d$. That random signed graphs
+with $d\ge C\log n$ satisfy~\eqref{C1} with bounded $K$ follows from norm
+bounds for random matrices with independent entries~\cite{BvH16}; we do not
+use this here.
+\end{remark}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrccccccc}
+\toprule
+$n$ & $d$ & $K$ & $H$ & $g$ & $\E G$ & sd of $G$ & min of $G$ & row-sum $K$\\
+\midrule
+400 & 19.6 & 2.50 & 0.50 & 0.203 & 0.435 & 0.015 & 0.381 & 9.6\\
+400 & 81.2 & 2.29 & 0.55 & 0.216 & 0.461 & 0.015 & 0.405 & 9.0\\
+400 & 199.4 & 2.42 & 0.50 & 0.211 & 0.452 & 0.014 & 0.400 & 8.6\\
+800 & 100.6 & 2.43 & 0.48 & 0.200 & 0.429 & 0.011 & 0.395 & 12.2\\
+800 & 400.7 & 2.41 & 0.49 & 0.206 & 0.442 & 0.011 & 0.405 & 12.1\\
+\bottomrule
+\end{tabular}
+\caption{Random signed graphs in the natural order, $T=n/2$. Here $K$, $H$
+and $g$ are the smallest constants for which~\eqref{C1}, \eqref{C2}
+and~\eqref{C3p} hold. The values of $G$ are in units of $n\sqrt d$, over
+$4000$ uniform prefixes. The last column is the constant needed by the
+row-sum certificate $\max_i\sum_j|M_{ij}|\le Kd$.}\label{tab:random}
+\end{table}
+
+\begin{remark}[Certificates for~\eqref{C1}]
+The stronger condition $\sum_j|M_{ij}|\le Kd$ for every $i$, mentioned
+in~\cite{CC}, fails for random signed graphs. The required $K$ grows like
+$\sqrt n$: in the runs of Table~\ref{tab:random} it is about $9$ for $n=400$
+and $12$ for $n=800$, at every density (last column). For a class that contains typical formulas,
+condition~\eqref{C1} has to remain an aggregate quadratic-form condition.
+\end{remark}
+
+\begin{remark}[Adaptive orders]
+The proposition concerns a fixed order, which defines $D_i^-$, $R$ and $G$.
+For an adaptive first phase the order depends on the prefix, so $G$ is no
+longer a single convex function of $u$, and the argument does not apply as it
+stands.
+\end{remark}
+
+\paragraph{Checks.} \texttt{explore\_counting\_addendum.py} computes the
+quantities of Table~\ref{tab:random}, confirms that no sampled prefix falls
+below $gn\sqrt d$, and evaluates the Hadamard and zero-gap examples of~\cite{CC}.
+
+\begin{thebibliography}{9}
+\small\raggedright
+\bibitem{CC} \emph{Replacing Random Signs by Neighborhood Counts: a
+ deterministic early-enumeration theorem and a limitation}, working note,
+ 8 October 2026. Local source: \texttt{max2sat\_counting\_conditions.tex}.
+\bibitem{EE} \emph{Max 2-SAT by Early Constraint-Guided Enumeration}, working
+ note, 8 October 2026. Local source: \texttt{max2sat\_early\_enumeration.tex}.
+\bibitem{BvH16} A.~S.~Bandeira and R.~van Handel. Sharp nonasymptotic bounds on
+ the norm of random matrices with independent entries. \emph{The Annals of
+ Probability} 44(4):2479--2506, 2016.
+\bibitem{Led01} M.~Ledoux. \emph{The Concentration of Measure Phenomenon}.
+ Mathematical Surveys and Monographs 89, American Mathematical Society, 2001.
+\bibitem{Tal88} M.~Talagrand. An isoperimetric theorem on the cube and the
+ Khintchine--Kahane inequalities. \emph{Proceedings of the American
+ Mathematical Society} 104(3):905--909, 1988.
+\end{thebibliography}
+\end{document}

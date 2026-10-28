@@ -1,0 +1,148 @@
+Complete random-input accumulation estimates
+===========================================
+
+Completed paper results
+-----------------------
+lem:random_requirements and lem:random_compensation are now checked in
+full, with the constants stated in the paper. The analysis is on a fixed
+observed support with vertices indexed in their fixed branching order.
+Lean uses Fin n and zero-based indices; the paper uses 1,...,r. Here n=r.
+The charged set C has cardinality T and is the paper's prefix. The proved
+bounds allow any fixed C, so the prefix is a specialization, not an extra
+formal hypothesis left to verify. Every charged vertex has positive degree.
+The paper fixes a nonempty observed graph, so m0>0 and T>0.
+
+OrderedExposure defines the unassigned suffix and its exact history classes.
+Its supportWeight equals the actual rational Random.weight on every
+nonempty observed edge pattern. Isolated labels are allowed by the local
+statements; their accounting in the full executable algorithm is a separate
+runtime obligation below.
+
+Accumulated requirements
+------------------------
+RequirementAccumulation defines requirementAt and requirements from the
+actual residual delta, preferred value decide(0 <= delta), and event of
+choosing the nonpreferred bit. The strict offset is +1, as in A_T.
+It proves adaptation, conditional drift, local range, domination of the
+truncated sum by A_T, and the whole-order squared-range budget m0^2*|C|.
+requirement_drift_tail_fixed proves the first deviation bound for each
+bounded base-pattern outcome; requirement_drift_tail averages it over the
+actual base-pattern law, using its proved support bound.
+
+EdgeDataLaw proves that the base patterns together with the two transformed
+theta signs on each edge have the independent product law used for bounded
+differences. thetaTransform is a probability-preserving involution of the
+full bit experiment. The same assignment bit may affect several endpoint
+signs without invalidating this joint-law identity. data_coefficient_exposure
+and drift_data_exposure identify the edge-data statistic with the actual
+available drift. No independence of pruning constraints is assumed.
+
+EdgeVariance proves the lower expectation of each squared coefficient,
+then E Y_t >= kappa*d_t/4. The formerly used variance calculation is
+unnecessary: 0 <= Y_t <= m0^2*d_t directly gives
+
+  sqrt(Y_t) >= Y_t/(m0*sqrt(d_t)),
+  E sqrt(Y_t) >= kappa*sqrt(d_t)/(4*m0).
+
+DriftMean proves this implies the paper's original constant
+
+  c1 = sqrt(kappa)/(2*sqrt(1+4*m0^4/kappa^2)).
+
+Indeed c1 <= kappa/(4*m0); the scalar comparison follows from
+(kappa-2*m0^2)^2 >= 0. The paper proof now uses this shorter argument.
+No theorem statement, numerical constant, input family, or algorithm changed.
+The previously checked general square-root moment lemma remains a valid
+paper statement but is no longer needed for this application.
+
+DriftSensitivity proves that changing one edge affects only its endpoints,
+each square root changes by at most m0, and the total squared sensitivity is
+at most 2*m0^2*n/169. The degree identity and normalization budget are proved,
+not assumed. Bounds outside a distribution's support are handled by the
+bounded extension clippedPattern: it leaves every allowed pattern unchanged
+and sends disallowed patterns to zero. This is only an extension of the
+statistic for applying a concentration theorem, not a modification of the
+input distribution or algorithm.
+
+DriftTail applies bounded differences and transfers the result back through
+the exact edge-data law. AccumulatedRequirements.requirements_tail combines
+the two deviations and proves exactly
+
+  P(A_T < c1*T/26-a-b)
+    <= exp(-2*a^2/(T*m0^2)) + exp(-169*b^2/(m0^2*n))
+
+for a,b>0. All application hypotheses are discharged.
+
+Compensation
+------------
+CompensationSum defines compensation by the actual score gains minus their
+residual averages. ordered_gain_deviation proves that only later neighbors
+contribute. compensation_edges and compensation_rows identify the entire
+Q_T with its edge terms and then incoming rows.
+
+CompensationTail proves each row is known after its variable is processed,
+its earlier comparison coefficients are known beforehand, and its conditional
+exponential estimate has the stated squared-coefficient allowance.
+total_compensation_budget charges each edge once to its earlier endpoint
+and proves the total is at most m0^2*|C|. The degree-normalization hypothesis
+of the generic intermediate bound is discharged by support_weight_squared_degree
+in compensation_tail_fixed. compensation_tail averages over all base patterns
+under the actual PairLaw product distribution. Its conclusion is exactly
+
+  P(Q_T < -c) <= exp(-2*c^2/(m0^2*T)).
+
+The paper proof now groups fresh signs by their later vertex, as Lean does.
+It uses conditional moment-generating bounds, not an incorrect claim that
+the entire row has a short deterministic range. No independence between
+requirements and compensation is needed.
+
+Additional checked consequences for the main proof
+--------------------------------------------------
+SumFeasibility.comparison_sum_identity proves the exact identity between the
+weighted sum of strict score comparisons and A_T+Q_T. Its sign convention
+and +1 offset agree with the paper, including preferred-value ties.
+sum_feasibility_tail uses a=b=c=c1*T/104, T>=n/2, and the two completed lemmas
+to obtain 3*exp(-c0*n), with c0=c1^2/(10816*m0^2). All scalar exponent
+comparisons are checked. sum_feasibility_input_law transfers this event
+from the auxiliary exposure to the original independent pair draws and
+an independent uniform assignment.
+
+CandidateProbability defines candidateCount as the number of assignments
+satisfying that summed comparison at their own prefix. The exact uniform
+probability/count identity and finite nonnegative Markov inequality give
+
+  E candidateCount <= 3*2^n*exp(-c0*n),
+  P(candidateCount > 2^n*exp(-c0*n/2)) <= 3*exp(-c0*n/2).
+
+These count the mathematical candidates on a fixed support, not the actual
+visited nodes of the executable search. Their prefix comparisons use the
+full assignment only through the actual residual average at that prefix.
+
+Remaining runtime obligations
+-----------------------------
+Update: RANDOM_RUNTIME.txt records the subsequent completion of generic
+prefix/suffix node accounting, initialized candidate counts, the exact
+score-constraint correspondence, and actual expected/high-probability node
+bounds for a fixed support indexed by its active vertices. Rejected calls
+are included, and all analytic input bounds are discharged.
+
+Update: RANDOM_COMPLETE.txt now closes the original-label transfer and
+observed-support averaging, including empty support and r<=n. Both
+thm:random_main and thm:weighted are checked_core. Ordinary implementation bit-cost and space
+arguments remain distinguished from a formal machine-cost analysis.
+
+The graph-family/SBM results and the proposed appendix extension retain
+their earlier status. No new tractable input family is claimed in this batch.
+
+Regression cases and audit
+--------------------------
+AccumulationExamples checks an empty charged set, bounded extension of an
+out-of-support pattern, the original constant comparison, a fixed-prefix
+candidate bound on a three-vertex path with unit clauses, and a two-variable
+Max-Cut encoding at the exact A_T+Q_T=0 feasibility boundary. These examples
+supplement the arbitrary-size proofs.
+
+The full build, transitive axiom audit, and source/manuscript fingerprints
+are recorded in result.json. Only propext, Classical.choice, and Quot.sound
+are permitted; proof placeholders, custom axioms, and native-evaluation proof
+dependencies are excluded. The paper-to-Lean correspondence remains a
+mathematical translation requiring independent human review.

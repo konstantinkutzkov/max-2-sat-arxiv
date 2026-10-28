@@ -1,0 +1,133 @@
+Published results and verification policy
+=======================================
+
+Policy agreed with the author, 23 October 2026
+---------------------------------------------
+Formally verify our contributions and our use of established results. Do not
+undertake to formalize the proofs of every established theorem cited by the
+paper. Check the exact published statements, assumptions, conventions and
+constants carefully, and record any specialization or rescaling. An unfinished
+lemma specific to our paper must not be relabelled as a published result.
+
+ExternalResults.lean defines two propositions. It does NOT assert them, add
+axioms, or provide proofs of them. The application theorems accept these
+propositions as explicit arguments. Kernel checking proves the deductions
+conditional on those arguments. Consequently, a clean standard-axiom audit
+alone is not a certificate that the external mathematical results have been
+formalized. The separate external-results.json register records this boundary.
+Source-to-Lean translation and citation review still require human review.
+
+1. Bandeira--van Handel: Rademacher matrix expectation
+-----------------------------------------------------
+A. S. Bandeira and R. van Handel, Sharp nonasymptotic bounds on the norm of
+random matrices with independent entries, Annals of Probability 44(4),
+2479--2506 (2016), DOI 10.1214/15-AOP1025.
+Published electronic reprint: https://arxiv.org/pdf/1408.6185
+Theorem 3.1, Corollary 3.2, and the paragraph immediately following Corollary
+3.2 (reprint pp. 11--13; journal pp. 2489--2491).
+
+Theorem 3.1 is initially Gaussian. Corollary 3.2 permits independent symmetric
+entries whose even moments are bounded by Gaussian moments. The next paragraph
+explicitly states that independent Rademacher signs satisfy this requirement.
+We use ONLY that Rademacher specialization, with deterministic coefficients.
+We do not assume this theorem for arbitrary centered, nonsymmetric entries.
+
+For m-by-n fixed coefficients A and independent fair signs, the bound is
+  E ||sign*A|| <= (1+theta)*(sigma_row+sigma_col
+                    + 5*b*sqrt(log(min(m,n)))/sqrt(log(1+theta))),
+where 0<theta<=1/2, b=max|A_ij|, and the two sigma values are maximum
+Euclidean row/column lengths. All matrix norms are Euclidean operator norms.
+The formal proposition uses m=n>0, and arbitrary nonnegative upper bounds on
+the three maxima. Monotonicity makes this equivalent to the maxima version.
+Zero coefficients are allowed. Unused rows in the application are padded with
+zeros, so this square version suffices and uses log n.
+
+Important norm convention: signedMatrix is a named Matrix-valued definition.
+This avoids Lean inferring its default function-space maximum norm for an
+inline two-argument function. The examples check the definitional connection
+to Matrix.toEuclideanCLM and hence to the Euclidean operator norm.
+
+Our application, proved in Lean:
+- each original independent coordinate is an unordered variable pair;
+- upperMatrix places it in at most one array entry;
+- Jensen's inequality symmetrizes using an independent copy;
+- swapping the two copies coordinate by coordinate preserves the product law;
+- this proves independent sign insertion, not merely scalar sign symmetry;
+- restriction of a full array of independent signs to the used pair positions
+  has exactly the required product law;
+- scalar concentration bounds incident squared mass at every vertex;
+- incident mass bounds both row and column maxima, including truncated rows;
+- second-moment and numerical estimates yield E||R_X||<=2.89*sqrt(n*chi*nu).
+
+2. Ledoux: convex upper tail around the expectation
+--------------------------------------------------
+M. Ledoux, Concentration of measure and logarithmic Sobolev inequalities,
+Seminaire de Probabilites XXXIII, Lecture Notes in Mathematics 1709,
+120--216, Springer (1999).
+Published text: https://www.numdam.org/article/SPS_1999__33__120_0.pdf
+Corollary 3.3, p. 165, and its interval rescaling, p. 166.
+
+For a separately convex function with Euclidean Lipschitz constant at most
+one and a product measure on [a,b]^d, the displayed upper tail is
+  Pr(f > E f + r) <= exp(-r^2/(2*(b-a)^2)),  r>0.
+Global convexity suffices, and is the stronger hypothesis used in Lean.
+Taking [a,b]=[-B,B], B>0, gives exp(-r^2/(8*B^2)). Strict > is sufficient
+for our good event; the cited bound is at least as strong at the endpoint.
+There is no assumption of identical coordinate laws, mean zero, or symmetry
+in this concentration result. Bounds are needed only on positive-mass outcomes
+in our finite-law version. Measurability and integrability are automatic for
+finite laws; convex Lipschitz functions are continuous. Empty coordinate sets
+have a constant statistic, so their upper-tail event is empty.
+
+The earlier paper proof used a median-to-mean consequence of Talagrand. The
+new proof uses this directly published mean-centered inequality instead. It
+is stronger and simpler, and preserves the proposition's constants and input
+class. No theorem statement or algorithm is weakened or changed.
+
+Our application, proved in Lean:
+- operator norm is convex in the original independent coordinates;
+- it is 1-Lipschitz: each coordinate appears at most once, the operator norm
+  is bounded by the Frobenius norm, and the triangle inequality applies;
+- with r=.01*sqrt(n*chi*nu), the norm is at most 2.90*sqrt(n*chi*nu), except
+  with probability exp(-n*chi*nu/(80000*B^2));
+- under n>=2 and n*chi*nu>=10^9*B^2*log n, this probability is <=n^-3;
+- empirical centering is handled by ||R_(X-delta)||<=||R_X||+n*|delta|.
+  We never apply either external result to dependent empirically centered
+  entries. The supplied-mean case takes delta=0.
+
+Checked milestone and remaining work
+------------------------------------
+independent_pair_norm_tail proves the norm event directly from the centered
+product sampling, support bound B, per-entry second moment <=chi*nu, n>=2,
+and n*chi*nu>=10^9*B^2*log n. It has no assumed row-moment, matrix expectation,
+or tail estimate other than the TWO named external theorems above.
+
+The two maxima can both use E sigma_j^2<=2.04*n*chi*nu. This sufficient
+simplification removes the separate tau-dependent column calculation.
+Scalar concentration and numerical substitutions for these moment bounds
+are checked. matrix_parameter_bounds checks the logarithmic coefficient,
+exceptional contribution to the moments, and final n^-3 norm failure rate.
+
+operator_energy_bound converts the paper's 2.902*sqrt(n*chi*nu) norm bound
+and D>=.98*(n-1)*nu into ||R||^2<=9*chi*D (n>=100 suffices).
+scalar_operator_event joins this norm event with the existing empirical
+scalar event. Its assumptions on the empirical-mean threshold a are explicit;
+its conclusion is scalarFailureBound+n^-3. It does not assume independence
+between these events or between the centered coordinates.
+
+The following membership batch now completes every finite-law step:
+original empirical scalar thresholds, the rounded earlier-row profile,
+comparison allowance, the final 1-1/n event for both centering cases, and
+the count-accumulation size bound. Original-coefficient wrappers and two
+Bernoulli graph instantiations are included. They use the SAME two external
+results; no additional published-result hypothesis was introduced.
+See INDEPENDENT_PAIR_MEMBERSHIP.txt for the full application scope.
+
+The complete proposition still has an unformalized extension beyond finite
+laws. Full SBM runtime and hidden-mean discovery/fallback remain separate
+unfinished obligations. The appendix biased-subset extension remains a
+research target.
+
+Reproduction: python3 verify.py. Read the separate external dependencies in
+result.json as well as the standard-axiom audit. Historical artifacts retain
+the scope and results of their original milestone.

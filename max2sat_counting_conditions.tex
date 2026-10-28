@@ -1,0 +1,465 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype,booktabs}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\title{Replacing Random Signs by Neighborhood Counts\\
+\large A deterministic early-enumeration theorem and a limitation}
+\author{}
+\date{8 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The cancellation needed for early enumeration has an exact formulation
+in terms of agreement and disagreement counts between signed
+neighborhoods. For a fixed family of learned inequalities, these pair
+counts determine the variance of their sum under a uniform completion;
+independence between neighborhoods is unnecessary. We formulate a general
+deterministic theorem using signed co-occurrence counts and counts of
+residual-gap profiles. A bipartite special case illustrates the mechanism,
+but does not improve on the simpler algorithm available for bipartite
+formulas. We also show why pairwise balance alone is insufficient
+for this particular summed-constraint generator: with zero initial gaps,
+it can enumerate a constant fraction of all assignments despite exactly
+orthogonal signed neighborhoods. These are sufficient conditions and a
+limitation of one algorithm, not a characterization of hard Max 2-SAT.
+\end{abstract}
+
+\section{What independence means here}
+
+Independence in the random-sign model is a property of the joint
+distribution over formulas. Empirical counts inside one formula are
+different objects. Even exactly balanced one- and two-coordinate counts
+do not imply joint independence. For example, the three sign patterns
+$(u,v,uv)$ over the four choices $(u,v)\in\{-1,+1\}^2$ have uniform
+one- and two-coordinate frequencies but only four of eight possible
+triples.
+
+We should replace independence by the particular counting inequalities
+used by the algorithm. This note separates two jobs: making learned
+inequalities sufficiently restrictive, and preventing their bad values
+from aligning too strongly. Pair counts handle the second job directly.
+In the theorem below, literal-degree gaps supply the first job.
+
+\section{Exact agreement counts for a fixed constraint family}
+
+Consider fixed inequalities $L_i(y)\le k_i$ on $r$ free variables,
+each counting one bad value on its support $N_i$. Write assignments as
+$y_w\in\{-1,+1\}$ and set
+\[
+ b_i(w)=\begin{cases}
+  +1,&\text{if value $+1$ is bad for $i$ at $w$},\\
+  -1,&\text{if value $-1$ is bad for $i$ at $w$},\\
+  0,&w\notin N_i.
+ \end{cases}
+\]
+Thus $L_i(y)=|N_i|/2+\frac12\sum_w b_i(w)y_w$.
+For two rows define the directly countable quantity
+\begin{equation}
+ C_{ij}=A_{ij}-O_{ij}=\sum_w b_i(w)b_j(w),             \label{eq:C}
+\end{equation}
+where $A_{ij}$ counts shared variables with agreeing bad values and
+$O_{ij}$ counts shared variables with opposite bad values.
+In particular, $C_{ii}=|N_i|$.
+
+For a selected family $I$, define
+\begin{align}
+ s_I&=\sum_{i\in I}\left(\frac{|N_i|}{2}-k_i\right),\\
+ V_I&=\sum_w\left(\sum_{i\in I}b_i(w)\right)^2
+     =\sum_{i\in I}|N_i|+
+                       2\sum_{\substack{i<j\\i,j\in I}}C_{ij}.
+                                                        \label{eq:V}
+\end{align}
+The sum of the inequalities is
+$Q_I(y)\le-s_I$, where
+$Q_I(y)=\frac12\sum_w(\sum_{i\in I}b_i(w))y_w$.
+
+\begin{lemma}[A deterministic counting bound]\label{lem:count}
+If $s_I>0$ and $V_I>0$, the number of assignments satisfying the
+summed inequality is at most
+\begin{equation}
+ 2^r\exp\left(-\frac{2s_I^2}{V_I}\right).           \label{eq:tail}
+\end{equation}
+If $s_I>0$ and $V_I=0$, that number is zero.
+\end{lemma}
+\begin{proof}
+Use a uniform assignment only to count completions of this fixed family.
+Its coordinates $y_w$ are independent signs, regardless of any
+dependencies between the rows $b_i$. Thus
+\[
+ \E e^{-\lambda Q_I}
+ =\prod_w\cosh\left(\frac\lambda2\sum_{i\in I}b_i(w)\right)
+ \le e^{\lambda^2V_I/8}.
+\]
+Markov's inequality with $\lambda=4s_I/V_I$ gives
+\eqref{eq:tail}. If $V_I=0$, then $Q_I$ is identically zero.
+\end{proof}
+
+This is stronger than an analogy with independence: the exact variance
+is $V_I/4$, and equation~\eqref{eq:V} expresses it using pair counts.
+Independence of the neighborhoods is not used. For example, when every
+$C_{ij}=0$ for $i\ne j$, then $V_I=\sum_{i\in I}|N_i|$ for every
+selected subfamily, even if there are higher-order relations among rows.
+
+For exact counts, let $m_w^+$ and $m_w^-$ count bad occurrences at $w$,
+put $c_w=|m_w^+-m_w^-|$, and
+$B=\sum_i k_i-\sum_w\min(m_w^+,m_w^-)$. Orient the cheaper value as zero.
+The summed inequality is $\sum_wc_wz_w\le B$, and its exact completion
+count is
+\[
+ \sum_{j=0}^{\lfloor B\rfloor}[x^j]\prod_w(1+x^{c_w}),
+\]
+interpreted as zero when $B<0$. Thus even the full count is determined
+by a histogram of signed occurrence multiplicities, not by a claim of
+independence. The pair counts give the simpler sufficient estimate above.
+
+\section{A deterministic counting version of the full proof}
+
+Fix any simple signed interaction graph, with one clause per edge and
+no initial units, and fix an order and a depth $T=\lfloor\tau n\rfloor$,
+where $0<\tau<1$ is constant. Let $d\ge1$ be a reference degree scale,
+$h_i$ the initial literal-degree gap, and $J_{iw}$ the product of the
+literal signs on an edge, zero off edges. Define the ordered interaction
+row $r_i(w)=J_{iw}$ for $w>i$, and zero otherwise, for $i\le T$.
+Its raw pair counts are
+\[
+ M_{ij}=\sum_{w>\max(i,j)}J_{iw}J_{jw}
+       =\#\{\text{agreeing interaction signs}\}
+        -\#\{\text{opposite interaction signs}\}.
+\]
+Here $M_{ii}$ is the number of later neighbors of $i$. Unlike $C$ in
+Section 2, these rows have not been oriented by preferred values.
+
+For a prefix $u\in\{-1,+1\}^T$, define its total gap
+\[
+ G(u)=\sum_{i\le T}\left|h_i-\sum_{j<i}J_{ij}u_j\right|.
+\]
+This is defined on the full assignment cube without survival tests or
+optimization. Fix constants $K>0$, $H\ge0$, $g>0$, and $\eta>0$.
+The three conditions are
+\begin{align}
+ \sum_{i,j\le T}M_{ij}z_iz_j
+       &\le Kd\sum_{i\le T}z_i^2
+       &&\text{for all }z\in\mathbb R^T,             \label{eq:rawcounts}\\
+ \sum_{i\le T}h_i^2&\le Hnd,                         \label{eq:henergy}\\
+ \#\{u\in\{-1,+1\}^T:G(u)<gn\sqrt d\}
+       &\le 2^T e^{-\eta n}.                        \label{eq:gapcount}
+\end{align}
+The first is an aggregate condition on pair counts, not a bound on
+each pair separately. It can be checked by linear algebra on $M$; the
+stronger condition $\sum_j|M_{ij}|\le Kd$ for every $i$ also suffices.
+The last condition counts exceptional gap profiles. It is not asserted
+to have a polynomial-time membership test. Replacing it by simpler input
+conditions is a remaining structural question.
+
+\begin{theorem}[Full deterministic counting criterion]\label{thm:full}
+Every fixed formula satisfying~\eqref{eq:rawcounts}--\eqref{eq:gapcount}
+is solved exactly by fixed-order branching through depth $T$, followed
+by enumeration of the summed learned inequality, in polynomial space and
+time
+\[
+ \Ostar(2^T+2^n e^{-cn}),\qquad
+ c=\min\left\{\eta,\frac{g^2}{32(H+K)}\right\}>0.
+\]
+All constants are independent of $d$. The statement has no probability
+qualification over input formulas.
+\end{theorem}
+\begin{proof}
+Use a uniform full assignment $u$ only to count generated candidates.
+Let $I$ consist of its nonpreferred decisions among the first $T$,
+$v_i=u_i[i\in I]$, and $\Delta_i=h_i-\sum_{j<i}J_{ij}u_j$.
+As in the early-enumeration note, set
+\[
+ S=\sum_{i\in I}(|\Delta_i|/2+1),\qquad
+ Q=\frac12\sum_{w=1}^n u_w\sum_{\substack{i<w\\i\le T}}J_{iw}v_i.
+\]
+Exactly those assignments with $S+Q\le0$ pass their prefix's summed
+inequality. Consequently, their total number is
+$W(F)=2^n\Prb_u[S+Q\le0]$ for this fixed formula.
+
+The coefficient of $u_w$ in the inner sum for $Q$ is determined before
+$u_w$ is exposed. Its total squared coefficient is at most
+$Kd\sum_iv_i^2\le KdT$ by~\eqref{eq:rawcounts}. The conditional
+cosh bound, compensated by these predictable squared coefficients,
+therefore gives
+\begin{equation}
+ \Prb[Q\le-b]\le e^{-2b^2/(KdT)}.                  \label{eq:fullQ}
+\end{equation}
+
+Writing $R$ for the matrix of rows $r_i$, condition~\eqref{eq:rawcounts}
+is $\|R\|^2\le Kd$. Its leading $T\times T$ submatrix is the transpose
+of the map from the prefix to its gap changes. Hence, for every prefix,
+\[
+ \sum_{i\le T}\Delta_i^2
+ \le2\sum_{i\le T}h_i^2+2KdT\le2(H+K)nd.
+\]
+Conditional on earlier decisions, $X_i=[i\in I]|\Delta_i|/2$ has mean
+$|\Delta_i|/4$ and second moment $\Delta_i^2/8$. Using
+$e^{-\lambda X_i}\le1-\lambda X_i+\lambda^2X_i^2/2$ and the predictable
+second-moment sum at most $(H+K)nd/4$ gives
+\begin{equation}
+ \Prb\left[\sum_{i\le T}X_i<G(u)/4-b\right]
+       \le e^{-2b^2/((H+K)nd)}.                     \label{eq:fullS}
+\end{equation}
+These conditional arguments require independent assignment coordinates,
+which the counting experiment supplies; no input signs are random.
+
+Take $b=gn\sqrt d/8$ in~\eqref{eq:fullQ}--\eqref{eq:fullS}.
+Outside the gap exception in~\eqref{eq:gapcount} and the shortfall
+exception in~\eqref{eq:fullS}, $S\ge\sum_iX_i\ge gn\sqrt d/8$.
+If also $Q>-gn\sqrt d/8$, then $S+Q>0$. A union bound therefore gives
+\[
+ \frac{W(F)}{2^n}\le
+ e^{-\eta n}+e^{-g^2n/(32(H+K))}+e^{-g^2n/(32K)}
+ \le3e^{-cn},
+\]
+where $T\le n$ was used in the $Q$ bound. The cost is
+$\Ostar(2^T+W(F))$, proving the result.
+\end{proof}
+
+Thus there is a precise counting replacement for the two roles of
+independence. Pair counts control collective agreement even after
+adaptive selection and orientation of rows. The gap-profile count
+controls how frequently the order fails to produce useful imbalance.
+The latter condition is a sufficient structural counting hypothesis,
+not a restatement that few assignments survive the algorithm.
+
+\section{A transparent bipartite special case}
+
+Let the formula have a simple bipartite interaction graph with parts
+$L$ and $R$, of sizes $p$ and $q$. There is one clause per edge and no
+initial unit clauses. Every vertex of $L$ has degree $d$; degrees in
+$R$ need not be equal. Let $h_i$ be the positive literal degree minus
+the negative literal degree of $i\in L$, and let $t_i\in\{-1,+1\}$
+be its preferred value, using $+1$ to break a tie.
+
+For edge $iw$, let $J_{iw}$ be the product of its two literal signs.
+The learned inequality in the nonpreferred branch of $i$ counts the
+bad value
+\begin{equation}
+ b_i(w)=-t_iJ_{iw},\qquad
+ L_i(y)\le\frac{d-|h_i|}{2}-1.                       \label{eq:learn}
+\end{equation}
+Set $b_i(w)=0$ off the support. All these rows and their pair counts
+$C_{ij}$ are defined directly from the input. They do not depend on
+which branches are later taken, because variables in $L$ have no edges
+to one another.
+
+Fix constants $a>0$ and $K\ge1$. Impose the following two conditions:
+\begin{align}
+ |h_i|&\ge a\sqrt d &&\text{for every }i\in L,       \label{eq:gap}\\
+ d|I|+2\sum_{\substack{i<j\\i,j\in I}}C_{ij}
+      &\le Kd|I| &&\text{for every }I\subseteq L.   \label{eq:counts}
+\end{align}
+Condition~\eqref{eq:counts} bounds the total excess of agreements over
+disagreements in every selected family. It permits nonzero correlations
+and arbitrary higher-order dependencies.
+
+One stronger, polynomial-time checkable condition is
+\begin{equation}
+ \sum_{j\ne i}\max(C_{ij},0)\le(K-1)d
+       \quad\text{for every }i\in L.               \label{eq:rowsum}
+\end{equation}
+Indeed, the off-diagonal sum in~\eqref{eq:counts} is at most the sum of
+these positive row sums over $i\in I$. Another sufficient certificate is
+$C\preceq Kd\,\mathrm{Id}$, which can be checked by linear algebra.
+That certificate is an equivalent spectral formulation of a stronger
+quadratic bound; it is not a separate independence assumption. The
+proof needs only the subset inequality~\eqref{eq:counts}.
+
+\begin{theorem}[Counting conditions suffice]\label{thm:det}
+Every input satisfying~\eqref{eq:gap}--\eqref{eq:counts} can be solved
+exactly in polynomial space and time
+\begin{equation}
+ \Ostar\left(2^p+2^q(1+e^{-a^2/(2K)})^p\right).     \label{eq:time}
+\end{equation}
+If $p/(p+q)$ is bounded away from zero and one, this is
+$\Ostar((2-\delta)^{p+q})$ for a fixed $\delta>0$ independent of $d$.
+The stronger condition~\eqref{eq:rowsum}, together with
+\eqref{eq:gap}, defines a class whose membership can be verified in
+polynomial time when the bipartition is supplied.
+\end{theorem}
+\begin{proof}
+Branch on every variable of $L$, learning~\eqref{eq:learn} when its
+nonpreferred value is used. At each resulting prefix freeze the learned
+family and enumerate solutions of its summed inequality. The learned
+constraints preserve the first optimum in preferred-child-first order:
+violating a learned constraint permits a no-worse single flip to the
+preferred value, producing an earlier optimum, a contradiction.
+Their sum therefore also preserves an optimum.
+
+There is exactly one prefix for each set $I$ of nonpreferred decisions.
+For $k=|I|>0$, its shortfall and variance parameter satisfy
+\[
+ s_I=\sum_{i\in I}(|h_i|/2+1)\ge ka\sqrt d/2,
+ \qquad V_I\le Kdk.
+\]
+Lemma~\ref{lem:count} bounds its candidate count by
+$N(I)\le2^q e^{-a^2k/(2K)}$. The same formula holds for $I=\varnothing$,
+whose count is $2^q$. Summing over all prefixes gives
+\[
+ \sum_{I\subseteq L}N(I)
+ \le2^q\sum_{k=0}^p\binom pk e^{-a^2k/(2K)}
+ =2^q(1+e^{-a^2/(2K)})^p.
+\]
+After orienting cheaper values, a depth-first generator of the
+nonnegative budget inequality takes $\operatorname{poly}(n)(N(I)+1)$
+time: every retained partial assignment extends by choosing cheaper
+values on the remaining variables. This proves~\eqref{eq:time}; the
+traversal uses polynomial space. If $p=\tau n$, the two exponential
+bases are $2^\tau$ and
+$2((1+e^{-a^2/(2K)})/2)^\tau$, both uniformly below two when $\tau$
+stays in a compact subinterval of $(0,1)$.
+\end{proof}
+
+This special case is a theorem about the constraint-guided enumeration
+mechanism, not a new tractability result for bipartite Max 2-SAT.
+Every bipartite formula already has an $\Ostar(2^{\min(p,q)})$ algorithm:
+enumerate the smaller side and optimize the variables on the other
+side independently. The value of the special case is its direct
+translation from static neighborhood counts to a bound on every
+selected learned family. Theorem~\ref{thm:full} is not restricted to
+bipartite graphs or graphs with a large independent set.
+
+\section{An explicit dense example}
+
+Take $p=q=d=4^k$ for any integer $k\ge1$, with the complete bipartite
+interaction graph. Let $H$ be a $q\times q$ sign matrix satisfying
+$HH^{\mathsf T}=q\,\mathrm{Id}$. Such matrices follow from the recursion
+\[
+ H_1=(1),\qquad
+ H_{2r}=\begin{pmatrix}H_r&H_r\\H_r&-H_r\end{pmatrix};
+\]
+the stated identity follows by block multiplication.
+Choose $u\in\{-1,+1\}^q$ with $\sum_wu_w=\sqrt q$.
+For each edge $iw$, set the literal sign at $i$ to $u_w$ and that
+at $w$ to $u_wH_{iw}$. This specifies all input clauses explicitly.
+
+Every left gap is $\sqrt q$, the interaction sign matrix is $H$, and
+the bad-value matrix is $-H$. Consequently $C_{ij}=0$ for $i\ne j$:
+each pair agrees on exactly half its neighbors and disagrees on the
+other half. Conditions~\eqref{eq:gap}--\eqref{eq:counts} hold with
+$a=K=1$. Since $n=2q$, Theorem~\ref{thm:det} gives
+\[
+ \Ostar\left(\left[\sqrt{2(1+e^{-1/2})}\right]^n\right)
+ =\Ostar(1.792502^n)\subseteq\Ostar(1.793^n).
+\]
+The clause density is $q/2=n/4$. There is no random-input qualification.
+This is an explicit witness that the class is nonempty at growing
+density, not a claim that this structured example requires exponential
+time or that the constants are optimal.
+
+\section{Why cancellation counts alone do not suffice}
+
+The role of the gap hypothesis is real for this particular algorithm.
+Take a matrix with $p$ orthogonal sign rows of length $q$, where
+$q\ge16p$, and make it the interaction matrix of a complete bipartite
+formula. Choose the own-literal signs at each left variable to be
+balanced, and choose the other endpoint signs to realize the desired
+interaction products. Then every $h_i=0$, while every distinct pair
+has $C_{ij}=0$ exactly. For example, take the first $p=q/16$ rows of
+the recursively defined matrix above, for powers of two $q\ge32$.
+These instances have clause density proportional to their number of
+variables.
+
+\begin{proposition}[Failure of the summed generator with zero gaps]
+For these formulas, the algorithm that branches on $L$ and then
+enumerates the summed inequality generates at least
+\[
+ \frac3{32}(2^p-1)2^q
+\]
+complete assignments. Thus its work is $\Omega(2^{p+q})$ despite
+perfectly balanced signed pair-agreement counts.
+\end{proposition}
+\begin{proof}
+For any nonempty set $I$ of $k$ nonpreferred decisions, the total
+shortfall is $s_I=k$ and $V_I=qk$. Under a uniform right assignment,
+$Q_I$ is a symmetric sum of independent signs, of variance
+$v=qk/4$ and fourth moment at most $3v^2$. For completeness, the
+elementary second-moment inequality for $X\ge0$ is
+\[
+ \Prb[X\ge\theta\E X]\ge
+ (1-\theta)^2\frac{(\E X)^2}{\E X^2},\qquad 0\le\theta<1.
+\]
+It follows by bounding the contribution from $X<\theta\E X$ and
+applying Cauchy--Schwarz to the remaining contribution. Apply it to
+$X=Q_I^2$ and $\theta=k^2/v=4k/q\le1/4$. Then
+\[
+ \Prb[|Q_I|\ge k]\ge\frac{(1-4k/q)^2}{3}\ge\frac3{16}.
+\]
+Symmetry and $k>0$ give
+$\Prb[Q_I\le-k]\ge3/32$. These are exactly the completions admitted
+by the summed inequality. Sum their counts over nonempty $I$.
+\end{proof}
+
+This does not show that the formulas are hard for other branching
+orders, domination, individual-constraint propagation, or aggregation.
+It shows that initial literal balance and pairwise neighborhood balance
+do not, by themselves, give the earlier switching guarantee for this
+generator. One must also obtain sufficiently restrictive constraints.
+
+\clearpage
+\section{What remains for the general branching approach}
+
+For a fixed residual constraint family, equations~\eqref{eq:C}--\eqref{eq:V}
+and Lemma~\ref{lem:count} already apply to arbitrary inputs. The
+remaining global task is to guarantee a large shortfall relative to
+$V_I$ on sufficiently many prefixes, accounting for the cost of all
+other prefixes. In the bipartite theorem, static gaps and the binomial
+count of nonpreferred decisions settle this exactly. In a general
+formula, branching changes gaps, supports, and which rows are selected.
+Initial pair counts cannot simply be reused after these restrictions.
+
+This gives a concrete form of the proposed dichotomy. Either learning
+creates a large total shortfall while the selected neighborhoods have
+controlled net agreement, and enumeration saves an exponential factor;
+or one must address insufficient gaps or a selected family with large
+positive agreement excess. The latter is a precisely countable alignment
+of bad values, but it is not yet a proof of a small separator or an
+aggregation rule with a global running-time bound.
+
+The counts also give exact transitions for a fixed summed inequality.
+Write its current shortfall as $s$ and let
+$B_w=\sum_i b_i(w)$, so $V=\sum_wB_w^2$. Assigning $y_w=\varepsilon$
+changes these parameters to
+\[
+ s'=s+\frac{\varepsilon B_w}{2},\qquad V'=V-B_w^2.
+\]
+Thus the effect of choosing a variable can be read from occurrence
+counts directly. A large $|B_w|$ gives a large separation between the
+two children's shortfalls and removes a large contribution to $V$.
+This does not itself shrink the number of completions of the inherited
+inequality: their counts partition between the children. Further savings
+must come from additional constraints, domination, or another valid
+optimization argument.
+
+\paragraph{Verification.}
+The companion program \texttt{explore\_counting\_conditions.py} verifies
+the agreement identities, the upper bound and preservation of an optimum
+on small explicit instances, and the zero-gap lower bound using exact
+completion counts. All 548 prefix checks passed, including 65,792
+full-assignment identity checks on the small positive-gap examples.
+Another 2,560 complete-assignment checks on signed complete graphs
+verified the ordered-count identities and quadratic bounds used in
+Theorem~\ref{thm:full}. These checks support the implementation; the
+theorems follow from the proofs above.
+
+\paragraph{Related working note.}
+The algorithm and output-sensitive budget generator are those of
+\emph{Max 2-SAT by Early Constraint-Guided Enumeration}, 8 October 2026,
+local source \texttt{max2sat\_early\_enumeration.tex}. The present note
+replaces a probabilistic assumption by sufficient deterministic
+conditions for a narrower input class. It does not assert that the
+conditions are necessary or characterize typical random signings.
+\end{document}

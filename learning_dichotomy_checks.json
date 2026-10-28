@@ -1,0 +1,502 @@
+{
+  "random_checks": {
+    "seed": 7102028,
+    "systems": 250,
+    "inherited_splits": 1368,
+    "new_constraint_splits": 250,
+    "core_extensions": 223,
+    "max_numerical_split_excess": 5.684341886080801e-13
+  },
+  "examples": {
+    "gated_core": {
+      "n": 16,
+      "clauses": 27,
+      "widths": [
+        4,
+        5
+      ],
+      "exact_count": 1,
+      "certificates": [
+        {
+          "core_size": 0,
+          "upper_bound": 61439.99999999997,
+          "certified_bits": 0.09310940439148219
+        },
+        {
+          "core_size": 1,
+          "upper_bound": 57343.999999999985,
+          "certified_bits": 0.19264507794239627
+        },
+        {
+          "core_size": 2,
+          "upper_bound": 49152.0,
+          "certified_bits": 0.4150374992788439
+        },
+        {
+          "core_size": 3,
+          "upper_bound": 32768.0,
+          "certified_bits": 1.0
+        },
+        {
+          "core_size": 4,
+          "upper_bound": 1.0,
+          "certified_bits": 16.0
+        }
+      ]
+    },
+    "all_patterns": {
+      "n": 16,
+      "clauses": 192,
+      "width": 5,
+      "conditioned_bound": 16.0,
+      "exact_count": 16
+    },
+    "opposite_cardinality": {
+      "packing_bound": 22.0,
+      "sum_bound": 0,
+      "exact_count": 0
+    }
+  },
+  "max2sat_frontiers": {
+    "seed": 7102029,
+    "formulas": 12,
+    "sampled_states": 48,
+    "core_improved": 24,
+    "core_better_than_sum": 4,
+    "sum_better_than_core": 34,
+    "rows": [
+      {
+        "formula": 0,
+        "free_variables": 10,
+        "constraints": 3,
+        "exact_count": 0,
+        "packing_bound": 20.000000000000004,
+        "core2_bound": 20.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 0,
+        "free_variables": 9,
+        "constraints": 4,
+        "exact_count": 0,
+        "packing_bound": 17.999999999999996,
+        "core2_bound": 6.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 0,
+        "free_variables": 9,
+        "constraints": 3,
+        "exact_count": 0,
+        "packing_bound": 46.00000000000001,
+        "core2_bound": 31.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 0,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 20.000000000000004,
+        "core2_bound": 20.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 0,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 26,
+        "packing_bound": 147.99999999999994,
+        "core2_bound": 106.00000000000003,
+        "weighted_sum_bound": 52
+      },
+      {
+        "formula": 1,
+        "free_variables": 7,
+        "constraints": 2,
+        "exact_count": 4,
+        "packing_bound": 8.0,
+        "core2_bound": 8.0,
+        "weighted_sum_bound": 8
+      },
+      {
+        "formula": 1,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 10,
+        "packing_bound": 92.00000000000001,
+        "core2_bound": 63.999999999999986,
+        "weighted_sum_bound": 22
+      },
+      {
+        "formula": 1,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 10.000000000000002,
+        "core2_bound": 3.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 1,
+        "free_variables": 10,
+        "constraints": 3,
+        "exact_count": 11,
+        "packing_bound": 92.00000000000001,
+        "core2_bound": 92.00000000000003,
+        "weighted_sum_bound": 36
+      },
+      {
+        "formula": 1,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 20.000000000000004,
+        "core2_bound": 20.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 2,
+        "free_variables": 10,
+        "constraints": 3,
+        "exact_count": 10,
+        "packing_bound": 176.0,
+        "core2_bound": 70.99999999999999,
+        "weighted_sum_bound": 44
+      },
+      {
+        "formula": 2,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 55.999999999999986,
+        "core2_bound": 55.999999999999986,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 2,
+        "free_variables": 7,
+        "constraints": 3,
+        "exact_count": 0,
+        "packing_bound": 8.0,
+        "core2_bound": 8.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 2,
+        "free_variables": 8,
+        "constraints": 3,
+        "exact_count": 0,
+        "packing_bound": 8.999999999999998,
+        "core2_bound": 9.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 3,
+        "free_variables": 7,
+        "constraints": 2,
+        "exact_count": 32,
+        "packing_bound": 64.0,
+        "core2_bound": 44.0,
+        "weighted_sum_bound": 49
+      },
+      {
+        "formula": 3,
+        "free_variables": 6,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 7.0,
+        "core2_bound": 2.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 3,
+        "free_variables": 4,
+        "constraints": 3,
+        "exact_count": 4,
+        "packing_bound": 8.0,
+        "core2_bound": 6.0,
+        "weighted_sum_bound": 8
+      },
+      {
+        "formula": 3,
+        "free_variables": 8,
+        "constraints": 3,
+        "exact_count": 0,
+        "packing_bound": 8.999999999999998,
+        "core2_bound": 9.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 3,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 31,
+        "packing_bound": 46.00000000000001,
+        "core2_bound": 46.000000000000014,
+        "weighted_sum_bound": 46
+      },
+      {
+        "formula": 4,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 6,
+        "packing_bound": 17.999999999999996,
+        "core2_bound": 18.0,
+        "weighted_sum_bound": 6
+      },
+      {
+        "formula": 4,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 4,
+        "packing_bound": 20.000000000000004,
+        "core2_bound": 20.0,
+        "weighted_sum_bound": 6
+      },
+      {
+        "formula": 5,
+        "free_variables": 9,
+        "constraints": 3,
+        "exact_count": 0,
+        "packing_bound": 17.999999999999996,
+        "core2_bound": 18.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 5,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 15,
+        "packing_bound": 55.999999999999986,
+        "core2_bound": 55.999999999999986,
+        "weighted_sum_bound": 56
+      },
+      {
+        "formula": 5,
+        "free_variables": 10,
+        "constraints": 4,
+        "exact_count": 0,
+        "packing_bound": 20.000000000000004,
+        "core2_bound": 4.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 5,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 92.00000000000001,
+        "core2_bound": 50.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 5,
+        "free_variables": 7,
+        "constraints": 4,
+        "exact_count": 0,
+        "packing_bound": 8.0,
+        "core2_bound": 3.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 6,
+        "free_variables": 7,
+        "constraints": 2,
+        "exact_count": 38,
+        "packing_bound": 44.0,
+        "core2_bound": 44.0,
+        "weighted_sum_bound": 44
+      },
+      {
+        "formula": 7,
+        "free_variables": 8,
+        "constraints": 2,
+        "exact_count": 3,
+        "packing_bound": 27.999999999999993,
+        "core2_bound": 18.0,
+        "weighted_sum_bound": 6
+      },
+      {
+        "formula": 7,
+        "free_variables": 8,
+        "constraints": 2,
+        "exact_count": 30,
+        "packing_bound": 58.00000000000003,
+        "core2_bound": 58.0,
+        "weighted_sum_bound": 38
+      },
+      {
+        "formula": 7,
+        "free_variables": 5,
+        "constraints": 2,
+        "exact_count": 3,
+        "packing_bound": 6.0,
+        "core2_bound": 3.0,
+        "weighted_sum_bound": 3
+      },
+      {
+        "formula": 7,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 18,
+        "packing_bound": 116.00000000000006,
+        "core2_bound": 56.0,
+        "weighted_sum_bound": 40
+      },
+      {
+        "formula": 7,
+        "free_variables": 7,
+        "constraints": 2,
+        "exact_count": 2,
+        "packing_bound": 14.0,
+        "core2_bound": 4.0,
+        "weighted_sum_bound": 4
+      },
+      {
+        "formula": 8,
+        "free_variables": 6,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 7.0,
+        "core2_bound": 2.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 8,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 9,
+        "packing_bound": 46.00000000000001,
+        "core2_bound": 25.0,
+        "weighted_sum_bound": 16
+      },
+      {
+        "formula": 8,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 54,
+        "packing_bound": 176.0,
+        "core2_bound": 120.00000000000001,
+        "weighted_sum_bound": 91
+      },
+      {
+        "formula": 8,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 65,
+        "packing_bound": 130.0,
+        "core2_bound": 130.00000000000003,
+        "weighted_sum_bound": 81
+      },
+      {
+        "formula": 8,
+        "free_variables": 8,
+        "constraints": 2,
+        "exact_count": 0,
+        "packing_bound": 8.999999999999998,
+        "core2_bound": 9.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 9,
+        "free_variables": 9,
+        "constraints": 3,
+        "exact_count": 13,
+        "packing_bound": 130.0,
+        "core2_bound": 74.00000000000003,
+        "weighted_sum_bound": 40
+      },
+      {
+        "formula": 9,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 49,
+        "packing_bound": 73.99999999999997,
+        "core2_bound": 74.0,
+        "weighted_sum_bound": 74
+      },
+      {
+        "formula": 9,
+        "free_variables": 4,
+        "constraints": 2,
+        "exact_count": 2,
+        "packing_bound": 5.000000000000001,
+        "core2_bound": 2.0,
+        "weighted_sum_bound": 3
+      },
+      {
+        "formula": 9,
+        "free_variables": 8,
+        "constraints": 2,
+        "exact_count": 6,
+        "packing_bound": 36.999999999999986,
+        "core2_bound": 16.0,
+        "weighted_sum_bound": 11
+      },
+      {
+        "formula": 9,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 46,
+        "packing_bound": 46.00000000000001,
+        "core2_bound": 46.000000000000014,
+        "weighted_sum_bound": 46
+      },
+      {
+        "formula": 10,
+        "free_variables": 7,
+        "constraints": 2,
+        "exact_count": 19,
+        "packing_bound": 29.000000000000014,
+        "core2_bound": 29.0,
+        "weighted_sum_bound": 29
+      },
+      {
+        "formula": 10,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 67,
+        "packing_bound": 116.00000000000006,
+        "core2_bound": 116.0,
+        "weighted_sum_bound": 116
+      },
+      {
+        "formula": 11,
+        "free_variables": 8,
+        "constraints": 3,
+        "exact_count": 0,
+        "packing_bound": 8.999999999999998,
+        "core2_bound": 2.0,
+        "weighted_sum_bound": 0
+      },
+      {
+        "formula": 11,
+        "free_variables": 10,
+        "constraints": 2,
+        "exact_count": 10,
+        "packing_bound": 55.999999999999986,
+        "core2_bound": 55.999999999999986,
+        "weighted_sum_bound": 16
+      },
+      {
+        "formula": 11,
+        "free_variables": 4,
+        "constraints": 2,
+        "exact_count": 5,
+        "packing_bound": 8.0,
+        "core2_bound": 6.0,
+        "weighted_sum_bound": 8
+      },
+      {
+        "formula": 11,
+        "free_variables": 9,
+        "constraints": 2,
+        "exact_count": 10,
+        "packing_bound": 46.00000000000001,
+        "core2_bound": 46.000000000000014,
+        "weighted_sum_bound": 16
+      }
+    ]
+  }
+}

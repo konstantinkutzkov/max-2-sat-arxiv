@@ -1,0 +1,413 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ostar}{O^{*}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+\title{Max 2-SAT by Early Constraint-Guided Enumeration\\
+\large A density-independent bound for random signs on almost regular graphs}
+\author{}
+\date{8 October 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We prove that the branching search can stop learning after assigning half
+the variables and then enumerate only completions permitted by the sum of
+its learned constraints. For any fixed simple graph of minimum degree
+$d\ge6$ and maximum degree $D$, independently uniform literal signs give
+an exact deterministic polynomial-space algorithm with running time
+$\Ostar((2e^{-d/(1250D)})^n)$ except on a set of signings of probability
+at most $3e^{-nd/(1250D)}$. In particular, every regular interaction graph
+gives a base below $1.999$, independently of its degree. The proof counts
+all generated completions, including exceptional prefixes. It does not
+require a conflict at the switching depth or a spectral hypothesis.
+The input guarantee is probabilistic over signs, not a worst-case bound
+for every signing of an almost regular graph. Constants are deliberately
+conservative, and no literature novelty claim is made.
+\end{abstract}
+
+\section{The input model and result}
+
+Fix a simple graph $G$ on $n$ labeled vertices. Each edge $uv$ contributes
+one clause $(\ell_u\vee\ell_v)$, whose two literal signs are independent
+uniform elements of $\{-1,+1\}$. All signs on distinct incidences are
+independent. There are no initial unit clauses. The graph and a vertex
+order are fixed before the signs are drawn. The graph itself can be
+arbitrary, including a complete graph; it need not be randomly generated.
+
+Write $d=\min_v\deg(v)$ and $D=\max_v\deg(v)$. These denote the minimum
+and maximum graph degrees, not the mean squared row norm used in the
+explicit-class note. All logarithms without a subscript are natural.
+
+\begin{theorem}[Early enumeration]\label{thm:main}
+There is a deterministic algorithm that is exact on every instance in
+this model and uses polynomial space. If $d\ge6$, then with probability
+at least $1-3e^{-nd/(1250D)}$ over the signs, its running time is
+\[
+ \Ostar\left((2e^{-d/(1250D)})^n\right).
+\]
+The algorithm branches in the fixed order through depth
+$T=\lceil n/2\rceil$, learning the usual constraint in each nonpreferred
+child. It then freezes those constraints and enumerates completions of
+their summed inequality. No contradiction at depth $T$ is required.
+\end{theorem}
+
+For $d$-regular graphs, the base is
+$2e^{-1/1250}\simeq1.99840064<1.999$.
+More generally, $D/d\le R$ for any fixed $R$ gives a fixed base below two.
+Degrees may grow with $n$, up to $n-1$; in the regular case the clause
+density is $d/2$. The expectation of the running time satisfies the
+stronger bound $\Ostar((2e^{-d/(625D)})^n)$.
+The algorithm does not need to recognize a typical signing or know $R$.
+
+This is a precisely specified random-input result. It is not a theorem
+for all signings of regular graphs, and it does not supply a combinatorial
+membership test for the typical signings. The earlier notes already
+obtain density-independent bounds in this random-sign model by waiting
+for conflicts~\cite{Key}. The point here is to justify an earlier switch
+to enumeration, using a different quantity in the analysis.
+
+\section{Algorithm, exactness, and cost}
+
+Use Boolean values $\sigma_v\in\{0,1\}$. At step $i$, let $\Delta_i$ be
+the number of positive occurrences minus negative occurrences of $x_i$
+in residual 2-clauses, plus twice the corresponding difference in
+residual unit clauses, after assigning $1,\ldots,i-1$.
+Let $D_i^+$ and $D_i^-$ be
+the numbers of neighbors later and earlier in the fixed order.
+The preferred literal is positive if $\Delta_i\ge0$, and negative
+otherwise. In the nonpreferred child learn
+\begin{equation}
+ L_i\le k_i^0,
+ \qquad k_i^0=\frac{D_i^+-|\Delta_i|}{2}-1,          \label{eq:learn}
+\end{equation}
+Here $L_i$ counts one bad value per later neighbor: in a clause containing
+the preferred literal of $x_i$, the neighbor value is bad if its literal
+is false; in a clause containing the other literal of $x_i$, it is bad
+if its literal is true. This is the previous branching
+rule~\cite{Plan,Frontier}. The right-hand side is integral because
+$\Delta_i$ and $D_i^+$ have the same parity. Negative allowances can be
+cut immediately.
+
+For clarity, the upper-bound analysis uses the \emph{uncut process}:
+generate the constraints for every prefix, even if a negative allowance
+or an earlier test would already have killed it. Early cuts can only
+reduce the actual work. No new constraints are created after step $T$.
+
+At a prefix $\alpha\in\{0,1\}^T$, substitute its values into every
+created constraint. If the remaining constraints are $L_c(y)\le k_c$,
+put $K=\sum_c k_c$. For each free variable $w$, let $m_w^b$ count the
+occurrences made true by $y_w=b$. Orient its cheaper value as $z_w=0$ and
+define
+\begin{equation}
+ c_w=|m_w^1-m_w^0|,\qquad
+ B=K-\sum_w\min\{m_w^0,m_w^1\}.                    \label{eq:budget}
+\end{equation}
+The sum of the constraints is equivalent to
+$\sum_w c_wz_w\le B$. Let $N_F(\alpha)$ be its number of Boolean
+solutions, including zero when $B<0$.
+
+Generate those solutions by depth-first search, pruning whenever the
+current nonnegative cost exceeds $B$. Evaluate the original Max 2-SAT
+score on each generated complete assignment. Testing every individual
+learned constraint as well is optional: the summed condition is a
+necessary relaxation, and extra candidates are still valid assignments
+of the original soft optimization problem.
+
+\begin{lemma}[Exactness and enumeration cost]\label{lem:cost}
+The algorithm preserves an optimum and has time
+\begin{equation}
+ \Ostar\left(2^T+W(F)\right),\qquad
+ W(F)=\sum_{\alpha\in\{0,1\}^T}N_F(\alpha),        \label{eq:cost}
+\end{equation}
+using polynomial space.
+\end{lemma}
+\begin{proof}
+For a fixed prefix and suffix, the score of the preferred value minus
+that of the nonpreferred value at decision $i$ is
+$L_i-(D_i^+-|\Delta_i|)/2$. Consequently, violating~\eqref{eq:learn}
+means that switching to the preferred value is no worse.
+Choose the first optimal assignment in the full search-tree order that
+visits preferred children first. If it violates any learned constraint
+on its path, flipping that decision gives an equally good assignment
+earlier in that order, a contradiction. Thus some optimum satisfies
+all its learned constraints, and hence their sum.
+
+For a fixed prefix with $N=N_F(\alpha)>0$, every retained generator
+prefix extends to a permitted completion by taking the cheaper value
+on every remaining variable. At each generator depth there are at most
+$N$ retained nodes, and there are at most $n-T+1$ depths. Rejected
+children add only a constant factor. If $N=0$, the summed inequality
+has $B<0$ and is rejected immediately. Thus each prefix costs
+$\operatorname{poly}(n)(N+1)$, yielding~\eqref{eq:cost}.
+Polynomial-size constraints and a depth-first traversal give polynomial
+space. Retaining or recomputing a polynomial number of integer counters
+suffices; a table over exponentially many prefixes is unnecessary.
+\end{proof}
+
+\section{Counting completions instead of waiting for a conflict}
+
+Let $\sigma\in\{0,1\}^n$ be a uniformly random complete assignment,
+independent of the formula. Run its first $T$ decisions through the
+uncut process, and let $\mathcal C_T$ denote the created constraints.
+For $c$ created at $i$, let $L_c(\sigma)$ count all its bad values on
+the later neighbors, before any substitutions. Define
+\begin{align}
+ S_T&=\sum_{c\in\mathcal C_T}\left(\frac{|\Delta_c|}{2}+1\right),
+                                                        \label{eq:S}\\
+ Q_T^{\rm all}&=\sum_{c\in\mathcal C_T}
+                 \left(L_c(\sigma)-\frac{D_c^+}{2}\right).
+                                                        \label{eq:Q}
+\end{align}
+The superscript distinguishes this from the earlier $Q_T$, which counted
+only support variables assigned by depth $T$. Here all support variables
+are evaluated, but only constraints created by time $T$ are used.
+
+\begin{lemma}[Candidate-mass identity]\label{lem:mass}
+For every complete assignment in the uncut process,
+\[
+ \sum_{c\in\mathcal C_T}(L_c(\sigma)-k_c^0)
+   =S_T+Q_T^{\rm all}.
+\]
+Consequently,
+\begin{equation}
+ \frac{\E_F W(F)}{2^n}
+ =\Prb_{F,\sigma}\left[S_T+Q_T^{\rm all}\le0\right].
+                                                        \label{eq:mass}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Substitute~\eqref{eq:learn} and add. For a fixed $F$, the number of full
+assignments satisfying the summed condition belonging to their own
+prefix is precisely $W(F)$. Divide by $2^n$ and average over $F$.
+\end{proof}
+
+This identity replaces the requirement that an entire prefix be
+infeasible. A prefix can have many candidates and still contribute
+little to the total in~\eqref{eq:cost}. The proof averages their actual
+counts, so unusually expensive prefixes are included.
+
+\section{Two lower-tail estimates}
+
+Let $H_i$ reveal the signs of vertices $1,\ldots,i$ in all their incident
+clauses, together with $\sigma_1,\ldots,\sigma_i$. Future endpoint signs
+are not revealed. The uncut process uses this filtration; we never
+condition it on surviving an earlier cut. A fixed order is important
+for this exposure argument.
+
+\subsection{Accumulated shortfall}
+
+At step $i$, let $r_i$ be the number of earlier neighbors whose literal
+in their clause with $i$ is false. This is determined by $H_{i-1}$.
+Conditional on $H_{i-1}$, the gap $\Delta_i$ is a sum of independent
+uniform signs: $D_i^+$ signs of weight one and $r_i$ signs of weight two.
+Put $Y_i=D_i^++4r_i$.
+
+We use an elementary moment bound rather than the optimal Khintchine
+constant. For a Rademacher sum $Z$ with variance $v$, expansion gives
+$\E Z^4\le3v^2$. H\"older's inequality gives
+$\E Z^2\le(\E|Z|)^{2/3}(\E Z^4)^{1/3}$, hence
+\[
+ \E|Z|\ge\sqrt{v/3}.
+\]
+The bound is also valid when $v=0$.
+
+Let $X_i$ be the contribution of decision $i$ to $S_T$.
+Given its gap, the decision is nonpreferred with probability $1/2$.
+Thus
+\begin{align*}
+ \E[X_i\mid H_{i-1}]&\ge
+       \frac{\sqrt{Y_i}}{4\sqrt3}+\frac12=:\mu_i,\\
+ \E[X_i^2\mid H_{i-1}]&\le
+       \frac{Y_i}{8}+\frac{\sqrt{Y_i}}2+\frac12
+       \le\frac D2+\sqrt D+\frac12\le D,
+\end{align*}
+where $Y_i\le4D$ and $D\ge6$.
+For $X_i\ge0$, the inequality
+$e^{-\lambda X_i}\le1-\lambda X_i+\lambda^2X_i^2/2$ implies a
+conditional exponential-moment bound. Multiplying its compensated
+versions and taking $\lambda=a/(TD)$ gives
+\begin{equation}
+ \Prb\left[S_T<\sum_{i\le T}\mu_i-a\right]
+ \le e^{-a^2/(2TD)}.                                \label{eq:Stail}
+\end{equation}
+
+It remains to lower-bound the sum of the predictable means.
+The indicators of earlier endpoint literals being false are independent
+fair coins: conditional on all of $\sigma$, they use distinct independent
+incidence signs, and their joint distribution does not depend on
+$\sigma$. Thus $r_i\sim\operatorname{Bin}(D_i^-,1/2)$, with
+\[
+ \E Y_i=D_i^++2D_i^-\ge d,\qquad
+ \operatorname{Var}(Y_i)=4D_i^-\le2\E Y_i.
+\]
+For a nonnegative random variable $Y$ of mean $\mu>0$,
+\[
+ \E\sqrt Y\ge\sqrt\mu-
+                  \frac{\operatorname{Var}(Y)}{2\mu^{3/2}}.
+\]
+This follows by averaging the pointwise inequality
+$\sqrt z\ge1+(z-1)/2-(z-1)^2/2$ for $z\ge0$; after writing
+$z=t^2$, the difference factors as $t(t-1)^2(t+2)/2\ge0$.
+It follows that $\E\sqrt{Y_i}\ge\sqrt{D_i^++2D_i^-}-1$.
+The positive $1/2$ in $\mu_i$ pays for this subtraction, so
+\[
+ \E\sum_{i\le T}\mu_i\ge\frac{T\sqrt d}{4\sqrt3}=:\mu_*.
+\]
+
+Let $e_P$ count edges internal to the first $T$ vertices. Changing one
+of its earlier-endpoint coins changes $\sum_i\mu_i$ by at most
+$1/(2\sqrt3)$. The bounded-differences inequality therefore gives
+\begin{equation}
+ \Prb\left[\sum_{i\le T}\mu_i<\mu_*-b\right]
+ \le e^{-24b^2/e_P}
+ \le e^{-48b^2/(TD)}.                               \label{eq:mutail}
+\end{equation}
+If $e_P=0$, the sum is deterministic and this failure probability is zero.
+Combining~\eqref{eq:Stail}--\eqref{eq:mutail} controls $S_T$.
+
+\subsection{All support contributions}
+
+Reveal variables through $n$, but create no more constraints after $T$.
+When vertex $w$ is revealed, its contribution to $Q_T^{\rm all}$ is
+\[
+ \sum_{\substack{i<w,\ i\le T\\ i\text{ created a constraint}}}
+       \left([\sigma_w\text{ is bad in the constraint of }i]-\frac12\right),
+\]
+with only adjacent $i$ included. Conditional on $H_{w-1}$, the creator
+set is fixed. The bad values use distinct unseen signs of $w$ and are
+independent fair coins. Multiplication by the common independent value
+of $\sigma_w$ preserves their joint uniform distribution.
+
+Let $a_w$ count neighbors $i<w$ with $i\le T$, whether or not they
+created a constraint. The conditional moment generating function of
+the negative contribution is at most
+$\cosh(\lambda/2)^{a_w}\le e^{\lambda^2a_w/8}$.
+If $e_\times$ counts edges from the prefix to its complement, then
+\[
+ \sum_w a_w=e_P+e_\times\le TD.
+\]
+Multiplying the conditional bounds and optimizing $\lambda$ proves
+\begin{equation}
+ \Prb[Q_T^{\rm all}<-c]
+ \le e^{-2c^2/(e_P+e_\times)}
+ \le e^{-2c^2/(TD)}.                               \label{eq:Qtail}
+\end{equation}
+No independence between $S_T$ and $Q_T^{\rm all}$ is asserted or needed.
+
+\section{Completing the running-time proof}
+
+Choose
+\[
+ a=\frac{2}{25}T\sqrt d,\qquad
+ b=\frac1{100}T\sqrt d,\qquad
+ c=\frac1{20}T\sqrt d.
+\]
+Their sum is $(7/50)T\sqrt d$, strictly less than
+$\mu_*=T\sqrt d/(4\sqrt3)$. Outside the three exceptional events,
+$S_T+Q_T^{\rm all}>0$. The exponents in
+\eqref{eq:Stail}, \eqref{eq:mutail}, and \eqref{eq:Qtail} are at least,
+respectively,
+\[
+ \frac{2Td}{625D},\qquad
+ \frac{3Td}{625D},\qquad
+ \frac{Td}{200D}.
+\]
+Hence Lemma~\ref{lem:mass} yields the following bound for \emph{every}
+$1\le T\le n$:
+\begin{equation}
+ \E_F W(F)\le3\cdot2^n e^{-2Td/(625D)}.             \label{eq:EW}
+\end{equation}
+By Markov's inequality,
+\begin{equation}
+ \Prb_F\left[W(F)>2^n e^{-Td/(625D)}\right]
+ \le3e^{-Td/(625D)}.                               \label{eq:Markov}
+\end{equation}
+For $T=\lceil n/2\rceil$, the right-hand side is at most
+$3e^{-nd/(1250D)}$, and outside this exceptional set
+\[
+ W(F)\le(2e^{-d/(1250D)})^n.
+\]
+The $2^T$ term in~\eqref{eq:cost} is smaller up to a constant factor.
+This proves Theorem~\ref{thm:main}. Applying~\eqref{eq:EW} directly to
+the cost bound proves the stated expectation bound.\hfill$\square$
+
+\paragraph{Earlier switching.}
+For any fixed $\tau\in(0,1)$, taking $T=\lceil\tau n\rceil$ instead
+gives, with failure probability at most $3e^{-\tau nd/(625D)}$,
+\[
+ \Ostar\left(2^{\tau n}+2^n e^{-\tau nd/(625D)}\right).
+\]
+Thus every fixed positive switching fraction gives a fixed saving for
+bounded $D/d$. Halfway is a simple concrete choice, not a required
+threshold and not an optimized one.
+
+\section{Interpretation and limitations}
+
+The conflict-only analysis bounds the number of prefixes with any
+remaining work. This argument bounds their \emph{total remaining work}.
+It pays for a prefix whose summed constraint is satisfiable but admits
+few assignments, and handles expensive prefixes through an expectation
+bound followed by Markov's inequality. No typical-prefix or median-cost
+assumption is substituted for that calculation.
+
+The algorithm can deliberately do no conflict checks before $T$ and
+still satisfy the theorem. Earlier checks can be added to the same fixed
+search without increasing its cost. Adaptive ordering during the first
+phase is not covered: inspecting future signs to choose a variable can
+invalidate the late-exposure argument. The final budget generator may
+use any variable order because its retained prefixes extend to solutions
+of the same frozen inequality. Further learning would require preserving
+that inherited inequality or another valid cost certificate.
+
+The result establishes the user's proposed early-enumeration mechanism
+for a well-defined random-sign input model, with an elementary proof.
+It neither proves the general growing-density conjecture nor resolves
+which deterministic interaction patterns guarantee the same bound.
+The constants were chosen for a transparent argument, not to improve
+the numerical base in the previous random-sign theorem.
+
+\section{Computational checks}
+
+The companion program \texttt{explore\_early\_enumeration.py} checks the
+algorithm on small signed regular graphs, including degrees below the
+theorem's minimum to test exactness separately from the running-time
+guarantee. It compares the optimum with exhaustive search, compares
+budget enumeration and exact dynamic-program counts with direct counts,
+and verifies the identity of Lemma~\ref{lem:mass} on every complete
+assignment. All 44 tested instances on 6, 8, 10, and 12 variables
+preserved the optimum; 1,408 prefix counts and 65,024 full-assignment
+identities passed. Its results are recorded in
+\texttt{early\_enumeration\_checks.json}.
+These finite checks validate the implementation and algebra; the
+probabilistic running-time guarantee follows from the proof above.
+
+\begin{thebibliography}{9}
+\small\raggedright
+\bibitem{Frontier}
+\emph{Exploring the Branching Frontier for Max 2-SAT}, working note,
+7 October 2026. Section 3: a joint measure from exact weighted-sum counts.
+Local source: \texttt{max2sat\_branching\_frontier.tex}.
+\bibitem{Plan}
+\emph{A Simplified Plan for Max 2-SAT: One Search, One Count, One Key Lemma},
+working note, 8 October 2026. Local source:
+\texttt{max2sat\_plan\_key\_lemma.tex}.
+\bibitem{Key}
+\emph{The Key Lemma for Random Signs}, working note, 8 October 2026.
+Local source: \texttt{max2sat\_key\_lemma\_proof.tex}.
+The shortfall and late-exposure arguments are adapted here, with an
+elementary fourth-moment constant and a completion-count objective.
+\end{thebibliography}
+\end{document}
