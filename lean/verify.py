@@ -15,7 +15,7 @@ OUT.mkdir(exist_ok=True)
 
 # A result label alone is not enough: flag edits to the statement for a new
 # mathematical correspondence review. Proof prose may be edited independently.
-paper = ROOT.parent / 'dense_max2sat_arxiv.tex'
+paper = ROOT.parent / 'paper' / 'dense_max2sat_arxiv.tex'
 if not paper.exists():
     paper = ROOT / 'paper' / 'dense_max2sat_arxiv.tex'
 if not paper.exists():
