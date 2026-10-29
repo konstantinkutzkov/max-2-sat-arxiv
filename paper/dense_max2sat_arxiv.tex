@@ -40,7 +40,7 @@
 \hypersetup{pdftitle={Accumulating Pruning Constraints: New Exact Polynomial-Space Algorithms for Max 2-SAT}}
 \title{Accumulating Pruning Constraints: \\
 	New Exact Polynomial-Space Algorithms for Max 2-SAT\\[3pt]}
-\author{}
+\author{Konstantin Kutzkov \\\url{kutzkov@gmail.com}}
 \date{}
 
 
@@ -63,7 +63,7 @@ on these pairs are random. For semirandom formulas and block-model graphs,
 the algorithms are still exact on every input, and the time bound holds
 with high probability over the input.
 To our knowledge, these are the first polynomial-space algorithms with such
-a running time for classes of dense Max 2-SAT instances. Beyond these
+a running time for nontrivial classes of dense Max 2-SAT instances. Beyond these
 classes, the pruning constraints can be added to any branching algorithm
 for Max 2-SAT, and we expect them to be of practical relevance for general
 formulas, in particular for sparse ones, where each constraint involves only
@@ -74,21 +74,21 @@ a few variables.
 
 Max-SAT is the optimization version of the fundamental NP-complete SAT problem. Instead of checking whether a Boolean formula over $n$ variables in conjunctive normal form (CNF) is satisfiable, that is, whether some assignment satisfies all its clauses, Max-SAT asks for an assignment satisfying the largest number of
 clauses. Exhaustive search solves both problems in time $\Ostar(2^n)$, where the notation $\Ostar$ suppresses factors polynomial in the input size. For formulas whose clauses may be arbitrarily long, no algorithm with running time $\Ostar(2^{(1-\gamma)n})$, for a constant $\gamma>0$, is known for either problem. The $k$-SAT problem, where each clause has at most $k$ literals, is easily solved in time $\Ostar(c_k^n)$ for a constant $c_k<2$. For Max-SAT, no comparable polynomial-space result is known even for $k=2$; note that Max 2-SAT is NP-hard, although 2-SAT is solvable in polynomial time. The only known algorithm that improves on the $\Ostar(2^n)$ bound on all Max 2-SAT instances is the elegant algorithm of Williams~\cite{Williams}, with running time $\Ostar(2^{\omega n/3})$, where $\omega$
-is the matrix multiplication exponent. However, it uses space $\Ostar(2^{2n/3})$, which makes it only of theoretical interest. Designing an algorithm with running time $\Ostar(2^{(1-\gamma)n})$ that uses only polynomial space has been an open problem since 2004.
+is the matrix multiplication exponent. However, it uses space $\Ostar(2^{2n/3})$, which makes it only of theoretical interest. Designing an algorithm with running time $\Ostar(2^{(1-\gamma)n})$ that uses only polynomial space has been an open problem since 2004~\cite{Williams,WOEGINGER}.
 
 \subsection{Previous work}\label{sec:previous}
 
 Exact algorithms for Max 2-SAT, which contains the Max-Cut problem on graphs as a special case, have been analyzed in two ways:
 \begin{itemize}
-	\item In terms of the number $m$ of clauses, with running time $\Ostar(2^{m/c})$ for a constant $c$. Such bounds improve on $\Ostar(2^n)$ only for sparse instances with $m<cn$; the currently best known bound is $\Ostar(2^{m/6...})$.
-	\item In terms of the maximum or average degree $d$ of the formula, with running time $\Ostar(2^{(1-f(d))n})$, where $f(d)\in(0,1)$ and $f(d)\to0$ as $d\to\infty$. Several works give $f(d) = c/d$ for a small constant $c$, and Golovnev and Kutzkov~\cite{GK14} and Hastings~\cite{Hastings} give the asymptotically better $f(d) = \log d/d$. These bounds yield $\Ostar(2^{(1-\gamma)n})$ for a fixed $\gamma >0$ only when the number of clauses is linear in $n$.
+	\item In terms of the number $m$ of clauses, with running time $\Ostar(2^{m/c})$ for a constant $c$. Such bounds improve on $\Ostar(2^n)$ only for sparse instances with $m<cn$. There is a long list of incremental improvements~\cite{SS07,KulikovK07,EdwardsM15,GaspersS17}; the currently best known bound is $\Ostar(2^{m/6.321})$~\cite{GaspersS12}.
+	\item In terms of the maximum or average degree $d$ of the formula, with running time $\Ostar(2^{(1-f(d))n})$, where $f(d)\in(0,1)$ and $f(d)\to0$ as $d\to\infty$. Several works give $f(d) = c/d$ for a small constant $c$~\cite{SS07,Marcin07,best_sparse_maxsat}, and Golovnev and Kutzkov~\cite{GK14} and Hastings~\cite{Hastings} give the asymptotically better $f(d) = \log d/d$. These bounds yield $\Ostar(2^{(1-\gamma)n})$ for a fixed $\gamma >0$ only when the number of clauses is linear in $n$.
 \end{itemize}
 
 \paragraph{The exponential time hypothesis.}
 The exponential time hypothesis (ETH) and its strong version
 (SETH)~\cite{impagliazzo2001problems,SETH} assert that 3-SAT requires time
-$2^{\Omega(n)}$ and that the savings for $k$-SAT vanish as $k$ grows. A
-recent preprint~\cite{OpenAI26ETH}, not yet peer reviewed, claims to refute
+$2^{\Omega(n)}$ and that the savings for $k$-SAT vanish as $k$ grows. Two
+recent preprints from frontier AI labs~\cite{Anthropic26ETH,OpenAI26ETH} claim to refute
 both hypotheses with a polynomial-space algorithm that solves $k$-SAT in
 subexponential time for every fixed $k$. If confirmed, this is a theoretical
 breakthrough, but it has little bearing on the results of this paper.
@@ -96,16 +96,15 @@ Applied to Max 2-SAT through standard reductions, the algorithm improves on
 exhaustive search only at very low density, when a variable occurs on
 average in $O(\sqrt{\log n})$ clauses, and the dense instances in our
 classes are not affected. Moreover, the current version of the
-algorithm has no practical value, because its running-time bound applies
-only to inputs of astronomical size.
+algorithm has no practical value, because of astronomical constants hidden in the big-Oh notation which make the new upper bound purely asymptotic.
 
 
 \subsection{Our contribution}
-We present a technique that extends the classic DPLL branching algorithm of Davis, Putnam, Logemann, and Loveland~\cite{davis1960computing,davis1962machine}. Consider a branching variable $v$, and suppose that we first explore $v=1$ and then backtrack to $v=0$. Setting $v$ affects only the clauses containing $v$, so for a given assignment of the other variables, which of the two values is better depends only on the values of the neighbors of $v$. After backtracking, the branch $v=0$ therefore only needs the assignments of the neighbors for which $v=0$ is strictly better. We describe them by a linear inequality over the literals of the neighbors, a hard \emph{pruning constraint}. Since the constraint depends only on the neighborhood of $v$, we can efficiently decide which of the two branches would receive the more restrictive constraint. Along a branch, the search creates many such constraints. Each of them alone prunes only part of the search space, but for each of our classes, only an exponentially small fraction of all assignments satisfies the sum of the constraints of its own branch, and listing only these assignments yields the saving.
+We present a technique that extends the classic DPLL branching algorithm of Davis, Putnam, Logemann, and Loveland~\cite{davis1962machine,davis1960computing}. Consider a branching variable $v$, and suppose that we first explore $v=1$ and then backtrack to $v=0$. Setting $v$ affects only the clauses containing $v$, so for a given assignment of the other variables, which of the two values is better depends only on the values of the neighbors of $v$. After backtracking, the branch $v=0$ therefore only needs the assignments of the neighbors for which $v=0$ is strictly better. We describe them by a linear inequality over the literals of the neighbors, a hard \emph{pruning constraint}. Since the constraint depends only on the neighborhood of $v$, we can efficiently decide which of the two branches would receive the more restrictive constraint. Along a branch, the search creates many such constraints. Each of them alone prunes only part of the search space, but for each of our classes, only an exponentially small fraction of all assignments satisfies the sum of the constraints of its own branch, and listing only these assignments yields the saving.
 
 Our contributions are of two kinds:
 \begin{enumerate}
-	\item We present new algorithms for several classes of instances, including dense ones with clause density $m/n=\omega(1)$, that run in time  $\Ostar(2^{(1-\gamma)n})$ using only polynomial space.  To the best of our knowledge these are the first results that show such running time bounds for dense Max 2-SAT instances, thus making an important step towards resolving the open problem from ...
+	\item We present new algorithms for several classes of instances, including dense ones with clause density $m/n=\omega(1)$, that run in time  $\Ostar(2^{(1-\gamma)n})$ using only polynomial space.  To the best of our knowledge these are the first results that show such running time bounds for nontrivial classes of dense Max 2-SAT instances, thus making an important step towards resolving the open problem from~\cite{Williams,WOEGINGER}.
 	\item The key idea of creating pruning constraints during search is easy to implement and likely to find practical applications. Some of our classes model practical inputs; for example, the stochastic block model is the standard model of networks with communities. The savings that we prove are small, since they result from a conservative analysis of a deliberately simple version of the algorithm. On practical instances we expect much larger savings: after some branching steps, the remaining variables have lower degrees and, relative to their degrees, larger differences between their positive and negative occurrences, which yields more restrictive constraints. Similarly, SAT solvers routinely solve instances with thousands of variables, although their worst-case running time is exponential. In future work, we plan to obtain such practical gains with heuristics based on our constraints and to evaluate them experimentally. The present paper focuses on the theoretical results.
 \end{enumerate}
 
@@ -310,7 +309,7 @@ Sections~\ref{sec:bias}--\ref{sec:sbm} treat the four classes in the order
 above. Each of these sections starts with an informal overview, followed
 by the algorithm, its correctness proof, and its running-time analysis.
 Section~\ref{sec:verification} summarizes a Lean~4 formalization of the
-main arguments. The
+main arguments~\footnote{See \url{https://github.com/konstantinkutzkov/max-2-sat-arxiv}}. The
 appendices contain the longer proofs and estimates, the spectral
 preprocessing used when the communities are unknown, additional
 simplification rules, details of the formal verification, and a proposed
@@ -2354,7 +2353,7 @@ which combines Corollary~\ref{cor:maxcut} with published spectral-gap
 theorems, is not formalized. Appendix~\ref{app:verification} describes the
 scope of the formalization in detail.
 
-\section{Concluding discussion}
+\section{Conclusions and future directions}
 
 All our algorithms use the same mechanism. When the search backtracks over
 a variable, the second branch only needs the assignments of the neighbors
@@ -2371,20 +2370,80 @@ on how much the remaining values can compensate together turns the
 accumulated requirements into a fixed exponential saving in polynomial
 space.
 
-The general problem from the introduction, a polynomial-space algorithm
-with running time $\Ostar(2^{(1-\gamma)n})$ for all Max 2-SAT instances,
-remains open. A natural next case is formulas whose pair coefficients keep a dominant direction
-even after a few statistics of the assignment have been guessed; the
-accumulation theorem of Appendix~\ref{app:accumulation} does not apply to
-them.
+Finding a polynomial-space algorithm with running time
+$\Ostar(2^{(1-\gamma)n})$ for all dense \mbox{Max 2-SAT} instances remains an
+important open theoretical problem. A natural next case is formulas whose
+pair coefficients keep a dominant direction even after a few statistics of
+the assignment have been guessed; the accumulation theorem of
+Appendix~\ref{app:accumulation} does not apply to them. 
 
-The main objective of our work is to present techniques of practical
-importance: the pruning constraints are local, cheap to compute, and can be
-added to any branching algorithm for Max 2-SAT. This paper establishes
-their theoretical guarantees. In future work, we plan to combine them with
-suitable heuristics and to evaluate them experimentally; on practical
-instances, we expect savings much larger than the bounds proven here.
+In future work,
+however, our focus will be on practical applications.
+The main objective of the paper is to present techniques of practical
+importance that yield theoretically provable gains. The pruning constraints are local, cheap to compute, and can be
+added to any branching algorithm for Max 2-SAT. The same reasoning can be extended to yield weaker hard
+constraints for general Max-SAT, since a longer clause has more literals that need to be falsified in order to create a constraint. 
+However, formulas with many short clauses appear in various applications and should still profit from pruning constraints, the more
+so as clauses become shorter during branching.
 
+Furthermore, Max-SAT has applications in areas like statistical physics
+(spin glasses)~\cite{barahona1988application,liers2004computing}, materials
+science~\cite{huang2016finding}, biology~\cite{malikic2019phiscs}, and
+protein design~\cite{allouche2014computational}. Public instances exist for
+many of these problems~\cite{jabs2026maxsat,wiegele2007biqmac}.
+
+%Exact solvers for Max-SAT and its special cases are used well beyond
+%computer science. In statistical physics, finding a ground state of an
+%Ising spin glass is a weighted Max-Cut problem, and hence a weighted
+%Max~2-SAT problem. Branch-and-cut algorithms compute exact ground states
+%for thousands of
+%spins~\cite{barahona1988application,desimone1995exact,liers2004computing},
+%and such exact ground states serve to benchmark quantum
+%annealers~\cite{junger2021quantum}. In materials science, Max-SAT solvers,
+%combined with convex optimization, find and certify the exact ground states
+%of generalized Ising models, which are used to study alloys and other
+%materials~\cite{huang2016finding}. In biology, Max-SAT and related Boolean
+%optimization have been used to check and repair gene regulatory networks
+%against experimental data~\cite{guerra2012reasoning}, to infer haplotypes
+%in pedigrees~\cite{marquessilva2011boolean}, and to reconstruct tumor
+%phylogenies from single-cell and bulk sequencing
+%data~\cite{malikic2019phiscs}. Computational protein design minimizes an
+%energy given by pairwise interactions, and it has been formulated as
+%weighted Max-SAT, among other formulations~\cite{allouche2014computational}.
+%In circuit design, minimizing the number of vias on chips and printed
+%circuit boards reduces to Max-Cut~\cite{barahona1988application}.
+%
+%Public instances exist for several of these problems: spin glasses on
+%toroidal grids and chains in the Biq Mac Library~\cite{wiegele2007biqmac};
+%ground states of generalized Ising models, haplotyping with pedigrees, and
+%tumor phylogenies in the benchmark collection of the MaxSAT
+%Evaluations~\cite{jabs2026maxsat}; and the protein design benchmark
+%of~\cite{allouche2014computational}. 
+We plan to combine our pruning
+constraints with suitable heuristics in a branch-and-bound solver and to
+evaluate them on these instances, where we expect savings much larger than
+the bounds proven here. These experiments are not restricted to dense
+instances; spin glasses on two- and three-dimensional grids, for example,
+have bounded degree. We expect the constraints to be even more useful on
+sparse instances, where each constraint involves only a few variables.
+
+
+\section*{Use of AI tools}
+
+This paper was developed together with the large language models Claude
+Opus~5.5 and GPT-6 Astra over several weeks. The author set the research
+goal and proposed the approach: pruning constraints obtained by comparing
+the two values of a variable during branching. The author also provided the
+pruning lemma (Lemma~\ref{lem:pruning}) and a simpler version of
+Theorem~\ref{thm:bias}, essentially Corollary~\ref{cor:lineargap}, together
+with its proof. The other results were developed in discussions with both
+models, which also contributed technical ideas within this approach. Almost
+all proofs and most of the text were first written by the models; the
+author directed the work, improved the presentation, added the intuition,
+and consolidated the results. The models were never asked to design an
+algorithm for Max 2-SAT from a general prompt. The main arguments are
+formalized in Lean~4; Section~\ref{sec:verification} lists what is not
+formalized. The author takes full responsibility for the paper.
 
 {\small
 	\bibliographystyle{plain}
@@ -4882,12 +4941,9 @@ may be chosen after the draw, including using additional randomness;
 no independence assumption on them is needed. The exactness theorem
 continues to apply to every well-formed input.
 
-% TODO: after adding lem:expander_conditions, lem:bounded_degree and
-% cor:random_regular to lean/verification/paper-correspondence.json,
-% restore the claim of a record for every numbered result.
-The artifact includes a correspondence record for the numbered results
+The artifact includes a correspondence record for every numbered result
 and the proposed theorem,
-with their precise verification status and Lean declarations where available.
+with its precise verification status and Lean declarations where available.
 Apart from Corollary~\ref{cor:random_regular}, every numbered proved result
 has checked mathematical content, subject to the two explicitly recorded
 published results where used. Lemmas~\ref{lem:expander_conditions}

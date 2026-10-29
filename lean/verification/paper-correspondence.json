@@ -11,7 +11,7 @@
         "Max2SAT.unit_cancellation"
       ],
       "scope": "Exact score identity for each cancelled pair of units; applies with multiplicity.",
-      "statement_sha256": "3fd61dac643cd037a07d4d09dc6807aa8b8fa11a78f041f513361ef1d0006c46"
+      "statement_sha256": "f5517f935b25fa59b0963948e6f1dc28eb49b934e8c31bd5a9b8781f93c4273b"
     },
     {
       "paper_label": "lem:simplify",
@@ -22,7 +22,7 @@
         "Max2SAT.pair_reduction"
       ],
       "scope": "Exact score identity for a complementary pair sharing one literal.",
-      "statement_sha256": "9232a706d129cf0bf9f5323e050383e6e027e198055ec7e57cf8c3b1f3e5fc00"
+      "statement_sha256": "688c9fc34c2de10a4972b9a0ab84739df55c9d67cfe93172bbb88e1069d74c25"
     },
     {
       "paper_label": "lem:unit_dom",
@@ -38,15 +38,16 @@
     {
       "paper_label": "lem:pruning",
       "kind": "lemma",
-      "title": "Pruning constraints from comparison",
+      "title": "Pruning constraints from almost-domination",
       "status": "checked",
       "lean_declarations": [
         "Max2SAT.pruning_gain_identity",
         "Max2SAT.pruning_bound_counts",
-        "Max2SAT.pruning_iff_strict_improvement"
+        "Max2SAT.pruning_iff_strict_improvement",
+        "Max2SAT.Bias.exists_optimal_cuts"
       ],
-      "scope": "The literal-occurrence inequality is equivalent to strict improvement.",
-      "statement_sha256": "2866131f28c995fe0c940fcf242fc722a26236033c2fea828a1bfa9f8ef6698a"
+      "scope": "The literal-occurrence inequality C(v), with bound d(-v)-d1(v)-1 = d2(-v)-d1(v)+d1(-v)-1, is equivalent to strict improvement of v=0 over v=1 for every assignment; this gives both implications of the lemma. The identity OPT(F)=max(OPT(F[v=1]),OPT(F[v=0] and C(v))) follows from exists_optimal_cuts, which keeps a common optimum for all fixed-preference cuts at once.",
+      "statement_sha256": "e8290f0142ae5e17f123eae96792a815007e2a103cb46c804914f0e8d4d84fa9"
     },
     {
       "paper_label": "lem:constraint_sum",
@@ -60,7 +61,7 @@
         "Max2SAT.Constraint.reject_sound"
       ],
       "scope": "Summation preserves necessity; cancellation preserves the single inequality; a negative normalized bound rejects soundly.",
-      "statement_sha256": "b746d548dd1fda9f3f55036e25e846cb66ef23d6416adc2405f8a243864d58eb"
+      "statement_sha256": "e01674ba48790d8bdeee46263e09526adc8dff6a3d19bf76c3e8fe944a960f46"
     },
     {
       "paper_label": "lem:enumeration",
@@ -102,7 +103,7 @@
     {
       "paper_label": "thm:bias",
       "kind": "theorem",
-      "title": "Relative literal bias",
+      "title": "Many biased variables",
       "status": "checked_core",
       "lean_declarations": [
         "Max2SAT.Bias.relative_bias_preprocessed",
@@ -113,8 +114,8 @@
         "Max2SAT.Bias.sum_storage",
         "Max2SAT.Bias.checker_storage"
       ],
-      "scope": "Correctness and explicit exponential node bound under the postpreprocessing RelativeBias hypotheses, for n>0; correctness also covers n=0. Depth and representation bounds are checked. Polynomial bit cost and space are conventional implementation arguments.",
-      "statement_sha256": "a12c921316e4d193bb9b9ff4227ead71a8c11b811228b5645ed170e250d7cfba"
+      "scope": "Correctness and explicit exponential node bound under the postpreprocessing RelativeBias hypotheses, for n>0; correctness also covers n=0. Depth and representation bounds are checked. Polynomial bit cost and space are conventional implementation arguments. The statement names the paper algorithm LiteralGap, formalized as Max2SAT.Bias.solveBiasPreprocessed.",
+      "statement_sha256": "76a277d572a09742f35dbdf4c2024a47ce7274408c2cd27e3573c1e5e5c1809a"
     },
     {
       "paper_label": "lem:bias_statistics",
@@ -163,8 +164,8 @@
         "Max2SAT.Bias.sum_storage",
         "Max2SAT.Bias.checker_storage"
       ],
-      "scope": "Original simple-input assumptions: simplicity is well-formedness plus no repeated literal sets, identifying reversed binary clauses. Preprocessing preserves every effective gap and never increases occurrence counts; the original 4(n-1)+2 occurrence bound yields the reduced squared-degree estimate. Optimality, the candidate count, and the explicit (4+2n)2^((1-epsilon^2 eta^2/48000)n) node bound are checked for n>0; general correctness also covers n=0. Depth and representation bounds are checked. Polynomial bit cost and space remain the paper implementation argument.",
-      "statement_sha256": "d20dcaf5cc81cdf5a7d38eaffadcca71ec1580db9da2ca00bed4fbfd8958bf63"
+      "scope": "Original simple-input assumptions: simplicity is well-formedness plus no repeated literal sets, identifying reversed binary clauses. Preprocessing preserves every effective gap and never increases occurrence counts; the original 4(n-1)+2 occurrence bound yields the reduced squared-degree estimate. Optimality, the candidate count, and the explicit (4+2n)2^((1-epsilon^2 eta^2/48000)n) node bound are checked for n>0; general correctness also covers n=0. Depth and representation bounds are checked. Polynomial bit cost and space remain the paper implementation argument. The statement names the paper algorithm LiteralGap, formalized as Max2SAT.Bias.solveBiasPreprocessed.",
+      "statement_sha256": "4b2985eca739654ef6aa95ff719d98211dc3cb98d0c244d29670fc72f26297cc"
     },
     {
       "paper_label": "lem:exactA",
@@ -193,7 +194,7 @@
     {
       "paper_label": "thm:random_main",
       "kind": "theorem",
-      "title": "Random clauses on arbitrary supports",
+      "title": "Semirandom formulas",
       "status": "checked_core",
       "lean_declarations": [
         "Max2SAT.Random.randomFormula_correct",
@@ -253,8 +254,8 @@
         "Max2SAT.RandomInput.random_clause_constant_bounds",
         "Max2SAT.FiniteLaw.fixed_coordinate_count"
       ],
-      "scope": "Complete mathematical probability and initialized recursion-node bounds, with deterministic optimality on every generated formula. The original variable labels are retained: inactive coordinates have zero influence, are fixed to their initialized values, and are counted once. Restriction to nonempty pair draws preserves the comparison statistic and candidate count; its conditional product law is derived exactly. Conditioning and averaging over every positive-probability observed support, including the empty support, are checked. Final expected and high-probability node bounds assume only the stated independent bounded complementation-invariant pair laws with positive second moments and arbitrary fixed units, not concentration or count estimates. Both concrete clause models use the common paper parameters m0=4 and kappa=3/4. All rejected calls are charged and exponential bases are strictly below two. Polynomial arithmetic overhead and streamed space remain conventional implementation arguments; no machine-cost or compiler-level verification is claimed.",
-      "statement_sha256": "5b76a677a3ae0721b909ea7d37b6c4e364da6e7fc82c05b344e0b660a57b9aae"
+      "scope": "Complete mathematical probability and initialized recursion-node bounds, with deterministic optimality on every generated formula. The original variable labels are retained: inactive coordinates have zero influence, are fixed to their initialized values, and are counted once. Restriction to nonempty pair draws preserves the comparison statistic and candidate count; its conditional product law is derived exactly. Conditioning and averaging over every positive-probability observed support, including the empty support, are checked. Final expected and high-probability node bounds assume only the stated independent bounded complementation-invariant pair laws with positive second moments and arbitrary fixed units, not concentration or count estimates. Both concrete clause models use the common paper parameters m0=4 and kappa=3/4. All rejected calls are charged and exponential bases are strictly below two. Polynomial arithmetic overhead and streamed space remain conventional implementation arguments; no machine-cost or compiler-level verification is claimed. The statement names the paper algorithm RandomFormula, formalized as Max2SAT.Random.randomFormula.",
+      "statement_sha256": "e45a0b986dc6c8ec4106b7d487c5c50d4e4b8a9ed3ab372fc6f5416d046b042f"
     },
     {
       "paper_label": "lem:slice",
@@ -293,7 +294,7 @@
     {
       "paper_label": "cor:maxcut",
       "kind": "corollary",
-      "title": "Max-Cut on regular graphs",
+      "title": "Max-Cut on regular expanders",
       "status": "checked_core",
       "lean_declarations": [
         "Max2SAT.Regular.formula_wellFormed",
@@ -326,8 +327,59 @@
         "Max2SAT.Regular.regular_nodes_bound",
         "Max2SAT.Regular.regular_family_nodes"
       ],
-      "scope": "Complete mathematical and recursive-call proof of the regular-graph corollary. Regular.formula encodes each graph edge by the two Max-Cut clauses and allows arbitrary unit multisets; formula_score connects the actual SAT objective to cut size. EigenBound uses the actual Hermitian adjacency eigenvalues with multiplicity, excluding exactly one eigenvalue d. For n<=1 the hypothesis is vacuous, matching the manuscript convention lambda(G)=0. The centered norm, mixing inequality, row energy, rounded two-round profile and comparison allowance are derived, not assumed. The high-degree count procedure includes preprocessing and all guesses. The low-degree branch constructively finds a greedy independent set, optimizes the unit-only residual, and counts the actual complement enumeration. regularResult is exact on all graphs. The integer degree and size thresholds are fixed for the family; regular_family_nodes proves existence of 1<=c<2 and C>0 such that actual nodes are at most C*(n+1)*(2+14*n)*c^n for all inputs under the paper assumptions. Polynomial graph conversion, per-node bit arithmetic and streamed space remain conventional implementation arguments. The noncomputable graph-to-list encoding specifies the formula independently of edge enumeration order; no compiler-level cost is claimed. Named Paley/Ramanujan constructions and their cited eigenvalue facts are not formalized.",
-      "statement_sha256": "0e4811cef3672f93b8d9525139602e936d774dced9326ce9de12dc033c968913"
+      "scope": "Complete mathematical and recursive-call proof of the regular-graph corollary. Regular.formula encodes each graph edge by the two Max-Cut clauses and allows arbitrary unit multisets; formula_score connects the actual SAT objective to cut size. EigenBound uses the actual Hermitian adjacency eigenvalues with multiplicity, excluding exactly one eigenvalue d. For n<=1 the hypothesis is vacuous, matching the manuscript convention lambda(G)=0. The centered norm, mixing inequality, row energy, rounded two-round profile and comparison allowance are derived, not assumed. The high-degree count procedure includes preprocessing and all guesses. The low-degree branch constructively finds a greedy independent set, optimizes the unit-only residual, and counts the actual complement enumeration. regularResult is exact on all graphs. The integer degree and size thresholds are fixed for the family; regular_family_nodes proves existence of 1<=c<2 and C>0 such that actual nodes are at most C*(n+1)*(2+14*n)*c^n for all inputs under the paper assumptions. Polynomial graph conversion, per-node bit arithmetic and streamed space remain conventional implementation arguments. The noncomputable graph-to-list encoding specifies the formula independently of edge enumeration order; no compiler-level cost is claimed. Named Paley/Ramanujan constructions and their cited eigenvalue facts are not formalized. The statement fixes one algorithm (regularResult with the family thresholds D,N), exact on every graph and fast on the stated family, as regular_result_correct and regular_family_nodes check. Its low- and high-degree steps are restated as lem:bounded_degree and lem:expander_conditions.",
+      "statement_sha256": "8b0226820ec414c49f43248dec453c45b9b3d7235cf2d6890251c028ea1081fd"
+    },
+    {
+      "paper_label": "lem:expander_conditions",
+      "kind": "lemma",
+      "title": "Regular expanders satisfy the conditions",
+      "status": "checked",
+      "lean_declarations": [
+        "Max2SAT.Regular.centered_norm_of_eigenvalues",
+        "Max2SAT.Regular.corrected_decomposition",
+        "Max2SAT.Regular.corrected_norm",
+        "Max2SAT.Regular.corrected_row_energy",
+        "Max2SAT.Regular.row_energy_bounds",
+        "Max2SAT.Regular.expander_mixing",
+        "Max2SAT.Regular.actual_round_edge_lower",
+        "Max2SAT.Regular.profile_from_edges",
+        "Max2SAT.Regular.actual_round_profile",
+        "Max2SAT.Regular.large_degree_scale",
+        "Max2SAT.Regular.regular_norm_bound",
+        "Max2SAT.Regular.regular_profile_bound",
+        "Max2SAT.Regular.regular_allowance_bound",
+        "Max2SAT.Regular.family_thresholds"
+      ],
+      "scope": "Restates the high-degree step of the checked proof of cor:maxcut. normConstant L eps = 9L^2/(2eps) and gapConstant eps = eps/(320 sqrt 3) are the paper constants K and g, and correction n d = -2d/(n-1) is beta. Under 64L^2<=d<=(1-eps)n, the eigenvalue bound, and the size conditions n>=80, eps*n>=2 and g^2*eps*n>=128 (which define n0(eps), see family_thresholds), the norm, profile and allowance conditions of lem:count_accumulation are derived for the actual two-round prefix; row_energy_bounds gives D_N = 4d(1-d/(n-1)) >= 2*eps*d > 0. Arbitrary unit clauses are allowed.",
+      "statement_sha256": "fe974694fbf72e80b51e0cb397ac9dcada2e15e3711cf609d4237dfbcf987348"
+    },
+    {
+      "paper_label": "lem:bounded_degree",
+      "kind": "lemma",
+      "title": "Graphs of bounded degree",
+      "status": "checked_core",
+      "lean_declarations": [
+        "Max2SAT.Regular.independent_set_independent",
+        "Max2SAT.Regular.independent_set_size",
+        "Max2SAT.Regular.formula_independent",
+        "Max2SAT.Regular.complete_optimal",
+        "Max2SAT.Regular.independent_solve_correct",
+        "Max2SAT.Regular.independent_result_correct",
+        "Max2SAT.Regular.independent_nodes_exact",
+        "Max2SAT.Regular.bounded_degree_nodes"
+      ],
+      "scope": "Restates the low-degree step of the checked proof of cor:maxcut, for every graph of maximum degree at most D. The greedy set is independent and has at least n/(D+1) vertices, the Max-Cut encoding with arbitrary units is independent on it, the optimal completion is exact, and the search has exactly 2^(n-|S|+1)-1 nodes, at most 2*(2^(1-1/(D+1)))^n. Polynomial bit cost and space are conventional paper arguments.",
+      "statement_sha256": "961dd4413f14ec64245233c8a18b0829e3db8c66ed7d0dabeb62dd59c02cca81"
+    },
+    {
+      "paper_label": "cor:random_regular",
+      "kind": "corollary",
+      "title": "Max-Cut on random regular graphs",
+      "status": "unverified",
+      "lean_declarations": [],
+      "scope": "Not formalized. The paper proof combines cor:maxcut (checked_core) with published spectral-gap theorems for uniformly random regular graphs; these theorems are neither formalized nor registered as external hypotheses.",
+      "statement_sha256": "7204fb78fb234175d1f718ae32706bd7b17fa4571265000089f05e636c742f05"
     },
     {
       "paper_label": "lem:count_accumulation",
@@ -425,8 +477,8 @@
         "Max2SAT.Regular.formula_score",
         "Max2SAT.Regular.optimal_cut_of_optimal_formula"
       ],
-      "scope": "Checked mathematical core, conditional only on the two explicitly registered published probability estimates. The original SBM is a finite Bernoulli product law on all unordered vertex pairs, with an arbitrary fixed group map and symmetric probabilities. Formal minimum/maximum block variances match the paper. The actual sampled graph and Max-Cut formula have the required coefficient identity, mean rank at most k, and norm/diagonal bounds. One rational algorithm parameter, density constant, multiplier, and base 1<=c<2 are chosen before n, partition, probabilities or units. The actual formula-only search has nodes at most K*p_k(n)*c^n with probability at least 1-1/n for every input size under the original n*v_min>=C*log n and variance-ratio conditions. Units may be an arbitrary function of the sampled graph. Exactness holds on every observed input, with the ordinary maximum-cut objective identified. No hidden partition or matrix is an input to the search. Polynomial arithmetic overhead and space are conventional paper arguments, not compiler-level costs. No random-partition mixing theorem is claimed: the result is uniform for each fixed/conditioned partition, as in the paper. See SBM_COMPLETE.txt.",
-      "statement_sha256": "4c9c4e99fbf0b87fd406a94d1632a0b2128d517a8b91d283e7bf0767abc5caca",
+      "scope": "Checked mathematical core, conditional only on the two explicitly registered published probability estimates. The original SBM is a finite Bernoulli product law on all unordered vertex pairs, with an arbitrary fixed group map and symmetric probabilities. Formal minimum/maximum block variances match the paper. The actual sampled graph and Max-Cut formula have the required coefficient identity, mean rank at most k, and norm/diagonal bounds. One rational algorithm parameter, density constant, multiplier, and base 1<=c<2 are chosen before n, partition, probabilities or units. The actual formula-only search has nodes at most K*p_k(n)*c^n with probability at least 1-1/n for every input size under the original n*v_min>=C*log n and variance-ratio conditions. Units may be an arbitrary function of the sampled graph. Exactness holds on every observed input, with the ordinary maximum-cut objective identified. No hidden partition or matrix is an input to the search. Polynomial arithmetic overhead and space are conventional paper arguments, not compiler-level costs. No random-partition mixing theorem is claimed: the result is uniform for each fixed/conditioned partition, as in the paper. See SBM_COMPLETE.txt. The statement fixes one algorithm that receives the graph with k and chi only and is exact on every graph, as checked.",
+      "statement_sha256": "682d989645969c45d453341f3eb710acc005aadafe821890611310bd157412e7",
       "external_dependencies": [
         "bvh_rademacher",
         "ledoux_upper_tail"
@@ -447,7 +499,7 @@
     {
       "paper_label": "thm:weighted",
       "kind": "theorem",
-      "title": "Random signs on every graph",
+      "title": "Semirandom formulas in the general model",
       "status": "checked_core",
       "lean_declarations": [
         "Max2SAT.RandomInput.requirements_tail",
@@ -486,8 +538,8 @@
         "Max2SAT.RandomInput.generated_input_exact",
         "Max2SAT.FiniteLaw.fixed_coordinate_count"
       ],
-      "scope": "Complete mathematical probability and initialized recursion-node bounds, with deterministic optimality on every generated formula. The original variable labels are retained: inactive coordinates have zero influence, are fixed to their initialized values, and are counted once. Restriction to nonempty pair draws preserves the comparison statistic and candidate count; its conditional product law is derived exactly. Conditioning and averaging over every positive-probability observed support, including the empty support, are checked. Final expected and high-probability node bounds assume only the stated independent bounded complementation-invariant pair laws with positive second moments and arbitrary fixed units, not concentration or count estimates. Both concrete clause models use the common paper parameters m0=4 and kappa=3/4. All rejected calls are charged and exponential bases are strictly below two. Polynomial arithmetic overhead and streamed space remain conventional implementation arguments; no machine-cost or compiler-level verification is claimed. The paper explicitly types the clause-count bound m0 as an integer, matching the finite multiplicity representation; kappa is real. This clarifies the parameter domain without changing the covered input families or the constant formula.",
-      "statement_sha256": "2c765d1a822843519641155bd2f321d3383207ecadfd76f2159edc29df1a881a"
+      "scope": "Complete mathematical probability and initialized recursion-node bounds, with deterministic optimality on every generated formula. The original variable labels are retained: inactive coordinates have zero influence, are fixed to their initialized values, and are counted once. Restriction to nonempty pair draws preserves the comparison statistic and candidate count; its conditional product law is derived exactly. Conditioning and averaging over every positive-probability observed support, including the empty support, are checked. Final expected and high-probability node bounds assume only the stated independent bounded complementation-invariant pair laws with positive second moments and arbitrary fixed units, not concentration or count estimates. Both concrete clause models use the common paper parameters m0=4 and kappa=3/4. All rejected calls are charged and exponential bases are strictly below two. Polynomial arithmetic overhead and streamed space remain conventional implementation arguments; no machine-cost or compiler-level verification is claimed. The paper explicitly types the clause-count bound m0 as an integer, matching the finite multiplicity representation; kappa is real. This clarifies the parameter domain without changing the covered input families or the constant formula. The statement names the paper algorithm RandomFormula, formalized as Max2SAT.Random.randomFormula.",
+      "statement_sha256": "ecd7a041ad822e510b56c01faeedd2e4a3c86a60bee8e9ac6e7142f4b7e973f3"
     },
     {
       "paper_label": "lem:observed_pairs",
@@ -536,7 +588,7 @@
         "Max2SAT.RandomInput.theta_subrow_law"
       ],
       "scope": "Complete finite-law exposure construction on the observed support: the independent base-pattern and endpoint-bit experiment has exactly the prescribed joint law of pair patterns and a uniform independent assignment. Conditioning on base patterns and every positive-probability earlier history is proved explicitly. The generated Formula score gain, its average over uniform unassigned values, and the actual branching preference after unit-only initialization and preprocessing are identified. Coefficients depend only on the earlier history; the current endpoint row is jointly fair and independent, and the assignment bit remains fair after the row is revealed and Delta is determined. Conditional mean, variance, and Y <= m0^2*d use the actual observed degree. The deviation identity, eta bound, and joint conditional law of the later theta signs are proved. List-history transitions match the fixed-order recursion. Nonempty bounded base outcomes follow from the retained pair laws, rather than being added distributional assumptions. No concentration or runtime guarantee is claimed by this lemma; the prose-to-Lean correspondence remains subject to independent review.",
-      "statement_sha256": "29a59faf15e7e37781aed31bb53b289243223a6cad3127a67c8b5581a6d87baf"
+      "statement_sha256": "71d3ab3f54fd89e4c2f5c163e9ba260e58c0fcaf65fec432bcf43685d292d661"
     },
     {
       "paper_label": "lem:random_ranges",
@@ -553,7 +605,7 @@
         "Max2SAT.FiniteLaw.zero_differences_tail"
       ],
       "scope": "Complete lemma on finite probability spaces, now explicit in the paper and sufficient for all applications. Exact conditional history laws, refining histories, adaptation, centering by the actual conditional mean, and history-dependent intervals with a deterministic pathwise squared-width budget. The compensated exponential is proved for the entire sequence; no independence of increments is assumed. The independent-input corollary covers arbitrary finite coordinate laws with exact constants, including the zero-influence constant-statistic case. Finite coordinate values are represented in a common alphabet. See RANDOM_CONCENTRATION.txt; the only statement change is the explicit finite-space scope.",
-      "statement_sha256": "fc5507d01be491b9715b45f6705ca4d217feb1bd3ceebb134f3135a041426834"
+      "statement_sha256": "04b50a5b71da471ade85b51d98a3063f15ca4e968bb9c496cc70201ce5987629"
     },
     {
       "paper_label": "lem:random_moments",
@@ -569,7 +621,7 @@
         "Max2SAT.FiniteLaw.integral_eq_expect"
       ],
       "scope": "Both assertions, with the stated constants. Arbitrary finite coefficient sets, real shifts, and positive truncation caps; the second assertion on arbitrary probability spaces with nonnegativity, measurability, finite second moment, and positive expectation. Exact fourth moments, two Cauchy--Schwarz inequalities, truncation, and symmetry. The measure bridge identifies these expectations with the existing finite sampling laws. No statement or algorithm change.",
-      "statement_sha256": "490c6e08d32d3a52917b964865550b3794d62bc1448c1fcbf41f88fe1ef2523f"
+      "statement_sha256": "82b740e8aed70317b3f721ca6c4d7c077ea40abc629de0e48b00ba2fa71c0d7a"
     },
     {
       "paper_label": "lem:random_requirements",
@@ -758,7 +810,7 @@
         "Max2SAT.Counts.normalized_rate"
       ],
       "scope": "Complete revised common-gap bound exp(-g^2*n/(8*tau*alpha^2*K_L)), including the exact rational comparison-average bridge, first moments, clipping, Huber smoothing/Taylor remainder, pointwise total squared-flip budget, finite-cube concentration, and parameter substitutions. The row matrix includes only prefix rows and zero-padded columns; EarlierInPrefix proves the T*V energy budget. The final theorem assumes only deterministic norm, profile and scale conditions, not a probability estimate. The paper now presents this sufficient substitute for its earlier unverified Talagrand argument. See COUNT_COMPLETE.txt.",
-      "statement_sha256": "250a91cfbacf9e8ac0ba7d543a63473913b70139011137761570afd6e09f2001"
+      "statement_sha256": "75fd70be3b945b64291e3f65b8e51fa05f25beb62faa0c6b65893ae666548b53"
     },
     {
       "paper_label": "cor:spectral",

@@ -7,14 +7,14 @@ pruning constraints, enumeration, and exponential search-node bounds.
 ## Current coverage
 
 The [correspondence register](verification/paper-correspondence.json) covers all
-35 numbered statements in the manuscript:
+38 numbered statements in the manuscript:
 
 | Status | Statements | Meaning |
 | --- | ---: | --- |
-| `checked` | 23 | Corresponding mathematical statements have checked Lean proofs. |
-| `checked_core` | 11 | Correctness and actual search-node bounds are checked; polynomial bit-cost and space use the paper's conventional arguments. |
+| `checked` | 24 | Corresponding mathematical statements have checked Lean proofs. |
+| `checked_core` | 12 | Correctness and actual search-node bounds are checked; polynomial bit-cost and space use the paper's conventional arguments. |
 | `partial` | 0 | No numbered proved statement has an unfinished mathematical formalization. |
-| `unverified` | 1 | The explicitly unproved biased-subset research target. |
+| `unverified` | 2 | The explicitly unproved biased-subset research target, and the corollary on random regular graphs, whose published spectral-gap inputs are not formalized. |
 
 All four main input families are covered: relative literal bias, the random
 formula models, the regular-graph Max Cut families, and the stochastic block

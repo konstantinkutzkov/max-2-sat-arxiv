@@ -7,9 +7,12 @@ The machine-readable outcome is result.json, produced by python3 verify.py.
 
 1. Coverage and mathematical boundary
 -------------------------------------
-The correspondence register contains 35 numbered manuscript statements:
-23 checked mathematical statements, 11 checked_core complexity statements,
-and one explicitly unproved research target. There are no partial entries.
+The correspondence register contains 38 numbered manuscript statements:
+24 checked mathematical statements, 12 checked_core complexity statements,
+one explicitly unproved research target, and one unformalized corollary
+(cor:random_regular), which combines the checked regular-expander corollary
+with published spectral-gap theorems for random regular graphs. There are
+no partial entries.
 All four main families have checked algorithm correctness and exponential
 bounds on actual recursion-node counts, with their original parameter and
 input-law substitutions. The shared reduction, constraint, enumeration,

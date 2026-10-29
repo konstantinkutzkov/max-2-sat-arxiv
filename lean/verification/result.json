@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "checked_at_utc": "2026-10-23T16:25:01.368148+00:00",
+  "checked_at_utc": "2026-10-29T12:55:16.172537+00:00",
   "lean": "Lean (version 4.34.0, arm64-apple-darwin24.6.0, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release)",
   "audited_theorems": 1110,
   "allowed_standard_axioms": [
@@ -5910,8 +5910,8 @@
     "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
     "lakefile.toml": "497977dc35ee5ddc12cb229bca3fb36044662cb4e75f74d8eb8c626379a88e5e",
     "lake-manifest.json": "d0a1bee453cbe6d64252275aab4816484b48de67e0752f0179616646c749b029",
-    "verify.py": "4b72f4d29d1d5974f93cf5029efc59e2e7ab856e8552badb4b5491fd46a2e1dd",
-    "README.md": "440599111b950c4ffad15f8e509df23b76d9ece1a6c16cdf83a99293b8345040",
+    "verify.py": "a5b0ab2ee92ab79d7fb985e890117eb098a4bb1af5df585c89e428d053bc9317",
+    "README.md": "96a170b0053b3bac98678617539187544fb166ea0b5e662cb571bf1d37d8f9a5",
     "verification/BIAS_PROOF.txt": "99efabb6cabfb9f405a720e78d79a1d8a106f17c62e09ca4adb01d12d57b6d25",
     "verification/RANDOM_CORRECTNESS.txt": "a00d2410f0e5eaa36645d9621eab5c1585b51ebd9f32e768a961f5af7891ce5b",
     "verification/RANDOM_PROBABILITY.txt": "6bf34535722e18288237b438c383f190891d0198d640e488307c19c6b34b32fd",
@@ -5934,18 +5934,18 @@
     "verification/SPECTRAL_TRUNCATION.txt": "3f6b1d80206b7d1b0bdf608c52a0102d550e15865220febfef6240f0de7de899",
     "verification/RATIONAL_DIAGONALIZATION.txt": "901f0a6cd820fcb2f4849417a40822e4c87f3c37ac946b910af7a385a5496821",
     "verification/SBM_COMPLETE.txt": "b79dee26769cb7e21f7dbd2fda56d18d685f0c2d4a4284ec9a7846b2abeaec12",
-    "verification/SUBMISSION_SCOPE.txt": "2da65b494dfbf14d1b387e3a34251190c893a47bb7b1aad139a493ec09870db4",
+    "verification/SUBMISSION_SCOPE.txt": "e6c39850d4aafff2e9eb5b48fac01625119dbe177e5a5073b921ddcfbe5bb4b4",
     "verification/external-results.json": "354eadc6534928875a69cb336ec1b8e65172ca982e982f95ec6c0d3c5258b323",
-    "verification/paper-correspondence.json": "6f5f58c3968284d73a42058df160cafe9df2ac78011831233f7e3114b28e9189"
+    "verification/paper-correspondence.json": "9154bf2e9a64d5789f6d6eb7ac47800ecda73530b8fef1ebe1c6f42d4c4247c4"
   },
   "manuscript_reference": {
     "file": "dense_max2sat_arxiv.tex",
-    "sha256": "f96b82a2b15ca66977e4bdb5648f1a3cbb1dec3dedda9fb9108cb80d9d247fe6"
+    "sha256": "cd9fc364dac69a083fe67c96d4940e2ddaeafc1e9be171b82caea94d0e117acb"
   },
   "paper_result_status_counts": {
-    "checked": 23,
-    "checked_core": 11,
-    "unverified": 1
+    "checked": 24,
+    "checked_core": 12,
+    "unverified": 2
   },
-  "scope": "All 34 numbered proved statements have checked mathematical content: 23 checked and 11 checked_core, with no partial entries. The sole unverified numbered statement is the explicitly unproved biased-subset research target. Actual algorithm correctness, reductions, constraint arithmetic, enumeration and exponential search-node bounds are checked for all four main families and the proved appendix results. The independent-pair auxiliary proposition is now explicitly scoped to integer coefficients, as in every computational input model in the paper; the earlier additional assertion for arbitrary continuously distributed real coefficients is not claimed. This changes no Max 2-SAT/Max Cut input family. General original probability spaces, almost-sure integer bounds, independent product transport, exact expectations and ordinary variance are checked. Discovery yields a measurable good event uniform in all subsequently chosen units, with one fixed base c<2 and constants for every size. Two published probability estimates remain explicit hypotheses, with source quotations and their applications audited separately. No internal proof obligation is classified as external. Standard-axiom checking does not prove those hypotheses. Polynomial bit-operation overhead and polynomial space remain conventional manuscript arguments, not machine-cost or compiler proofs. The registry and fingerprints track intended paper correspondence; independent review of its semantic correctness remains distinct from kernel checking. See SUBMISSION_SCOPE.txt for the final boundary; older milestone notes record historical states."
+  "scope": "Of the 37 numbered proved statements, 36 have checked mathematical content: 24 checked and 12 checked_core, with no partial entries. The corollary on random regular graphs is not formalized: it combines the checked regular-expander corollary with published spectral-gap theorems for random regular graphs. The other unverified numbered statement is the explicitly unproved biased-subset research target. Actual algorithm correctness, reductions, constraint arithmetic, enumeration and exponential search-node bounds are checked for all four main families and the proved appendix results. The independent-pair auxiliary proposition is now explicitly scoped to integer coefficients, as in every computational input model in the paper; the earlier additional assertion for arbitrary continuously distributed real coefficients is not claimed. This changes no Max 2-SAT/Max Cut input family. General original probability spaces, almost-sure integer bounds, independent product transport, exact expectations and ordinary variance are checked. Discovery yields a measurable good event uniform in all subsequently chosen units, with one fixed base c<2 and constants for every size. Two published probability estimates remain explicit hypotheses, with source quotations and their applications audited separately. No internal proof obligation is classified as external. Standard-axiom checking does not prove those hypotheses. Polynomial bit-operation overhead and polynomial space remain conventional manuscript arguments, not machine-cost or compiler proofs. The registry and fingerprints track intended paper correspondence; independent review of its semantic correctness remains distinct from kernel checking. See SUBMISSION_SCOPE.txt for the final boundary; older milestone notes record historical states."
 }

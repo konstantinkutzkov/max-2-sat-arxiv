@@ -5,11 +5,25 @@ Emmanuel Abbe.
 \newblock Community detection and stochastic block models: recent developments.
 \newblock {\em Journal of Machine Learning Research}, 18(177):1--86, 2018.
 
+\bibitem{allouche2014computational}
+David Allouche, Isabelle Andr{\'e}, Sophie Barbe, Jessica Davies, Simon
+  de~Givry, George Katsirelos, Barry O'Sullivan, Steve Prestwich, Thomas
+  Schiex, and Seydou Traor{\'e}.
+\newblock Computational protein design as an optimization problem.
+\newblock {\em Artificial Intelligence}, 212:59--79, 2014.
+
 \bibitem{BvH16}
 Afonso~S. Bandeira and Ramon van Handel.
 \newblock Sharp nonasymptotic bounds on the norm of random matrices with
   independent entries.
 \newblock {\em Annals of Probability}, 44(4):2479--2506, 2016.
+
+\bibitem{barahona1988application}
+Francisco Barahona, Martin Gr{\"o}tschel, Michael J{\"u}nger, and Gerhard
+  Reinelt.
+\newblock An application of combinatorial optimization to statistical physics
+  and circuit layout design.
+\newblock {\em Operations Research}, 36(3):493--513, 1988.
 
 \bibitem{BLM13}
 St{\'e}phane Boucheron, G{\'a}bor Lugosi, and Pascal Massart.
@@ -35,6 +49,13 @@ Ruiwen Chen and Rahul Santhanam.
 \newblock In {\em Theory and Applications of Satisfiability Testing -- SAT
   2015}, pages 33--45, 2015.
 
+\bibitem{Anthropic26ETH}
+{Claude Anthropic}.
+\newblock A $2^{o(n)}$ time algorithm for {3-SAT}.
+\newblock Preprint, Anthropic Release, 2026.
+\newblock Dated 26 October 2026,
+  \mbox{\url{https://github.com/anthropics/formal-math/tree/main/eth}}.
+
 \bibitem{CGJ18}
 Nicholas Cook, Larry Goldstein, and Tobias Johnson.
 \newblock Size biased couplings and the spectral gap for random regular graphs.
@@ -50,11 +71,34 @@ Martin Davis and Hilary Putnam.
 \newblock A computing procedure for quantification theory.
 \newblock {\em Journal of the ACM}, 7(3):201--215, 1960.
 
+\bibitem{Marcin07}
+Federico {Della Croce}, Marcin~Jakub Kaminski, and Vangelis~Th. Paschos.
+\newblock An exact algorithm for {MAX-CUT} in sparse graphs.
+\newblock {\em Oper. Res. Lett.}, 35(3):403--408, 2007.
+
+\bibitem{EdwardsM15}
+Keith Edwards and Eric McDermid.
+\newblock A general reduction theorem with applications to pathwidth and the
+  complexity of {MAX 2-CSP}.
+\newblock {\em Algorithmica}, 72(4):940--968, 2015.
+
 \bibitem{feige2007refuting}
 Uriel Feige.
 \newblock Refuting smoothed 3{CNF} formulas.
 \newblock In {\em Proceedings of the 48th Annual IEEE Symposium on Foundations
   of Computer Science}, pages 407--417, 2007.
+
+\bibitem{GaspersS12}
+Serge Gaspers and Gregory~B. Sorkin.
+\newblock A universally fastest algorithm for {Max 2-Sat}, {Max 2-CSP}, and
+  everything in between.
+\newblock {\em J. Comput. Syst. Sci.}, 78(1):305--335, 2012.
+
+\bibitem{GaspersS17}
+Serge Gaspers and Gregory~B. Sorkin.
+\newblock Separate, measure and conquer: Faster polynomial-space algorithms for
+  {Max 2-CSP} and counting dominating sets.
+\newblock {\em {ACM} Trans. Algorithms}, 13(4):44:1--44:36, 2017.
 
 \bibitem{GK14}
 Alexander Golovnev and Konstantin Kutzkov.
@@ -64,12 +108,26 @@ Alexander Golovnev and Konstantin Kutzkov.
 \bibitem{Hastings}
 Matthew~B. Hastings.
 \newblock Local maxima and improved exact algorithm for {MAX-2-SAT}.
-\newblock arXiv:1610.07100, 2016.
+\newblock {\em Chic. J. Theor. Comput. Sci.}, 2018.
+
+\bibitem{huang2016finding}
+Wenxuan Huang, Daniil~A. Kitchaev, Stephen Dacek, Ziqin Rong, Alexander Urban,
+  Shan Cao, Chuan Luo, and Gerbrand Ceder.
+\newblock Finding and proving the exact ground state of a generalized {Ising}
+  model by convex optimization and {MAX-SAT}.
+\newblock {\em Physical Review B}, 94:134424, 2016.
 
 \bibitem{impagliazzo2001problems}
 Russell Impagliazzo and Ramamohan Paturi.
 \newblock On the complexity of $k$-{SAT}.
 \newblock {\em Journal of Computer and System Sciences}, 62(2):367--375, 2001.
+
+\bibitem{jabs2026maxsat}
+Christoph Jabs, Dieter Vandesande, Jeremias Berg, Johannes Fichte, George
+  Katsirelos, Ruben Martins, Andr{\'e} Schidler, and Dominik Schreiber.
+\newblock {MaxSAT Evaluation}: Complete benchmark collection.
+\newblock Dataset on Zenodo, 2026.
+\newblock \mbox{\url{https://doi.org/10.5281/zenodo.21283148}}.
 
 \bibitem{KulikovK07}
 Alexander~S. Kulikov and Konstantin Kutzkov.
@@ -82,6 +140,21 @@ Michel Ledoux.
 \newblock Concentration of measure and logarithmic {S}obolev inequalities.
 \newblock In {\em S{\'e}minaire de Probabilit{\'e}s XXXIII}, volume 1709 of
   {\em Lecture Notes in Mathematics}, pages 120--216. Springer, 1999.
+
+\bibitem{liers2004computing}
+Frauke Liers, Michael J{\"u}nger, Gerhard Reinelt, and Giovanni Rinaldi.
+\newblock Computing exact ground states of hard {Ising} spin glass problems by
+  branch-and-cut.
+\newblock In Alexander~K. Hartmann and Heiko Rieger, editors, {\em New
+  Optimization Algorithms in Physics}, pages 47--68. Wiley-VCH, 2004.
+
+\bibitem{malikic2019phiscs}
+Salem Malikic, Farid Rashidi~Mehrabadi, Simone Ciccolella, Md~Khaledur Rahman,
+  Camir Ricketts, Ehsan Haghshenas, Daniel Seidman, Faraz Hach, Iman
+  Hajirasouliha, and S.~Cenk Sahinalp.
+\newblock {PhISCS}: a combinatorial approach for subperfect tumor phylogeny
+  reconstruction via integrative use of single-cell and bulk sequencing data.
+\newblock {\em Genome Research}, 29(11):1860--1877, 2019.
 
 \bibitem{OpenAI26ETH}
 {OpenAI}.
@@ -104,15 +177,33 @@ Rahul Santhanam.
 \newblock In {\em 51th Annual {IEEE} Symposium on Foundations of Computer
   Science, {FOCS}}, pages 183--192, 2010.
 
+\bibitem{SS07}
+Alexander~D. Scott and Gregory~B. Sorkin.
+\newblock Linear-programming design and analysis of fast algorithms for {Max
+  2-CSP}.
+\newblock {\em Discrete Optimization}, 4(3):260--287, 2007.
+
 \bibitem{TY19}
 Konstantin Tikhomirov and Pierre Youssef.
 \newblock The spectral gap of dense random regular graphs.
 \newblock {\em Annals of Probability}, 47(1):362--419, 2019.
+
+\bibitem{wiegele2007biqmac}
+Angelika Wiegele.
+\newblock {Biq Mac Library} -- a collection of {Max-Cut} and quadratic 0-1
+  programming instances of medium size.
+\newblock Technical report, Alpen-Adria-Universit{\"a}t Klagenfurt, 2007.
+\newblock \mbox{\url{https://biqmac.aau.at/biqmaclib.html}}.
 
 \bibitem{Williams}
 Ryan Williams.
 \newblock A new algorithm for optimal 2-constraint satisfaction and its
   implications.
 \newblock {\em Theoretical Computer Science}, 348(2--3):357--365, 2005.
+
+\bibitem{WOEGINGER}
+Gerhard~J. Woeginger.
+\newblock Open problems around exact algorithms.
+\newblock {\em Discrete Applied Mathematics}, 156(3):397--405, 2008.
 
 \end{thebibliography}
